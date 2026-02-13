@@ -1,0 +1,7 @@
+vendor/
+composer.lock
+otp-storage.json
+uploads/
+node_modules/
+.DS_Store
+Thumbs.db
