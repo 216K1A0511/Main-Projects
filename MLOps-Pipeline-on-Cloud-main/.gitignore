@@ -1,0 +1,29 @@
+# --- Security (CRITICAL) ---
+.env
+secrets.json
+*.key
+api_keys.txt
+keys.txt
+
+# --- Python & Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+build/
+dist/
+
+# --- Local Data & Reports ---
+# We ignore these so your personal test results don't clutter GitHub
+data/raw/sample_data.csv
+reports/*.csv
+logs/*.log
+
+# --- Infrastructure & Tools ---
+.terraform/
+*.tfstate
+*.tfstate.backup
+.prefect/
+terraform.exe
