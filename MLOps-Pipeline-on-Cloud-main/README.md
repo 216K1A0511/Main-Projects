@@ -50,4 +50,4 @@ To run the full pipeline, execute the PowerShell script in the root directory:
 ```
 
 ### 👩💻 Developed By
-**[Bollinkala]** *Aspiring Cloud Engineer | B.Tech Student AI & ML*
+**[Durgaprasad b]** *Aspiring Cloud Engineer | B.Tech Student CSE (AI & ML)*
