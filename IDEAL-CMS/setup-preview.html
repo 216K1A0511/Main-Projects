@@ -1,0 +1,2852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL ERP - System Setup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-hover: rgba(30, 41, 59, 0.9);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.1);
+            --border-focus: rgba(99, 102, 241, 0.5);
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            height: 70px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-back:hover {
+            color: white;
+            border-color: var(--text-main);
+            background: var(--glass);
+        }
+
+        /* Main Layout */
+        main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            gap: 2rem;
+        }
+
+        /* Setup Navigation Menu */
+        .setup-nav {
+            width: 300px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            border: 1px solid transparent;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background: var(--glass);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: white;
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-item.active i {
+            color: var(--primary);
+        }
+
+        /* Setup Content Area */
+        .setup-content-container {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .content-section {
+            padding: 2.5rem;
+            display: none;
+            animation: fadeUp 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, var(--text-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:hover, select:hover, textarea:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Buttons */
+        .btn-panel {
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glass-strong);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Data Cards for Lists (Extracurricular) */
+        .data-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .data-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .data-card:hover::before {
+            opacity: 1;
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fas fa-layer-group"></i> IDEAL ERP Setup
+        </div>
+        <div class="header-actions">
+            <a href="dashboard-preview.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Navigation Sidebar -->
+        <aside class="setup-nav">
+            <h3 class="nav-title">Setup Modules</h3>
+            <div class="nav-item active" onclick="switchTab('college', this)">
+                <i class="fas fa-university"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">College Setup</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Basic Information</div>
+                </div>
+            </div>
+            
+            <div class="nav-item" onclick="switchTab('academic', this)">
+                <i class="fas fa-graduation-cap"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Academic Calendar</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Terms & Semesters</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('programs', this)">
+                <i class="fas fa-book-open"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Academic Programs</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Courses & Seats</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('semester', this)">
+                <i class="fas fa-calendar-alt"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Semester Setup</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Batches & Duration</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('subjects', this)">
+                <i class="fas fa-book"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Subjects Setup</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Course Subjects</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('electives', this)">
+                <i class="fas fa-layer-group"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Elective Setup</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Groups & Assignments</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('faculty_subjects', this)">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Faculty Subjects</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Assign to Staff</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('timetables', this)">
+                <i class="fas fa-calendar-week"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Timetables</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Class Schedules</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('question_papers', this)">
+                <i class="fas fa-file-signature"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Question Papers</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Offline & Online Exams</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('exams', this)">
+                <i class="fas fa-pen-alt"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Exams</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Manage & Analyze</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('seminars', this)">
+                <i class="fas fa-microphone-alt"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Seminars</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Student Presentations</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('attendance', this)">
+                <i class="fas fa-clipboard-user"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Attendance</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Reports & Analytics</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('committee', this)">
+                <i class="fas fa-users-cog"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Committees</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Groups & Assignments</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('admissions', this)">
+                <i class="fas fa-user-graduate"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Admissions</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Enrollment & Records</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('hr', this)">
+                <i class="fas fa-id-badge"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Human Resource</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Faculty & Recruitment</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('interaction', this)">
+                <i class="fas fa-comments"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Feedback & Comms</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Ratings, Forums, Complaints</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('management', this)">
+                <i class="fas fa-chart-bar"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Management</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Hostel, Leaves, Placements</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('network', this)">
+                <i class="fas fa-network-wired"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Network & Alerts</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Online Users & Mass SMS</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('holidays', this)">
+                <i class="fas fa- umbrella-beach"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Holidays & Closures</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Manage Leave Days</div>
+                </div>
+            </div>
+
+            <div class="nav-item" onclick="switchTab('modules', this)">
+                <i class="fas fa-puzzle-piece"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Core Modules</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Activate & Setup System</div>
+                </div>
+            </div>
+            
+            <div class="nav-item" onclick="switchTab('extra', this)">
+                <i class="fas fa-palette"></i>
+                <div class="nav-label">
+                    <div style="font-weight: 500; font-size: 1.05rem">Extracurricular</div>
+                    <div style="font-size: 0.75rem; opacity: 0.7;">Activities & Clubs</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="setup-content-container">
+            
+            <!-- College Setup -->
+            <div id="college" class="content-section active">
+                <div class="section-header">
+                    <h2 class="section-title">College Configuration</h2>
+                    <p class="section-desc">Define the core identity and contact information for the institution.</p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Institution Name</label>
+                        <input type="text" value="Engineering College - Main Campus" placeholder="Enter institution name">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Address</label>
+                        <textarea rows="3" placeholder="Enter full address">123 Tech Park Road, Silicon Valley, CA</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" value="admin@engineering.edu" placeholder="admin@college.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="text" value="+1 (555) 123-4567" placeholder="+1 (XXX) XXX-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Website URL</label>
+                        <input type="url" value="https://www.engineering.edu" placeholder="https://">
+                    </div>
+                    <div class="form-group">
+                        <label>Affiliation / University</label>
+                        <input type="text" value="State Technical University" placeholder="Affiliated body">
+                    </div>
+                    <div class="form-group">
+                        <label>Established Year</label>
+                        <input type="number" value="1995" placeholder="YYYY">
+                    </div>
+                </div>
+
+                <div class="btn-panel">
+                    <button class="btn btn-secondary">Discard Changes</button>
+                    <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Save Configuration</button>
+                </div>
+            </div>
+
+            <!-- Academic Setup -->
+            <div id="academic" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Academic Calendar</h2>
+                    <p class="section-desc">Manage academic years, active semesters, and critical dates.</p>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Current Academic Year</label>
+                        <select>
+                            <option>2024-2025</option>
+                            <option selected>2025-2026</option>
+                            <option>2026-2027</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Active Term / Semester</label>
+                        <select>
+                            <option>Fall Term</option>
+                            <option selected>Spring Term</option>
+                            <option>Summer Term</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Term Start Date</label>
+                        <input type="date" value="2026-01-15">
+                    </div>
+                    <div class="form-group">
+                        <label>Term End Date</label>
+                        <input type="date" value="2026-05-30">
+                    </div>
+                    <div class="form-group full-width">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                            Set this as the Global Default Academic Configuration
+                        </label>
+                    </div>
+                </div>
+
+                <div class="btn-panel" style="justify-content: space-between">
+                    <div>
+                        <button class="btn btn-secondary" onclick="toggleCsvModal()"><i class="fas fa-file-csv"></i> Day-order CSV Template Tool</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Save Academic Configuration</button>
+                </div>
+            </div>
+
+            <!-- Program Details Setup -->
+            <div id="programs" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Academic Programs</h2>
+                    <p class="section-desc">Manage college degree programs, course codes, duration, and dynamically track seat availability.</p>
+                </div>
+
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Add New Program</h4>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Program Name</label>
+                            <input type="text" placeholder="e.g. Computer Science and Engineering">
+                        </div>
+                        <div class="form-group">
+                            <label>Program Code</label>
+                            <input type="text" placeholder="e.g. CSE">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (Years)</label>
+                            <input type="number" min="1" placeholder="e.g. 4">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Semesters</label>
+                            <input type="number" min="1" placeholder="e.g. 8">
+                        </div>
+                        <div class="form-group">
+                            <label>Maximum Seat Intake</label>
+                            <input type="number" min="1" placeholder="e.g. 120">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Create Program</button>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Program Seat Availability Tracker</h4>
+                
+                <div class="data-list">
+                    <!-- CSE Card -->
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Computer Science (CSE)</h3>
+                            <span class="data-tag" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">4 Years</span>
+                        </div>
+                        
+                        <!-- Mini progress bar logic for seating -->
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                                <span style="color: var(--text-dim)">Seat Occupancy</span>
+                                <span style="color: #fff; font-weight: bold;">110 / 120 (91%)</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                                <div style="width: 91%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary));"></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--success); text-align: right;">
+                                <i class="fas fa-check-circle"></i> 10 Seats Available
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MECH Card -->
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Mechanical Eng (ME)</h3>
+                            <span class="data-tag" style="background: rgba(99, 102, 241, 0.15); color: var(--primary);">4 Years</span>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                                <span style="color: var(--text-dim)">Seat Occupancy</span>
+                                <span style="color: #fff; font-weight: bold;">60 / 60 (100%)</span>
+                            </div>
+                            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                                <div style="width: 100%; height: 100%; background: var(--accent);"></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--accent); text-align: right;">
+                                <i class="fas fa-ban"></i> Enrollment Full
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semester Setup -->
+            <div id="semester" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Semester Setup</h2>
+                    <p class="section-desc">Create semesters according to batches, set their duration, view existing semesters, and assign the current semester.</p>
+                </div>
+
+                <!-- Create Semester -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> (a.) Create Semester</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Batch / Program</label>
+                            <select>
+                                <option>CSE (2017-2020)</option>
+                                <option>MECH (2020-2024)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester Name</label>
+                            <input type="text" placeholder="e.g. Sem-1">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (Months)</label>
+                            <input type="number" value="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Semester Type</label>
+                            <select>
+                                <option>First Semester</option>
+                                <option>Normal Semester</option>
+                                <option>End / Final Semester</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Create</button>
+                    </div>
+                </div>
+
+                <!-- View Semesters -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">(b.) View / Edit Created Semesters</h4>
+                <div class="data-list" style="margin-bottom: 2rem;">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Sem-1 <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: normal;">CSE (2017-2020)</span></h3>
+                            <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);">
+                            <div><i class="fas fa-clock" style="color: var(--primary)"></i> Duration: 6 months (First Semester)</div>
+                            <div style="margin-top: 5px;"><i class="fas fa-calendar" style="color: var(--primary)"></i> Dates: Aug 1, 2017 - Jan 31, 2018</div>
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Sem-2 <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: normal;">CSE (2017-2020)</span></h3>
+                            <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);">
+                            <div><i class="fas fa-clock" style="color: var(--primary)"></i> Duration: 6 months</div>
+                            <div style="margin-top: 5px;"><i class="fas fa-calendar" style="color: var(--primary)"></i> Dates: Feb 1, 2018 - Jul 31, 2018</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Set Current Semester -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-check-circle" style="color: var(--success);"></i> (c.) Set Current Semester</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Assign the current active semester for a particular batch.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Batch</label>
+                            <select>
+                                <option>CSE (2017-2020)</option>
+                                <option>MECH (2020-2024)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign Current Semester</label>
+                            <select>
+                                <option>Sem-1</option>
+                                <option>Sem-2</option>
+                                <option>Sem-3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Set Current</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subjects Setup -->
+            <div id="subjects" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Subjects Setup</h2>
+                    <p class="section-desc">Manage subjects according to branches, batches, and semesters. Define marks split-up and credits.</p>
+                </div>
+
+                <!-- (a) Create Subject -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> (a.) Create Subject</h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Branch & Batch</label>
+                            <select>
+                                <option>CSE (2017-2020)</option>
+                                <option>MECH (2020-2024)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester</label>
+                            <select>
+                                <option>Sem-1</option>
+                                <option>Sem-2</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Subject Name</label>
+                            <input type="text" placeholder="e.g. Data Structures & Algorithms">
+                        </div>
+                        <div class="form-group">
+                            <label>Subject Code</label>
+                            <input type="text" placeholder="e.g. CS201">
+                        </div>
+                        <div class="form-group">
+                            <label>Subject Credits</label>
+                            <input type="number" min="1" max="5" value="4">
+                        </div>
+                        <div class="form-group">
+                            <label>Internal Marks Split-up</label>
+                            <input type="number" placeholder="e.g. 40">
+                        </div>
+                        <div class="form-group">
+                            <label>External Marks Split-up</label>
+                            <input type="number" placeholder="e.g. 60">
+                        </div>
+                        <div class="form-group full-width">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 20px; height: 20px; accent-color: var(--primary);">
+                                Enable Practical for this subject
+                            </label>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Create Subject</button>
+                    </div>
+                </div>
+
+                <!-- (b) Load Prev Subjects -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-copy" style="color: var(--secondary);"></i> (b.) Load Prev Subjects</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Load subjects from a previous batch to a new batch for the same course branch.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Source Batch (Copy From)</label>
+                            <select>
+                                <option>CSE (2016-2019)</option>
+                                <option>CSE (2015-2018)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Batch (Paste To)</label>
+                            <select>
+                                <option>CSE (2017-2020)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex; background: linear-gradient(135deg, var(--secondary), #7c3aed);" onclick="saveSettings()">Load Subjects</button>
+                    </div>
+                </div>
+
+                <!-- (c) View / Edit Created Subjects -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">(c.) View / Edit Created Subjects</h4>
+                <div class="form-group" style="margin-bottom: 1.5rem; max-width: 400px;">
+                    <label>Filter by Branch, Batch & Semester</label>
+                    <select>
+                        <option>CSE (2017-2020) - Sem-1</option>
+                        <option>CSE (2017-2020) - Sem-2</option>
+                    </select>
+                </div>
+                <div class="data-list">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Data Structures</h3>
+                            <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);">
+                            <div><i class="fas fa-hashtag" style="color: var(--primary)"></i> Code: CS201 | Credits: 4</div>
+                            <div style="margin-top: 5px;"><i class="fas fa-chart-pie" style="color: var(--primary)"></i> Marks: 40 (Int) + 60 (Ext)</div>
+                            <div style="margin-top: 5px; color: var(--success);"><i class="fas fa-flask"></i> Practical: Enabled</div>
+                        </div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Engineering Physics</h3>
+                            <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.85rem; color: var(--text-dim);">
+                            <div><i class="fas fa-hashtag" style="color: var(--primary)"></i> Code: PHY101 | Credits: 3</div>
+                            <div style="margin-top: 5px;"><i class="fas fa-chart-pie" style="color: var(--primary)"></i> Marks: 30 (Int) + 70 (Ext)</div>
+                            <div style="margin-top: 5px; color: var(--accent);"><i class="fas fa-times-circle"></i> Practical: Disabled</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Electives Setup -->
+            <div id="electives" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Elective Groups & Subjects</h2>
+                    <p class="section-desc">Manage elective groups, subjects under those groups, and assign them to specific students.</p>
+                </div>
+
+                <!-- (a) Elective Groups -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-layer-group" style="color: var(--primary);"></i> (a) Elective Groups</h4>
+                    
+                    <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Create Elective Group</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Branch & Batch</label>
+                                <select>
+                                    <option>CSE (2017-2020)</option>
+                                    <option>MECH (2020-2024)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Semester</label>
+                                <select>
+                                    <option>Sem-5</option>
+                                    <option>Sem-6</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Elective Group Name</label>
+                                <input type="text" placeholder="e.g. Professional Elective 1">
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Create Group</button>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">2) View Created Groups</h5>
+                    <div class="data-list">
+                        <div class="data-card" style="padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Professional Elective 1</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">CSE (2017-2020) | Sem-5</div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (b) Elective Subjects -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-book" style="color: var(--secondary);"></i> (b) Elective Subjects</h4>
+                    
+                    <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Create / Add Elective Subject</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Elective Group</label>
+                                <select>
+                                    <option>Professional Elective 1 (CSE Sem-5)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject Name</label>
+                                <input type="text" placeholder="e.g. Artificial Intelligence">
+                            </div>
+                            <div class="form-group">
+                                <label>Subject Code & Credits</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" placeholder="CS501" style="flex: 2;">
+                                    <input type="number" placeholder="Cr" style="flex: 1;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Marks (Int / Ext)</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="number" placeholder="Int" style="flex: 1;">
+                                    <input type="number" placeholder="Ext" style="flex: 1;">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Add Subject</button>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border-left: 3px solid var(--primary);">
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">3) Load Prev Electives</h5>
+                        <div style="display: flex; gap: 1rem; align-items: end;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Source Batch</label>
+                                <select><option>CSE (2016-2019)</option></select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Target Batch</label>
+                                <select><option>CSE (2017-2020)</option></select>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-bottom: 2px;" onclick="saveSettings()"><i class="fas fa-copy"></i> Load</button>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">2) View Subjects (Filtered By Group)</h5>
+                    <div class="data-list">
+                        <div class="data-card" style="padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Artificial Intelligence</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">Group: Prof Elective 1 | Code: CS501</div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (c) Assign Electives -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-check" style="color: var(--success);"></i> (c) Assign Electives</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Assign an elective subject to specific students (Only 1 subject permitted per group per student).</p>
+                    
+                    <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Assign Subject</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Target Class (Batch/Sem/Sec)</label>
+                                <select>
+                                    <option>CSE (2017-2020) - Sem-5 - Sec A</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Elective Group</label>
+                                <select>
+                                    <option>Prof Elective 1</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject to Assign</label>
+                                <select>
+                                    <option>Artificial Intelligence (CS501)</option>
+                                    <option>Cloud Computing (CS502)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Assign To</label>
+                                <select>
+                                    <option>All Unassigned Students</option>
+                                    <option>Select Specific Students (Popup)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--success);" onclick="saveSettings()">Assign</button>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">2) View / Managed Assigned Electives</h5>
+                    <div class="data-list">
+                        <div class="data-card" style="padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Artificial Intelligence</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">Assigned to: 45 Students</div>
+                                    <div style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">CSE (2017-2020) Sem-5 | Sec A</div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-eye"></i> View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Subjects Setup -->
+            <div id="faculty_subjects" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Faculty Subjects</h2>
+                    <p class="section-desc">Assign subjects to faculties department-wise or cross-department, and view assignments.</p>
+                </div>
+
+                <!-- (a) Assign Employees Subject (Same Dept) -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-plus" style="color: var(--primary);"></i> (a) Assign Employees Subject</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Assign branch/department-wise faculties to the particular subjects.</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Class (Branch/Batch/Sem)</label>
+                            <select>
+                                <option>CSE (2017-2020) - Sem-1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select>
+                                <option>Data Structures & Algorithms</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Faculty (Same Department)</label>
+                            <select>
+                                <option>Dr. Alan Turing</option>
+                                <option>Prof. John Doe</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Assign Faculty</button>
+                    </div>
+                </div>
+
+                <!-- (b) Assign Employee Subjects (Cross Dept) -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-exchange-alt" style="color: var(--secondary);"></i> (b) Assign Faculty (Cross-Department)</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Assign faculties to other branches/departments for particular subjects.</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Target Class (Branch/Batch/Sem)</label>
+                            <select>
+                                <option>CSE (2017-2020) - Sem-1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select>
+                                <option>Engineering Physics (PHY101)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Source Faculty Department</label>
+                            <select>
+                                <option>Science & Humanities</option>
+                                <option>Mechanical Engineering</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Faculty</label>
+                            <select>
+                                <option>Dr. Albert Einstein</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--secondary), #7c3aed);" onclick="saveSettings()">Assign Cross-Dept</button>
+                    </div>
+                </div>
+
+                <!-- (c) View (By Faculty) -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">(c) View Assigned Subjects (By Faculty)</h4>
+                <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <div class="form-group" style="max-width: 400px; margin-bottom: 1rem;">
+                        <label>Select Faculty</label>
+                        <select>
+                            <option>Dr. Alan Turing (CSE)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="data-list" style="margin-top: 0;">
+                        <div class="data-card" style="padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Data Structures</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">CSE (2017-2020) Sem-1</div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (d) Employee Subjects (By Subject) -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">(d) View Assigned Faculties (By Subject)</h4>
+                <div style="background: var(--glass); padding: 1rem; border-radius: 12px;">
+                    <div class="form-grid" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label>Class</label>
+                            <select><option>CSE (2017-2020) - Sem-1</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <select><option>Engineering Physics (PHY101)</option></select>
+                        </div>
+                    </div>
+                    
+                    <div class="data-list" style="margin-top: 0;">
+                        <div class="data-card" style="padding: 1rem; border-left: 3px solid var(--secondary);">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div class="profile-img" style="width: 32px; height: 32px; background: url('https://ui-avatars.com/api/?name=Albert+Einstein') center/cover;"></div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Dr. Albert Einstein</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-dim);">Science & Humanities</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem; color: var(--accent);" title="Remove Assignment"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timetables Setup -->
+            <div id="timetables" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Timetables</h2>
+                    <p class="section-desc">Create bounded timetables for specific classes, define active working days, and access reports for tracking schedules.</p>
+                </div>
+
+                <!-- (a) Create Timetable -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-calendar-plus" style="color: var(--primary);"></i> (a) Create Timetable</h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Target Class (Branch/Batch/Sem/Sec)</label>
+                            <select>
+                                <option>CSE (2017-2020) - Sem-1 - Sec A</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Timetable Name</label>
+                            <input type="text" placeholder="e.g. Regular Odd Semester Schedule">
+                        </div>
+                        <div class="form-group">
+                            <label>Valid From Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>Valid To Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Select Working Days</label>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 5px;">
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" checked style="accent-color: var(--primary);"> Mon</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" checked style="accent-color: var(--primary);"> Tue</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" checked style="accent-color: var(--primary);"> Wed</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" checked style="accent-color: var(--primary);"> Thu</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" checked style="accent-color: var(--primary);"> Fri</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" style="accent-color: var(--primary);"> Sat</label>
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;"><input type="checkbox" style="accent-color: var(--primary);"> Sun</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Create Timetable Wrapper</button>
+                    </div>
+                </div>
+
+                <!-- (b) Active Timetables -->
+                <h4 style="color: var(--text-main); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fas fa-play-circle" style="color: var(--success); margin-right: 5px;"></i> (b) Active Timetables</h4>
+                <div class="data-list" style="margin-bottom: 2rem;">
+                    <div class="data-card" style="padding: 1rem; border-left: 3px solid var(--success);">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Regular Odd Semester Schedule</div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim);">Class: CSE (2017-2020) Sem-1 Sec A</div>
+                                <div style="font-size: 0.75rem; color: var(--success); margin-top: 5px;"><i class="fas fa-calendar-check"></i> Valid: Aug 1, 2026 - Dec 15, 2026</div>
+                            </div>
+                            <div style="display: flex; gap: 5px; flex-direction: column;">
+                                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-pen"></i> Edit Structure</button>
+                                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: var(--warning);"><i class="fas fa-ban"></i> Disable Early</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (c) Expired Timetables -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fas fa-history" style="margin-right: 5px;"></i> (c) Expired Timetables</h4>
+                <div class="data-list" style="margin-bottom: 2rem;">
+                    <div class="data-card" style="padding: 1rem; opacity: 0.7;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px; color: var(--text-dim);">Summer Crash Course Schedule</div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim);">Class: CSE (2016-2019) Sem-6 Sec B</div>
+                                <div style="font-size: 0.75rem; color: var(--accent); margin-top: 5px;"><i class="fas fa-clock"></i> Expired on: Jul 15, 2026</div>
+                            </div>
+                            <div>
+                                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-eye"></i> View Only</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (d) Timetable Report -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-chart-bar" style="color: var(--secondary);"></i> (d) Timetable Report</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-dim); margin-bottom: 1rem;">Generate deep analytics regarding day-wise hour blocks per subject or per faculty.</p>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Report Type</label>
+                            <select>
+                                <option>Class-wise Hourly Breakdown</option>
+                                <option>Faculty Load Breakdown</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Class (If Applicable)</label>
+                            <select>
+                                <option>CSE (2017-2020) - Sem-1 - Sec A</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--secondary), #7c3aed);" onclick="saveSettings()">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Papers Setup -->
+            <div id="question_papers" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Question Papers & Assessments</h2>
+                    <p class="section-desc">Manage both offline and online question papers. Upload papers, map CO/PO parameters, and create dynamic online assessments.</p>
+                </div>
+
+                <!-- (a) Offline Q-Paper -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-file-alt" style="color: var(--primary);"></i> (a) Offline Question Papers</h4>
+                    
+                    <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Create / Upload Exam Q-Paper</h5>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Target Class</label>
+                                <select><option>CSE (2017-2020) - Sem-1</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <select><option>Data Structures & Algorithms</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Exam Type</label>
+                                <select>
+                                    <option>Internal Exam</option>
+                                    <option>SEM Exam</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Upload Paper (PDF/Docx)</label>
+                                <input type="file" style="padding: 6px; font-size: 0.8rem;">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Map CO, PO & Marks (Preview)</label>
+                                <div style="display: flex; gap: 10px; align-items: center; border: 1px solid var(--border); padding: 10px; border-radius: 8px;">
+                                    <input type="text" placeholder="Q. No (e.g. 1A)" style="flex: 1;">
+                                    <input type="number" placeholder="Marks" style="flex: 1;">
+                                    <input type="text" placeholder="CO (e.g. CO1)" style="flex: 1;">
+                                    <input type="text" placeholder="PO (e.g. PO2)" style="flex: 1;">
+                                    <button class="btn btn-secondary" style="padding: 6px 12px;"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Upload & Set Paper</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1; border-left: 3px solid var(--primary);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">3) Load Previous Question Papers</h5>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>Source Batch / Semester</label>
+                                <select><option>CSE (2016-2019) Sem-1</option></select>
+                            </div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="saveSettings()"><i class="fas fa-copy"></i> Import Previous Papers</button>
+                        </div>
+                    </div>
+
+                    <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">4) View Previous Q-Papers</h5>
+                    <div class="data-list">
+                        <div class="data-card" style="padding: 1rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Data Structures - Internal 1</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-dim);">Mapped: 10 Questions | 50 Marks</div>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-download"></i> DL</button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-eye"></i> View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (b) Online Q-Paper & (c) Online Assessments -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- Online Q-Paper -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-laptop" style="color: var(--secondary);"></i> (b) Online Q-Paper</h4>
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Create MCQ Paper</h5>
+                            <div class="form-group">
+                                <label>Exam Title</label>
+                                <input type="text" placeholder="e.g. Unit 1 Online MCQ Quiz">
+                            </div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-bottom: 10px;"><i class="fas fa-file-excel"></i> Bulk Upload Options (.csv)</button>
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--secondary), #7c3aed); width: 100%; justify-content: center;" onclick="saveSettings()">Create Template</button>
+                        </div>
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">2) View / Download Scripts</h5>
+                        <div class="data-list">
+                            <div class="data-card" style="padding: 0.8rem;">
+                                <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Unit 1 Quiz (20 MCQs)</div>
+                                <div style="display: flex; gap: 5px; margin-top: 10px;">
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-download"></i> Download</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Online Assessments -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-tasks" style="color: var(--success);"></i> (c) Online Assessments</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Link Q-Papers to create student assessments.</p>
+                        
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">1) Assign Assessment</h5>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>Target Class (Enable link for students)</label>
+                                <select><option>CSE (2017-2020) Sec-A</option></select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>Select Online Q-Paper</label>
+                                <select><option>Unit 1 Quiz (20 MCQs)</option></select>
+                            </div>
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--success); width: 100%; justify-content: center;" onclick="saveSettings()">Push Assessment Live</button>
+                        </div>
+
+                        <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">Status & Reports</h5>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn btn-secondary" style="flex: 1; justify-content: center; font-size: 0.8rem;"><i class="fas fa-eye"></i> View Live Status</button>
+                            <button class="btn btn-secondary" style="flex: 1; justify-content: center; font-size: 0.8rem; color: var(--success);"><i class="fas fa-file-excel"></i> Gen Report</button>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+            </div>
+
+            <!-- Exams Setup -->
+            <div id="exams" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Exam Management</h2>
+                    <p class="section-desc">Create University and Internal exams, manage exam timetables, input marks, handle attendance eligibility, and generate analytics.</p>
+                </div>
+
+                <!-- (a) Exams & (b) View Exams -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-edit" style="color: var(--primary);"></i> Exams Configuration</h4>
+                    
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1; min-width: 250px;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(a) Create Exams</h5>
+                            <div class="form-group">
+                                <label>Target Class (Branch/Batch/Sem)</label>
+                                <select><option>CSE (2017-2020) Sem-1</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Exam Type</label>
+                                <select><option>Internal Exam</option><option>University Exam</option></select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label>Exam Name</label>
+                                <input type="text" placeholder="e.g. Mid-Term 1">
+                            </div>
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; width: 100%; justify-content: center;" onclick="saveSettings()">Create Exam</button>
+                        </div>
+
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1.5; min-width: 300px;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(b) View Exams & Enter Marks</h5>
+                            <p style="font-size: 0.8rem; color: var(--warning); margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Note: Exam Timetable must be created and Exam Attendance marked prior to marks entry. Student overall attendance < 75% requires HOD/Admin permission.</p>
+                            <div class="data-list" style="margin-top: 0;">
+                                <div class="data-card" style="padding: 1rem; border-left: 3px solid var(--primary);">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Mid-Term 1 (Internal)</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-dim);">CSE (2017-2020) Sem-1</div>
+                                        </div>
+                                        <div style="display: flex; gap: 5px;">
+                                            <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem; background: var(--success); color: white; border-color: var(--success);"><i class="fas fa-plus"></i> Add Marks</button>
+                                            <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-eye"></i> View</button>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top: 10px; display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; color: var(--accent);"><i class="fas fa-user-times"></i> Not Eligible List</button>
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.7rem; color: var(--success);"><i class="fas fa-user-check"></i> Allowed via Perm.</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- (g) & (h) Exam Timetables -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-calendar-alt" style="color: var(--secondary);"></i> Exam Timetables</h4>
+                    
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1; min-width: 250px;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(g) Create Exam Timetable</h5>
+                            <div class="form-group">
+                                <label>Select Exam</label>
+                                <select><option>Mid-Term 1 (Internal)</option></select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label>Date Range</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="date" style="flex: 1;">
+                                    <input type="date" style="flex: 1;">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--secondary), #7c3aed); width: 100%; justify-content: center;" onclick="saveSettings()">Schedule Timetable</button>
+                        </div>
+
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1.5; min-width: 300px;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(h) View Exam Timetable</h5>
+                            <div class="data-list" style="margin-top: 0;">
+                                <div class="data-card" style="padding: 0.8rem;">
+                                    <div style="font-weight: 600; font-size: 0.95rem; margin-bottom: 4px;">Mid-Term 1 Schedule</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-dim);">Oct 12 - Oct 18 | CSE (17-20) Sem-1</div>
+                                    <div style="display: flex; gap: 5px; margin-top: 10px;">
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.75rem;"><i class="fas fa-user-clock"></i> Mark Exam Attendance</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis, Reports & Arrears -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-chart-line" style="color: var(--success);"></i> Analytics & History</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--primary);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(i) Generated Reports</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 5px; font-size: 0.8rem;"><i class="fas fa-file-pdf"></i> (1) Monthly Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 5px; font-size: 0.8rem;"><i class="fas fa-chalkboard"></i> (2) Subject Wise Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-poll"></i> (3) Result Analysis Report</button>
+                        </div>
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--secondary);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(c)(d)(e) Analysis</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 5px; font-size: 0.8rem;"><i class="fas fa-percentage"></i> (c) Exam Report (Subj %)</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 5px; font-size: 0.8rem;"><i class="fas fa-chart-pie"></i> (d) Subject Analysis</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-chart-line"></i> (e) Exam Analysis</button>
+                        </div>
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--accent);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(f) Arrear Histories</h5>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.75rem;">Student ID / Name</label>
+                                <input type="text" placeholder="Search..." style="padding: 5px; font-size: 0.8rem;">
+                            </div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;"><i class="fas fa-search"></i> View History</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Seminars Setup -->
+            <div id="seminars" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Seminars</h2>
+                    <p class="section-desc">Create and manage seminars based on branch, batch, and subjects. Assign them to students who can then view the seminar details in their portal.</p>
+                </div>
+
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- (a) Create Seminar -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> (a) Create Seminar</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Target Class (Branch/Batch/Sem/Sec)</label>
+                                <select><option>CSE (2017-2020) Sem-6 Sec-A</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <select><option>Artificial Intelligence</option></select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Seminar Topic / Name</label>
+                                <input type="text" placeholder="e.g. Advancements in Machine Learning">
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date">
+                            </div>
+                            <div class="form-group">
+                                <label>Time</label>
+                                <input type="time">
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; width: 100%; justify-content: center;" onclick="saveSettings()">Create Seminar</button>
+                        </div>
+                    </div>
+
+                    <!-- (b) View Seminars & (c) Assign Seminars -->
+                    <div style="flex: 1.5; min-width: 350px;">
+                        
+                        <!-- (c) Assign Seminars -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-tag" style="color: var(--success);"></i> (c) Assign Seminars</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Assign an existing formulated seminar block to specific students for presentation.</p>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Select Seminar</label>
+                                    <select><option>Advancements in ML (AI)</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Assign Student(s)</label>
+                                    <select><option>John Doe (ID: CS201701)</option><option>Jane Smith (ID: CS201702)</option></select>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem; text-align: right;">
+                                <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--success);" onclick="saveSettings()">Assign Student</button>
+                            </div>
+                        </div>
+
+                        <!-- (b) View Created Seminars -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-list" style="color: var(--secondary);"></i> (b) View Seminars</h4>
+                            <div class="data-list" style="margin-top: 0;">
+                                <div class="data-card" style="padding: 1rem; border-left: 3px solid var(--secondary);">
+                                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                                        <div>
+                                            <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Advancements in ML</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-dim);">Oct 20, 2026 at 10:00 AM</div>
+                                            <div style="font-size: 0.75rem; color: var(--success); margin-top: 5px;"><i class="fas fa-user-graduate"></i> Assigned to: John Doe</div>
+                                        </div>
+                                        <div style="display: flex; gap: 5px; flex-direction: column;">
+                                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Attendance Setup -->
+            <div id="attendance" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Attendance Reports</h2>
+                    <p class="section-desc">Generate detailed graphical and statistical reports for both students and employees based on class, subjects, and specific criteria.</p>
+                </div>
+
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- (a) Student Attendance -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-graduate" style="color: var(--primary);"></i> (a) Student Attendance</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">View specific class or individual student attendance parameters.</p>
+                        
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Target Class</label>
+                                <select><option>CSE (2017-2020) Sem-6 Sec A</option></select>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-top: 1rem;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">Report Generators</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem;"><i class="fas fa-calendar-alt"></i> (1) Monthly Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem;"><i class="fas fa-history"></i> (2) Historical Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem;"><i class="fas fa-percentage"></i> (3) Percentage Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem;"><i class="fas fa-chart-bar"></i> (4) Day Graph View</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem;"><i class="fas fa-clock"></i> (5) Subject Hours Wise Graph</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-book-reader"></i> (6) Subject Wise Percentage</button>
+                        </div>
+                    </div>
+
+                    <!-- (b) Employee Attendance -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-chalkboard-teacher" style="color: var(--secondary);"></i> (b) Employee Attendance</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Track staff login logs, leaves, and overall department attendance metrics.</p>
+
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Target Department / Staff Type</label>
+                                <select><option>Computer Science & Engineering</option><option>All Teaching Staff</option></select>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-top: 1rem;">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">Report Generators</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 10px; font-size: 0.8rem; border-left: 3px solid var(--secondary);"><i class="fas fa-calendar-alt"></i> (1) Monthly Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 10px; font-size: 0.8rem; border-left: 3px solid var(--secondary);"><i class="fas fa-history"></i> (2) Historical Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 10px; font-size: 0.8rem; border-left: 3px solid var(--secondary);"><i class="fas fa-percentage"></i> (3) Percentage Report</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem; border-left: 3px solid var(--secondary);"><i class="fas fa-chart-line"></i> (4) Graph View</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Committee Setup -->
+            <div id="committee" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">College Committees</h2>
+                    <p class="section-desc">Create administrative or student-body committees (e.g. Disciplinary, Cultural). Assign both faculties and students to oversee and participate.</p>
+                </div>
+
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- (a) Create & Assign Committee -->
+                    <div style="flex: 1; min-width: 350px;">
+                        
+                        <!-- Create Panel -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.5rem;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> (a) Create Committee</h4>
+                            <div class="form-grid">
+                                <div class="form-group full-width">
+                                    <label>Committee Name</label>
+                                    <input type="text" placeholder="e.g. Disciplinary Committee, Anti-Ragging Squad">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Description / Purpose</label>
+                                    <textarea placeholder="Briefly describe the purpose of this committee..." rows="2" style="width: 100%; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-color); padding: 10px; color: var(--text-main);"></textarea>
+                                </div>
+                            </div>
+                            <div style="margin-top: 1rem; text-align: right;">
+                                <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; width: 100%; justify-content: center;" onclick="saveSettings()">Initialize Committee</button>
+                            </div>
+                        </div>
+
+                        <!-- Assign Panel -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-plus" style="color: var(--secondary);"></i> Assign Members</h4>
+                            
+                            <div class="form-group" style="margin-bottom: 1rem;">
+                                <label>Target Committee</label>
+                                <select><option>Disciplinary Committee</option></select>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Assign Employee (Faculty)</label>
+                                    <select><option>Dr. Alan Turing</option><option>Prof. Ada Lovelace</option></select>
+                                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px; font-size: 0.75rem; justify-content: center;"><i class="fas fa-link"></i> Add Staff</button>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Assign Student</label>
+                                    <select><option>John Doe (CSE Sec A)</option></select>
+                                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px; font-size: 0.75rem; justify-content: center;"><i class="fas fa-link"></i> Add Student</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- (b) View Committees -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1.5; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-list-alt" style="color: var(--success);"></i> (b) View Committees</h4>
+                        
+                        <div class="data-list" style="margin-top: 0;">
+                            <!-- Data Card -->
+                            <div class="data-card" style="padding: 1.2rem; border-left: 3px solid var(--success);">
+                                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 1.1rem; margin-bottom: 4px;">Disciplinary Committee</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-dim);">Monitoring campus behavior and rule adherence.</div>
+                                    </div>
+                                    <div style="display: flex; gap: 5px;">
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                        <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Member List (Avatars/Tags) -->
+                                <div style="background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                                    <h6 style="color: var(--text-dim); margin-bottom: 8px; font-size: 0.7rem; text-transform: uppercase;">Active Members</h6>
+                                    
+                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <!-- Staff tag -->
+                                        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--secondary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--secondary);">
+                                            <i class="fas fa-chalkboard-teacher"></i> Dr. Alan Turing
+                                            <i class="fas fa-times" style="margin-left: 5px; cursor: pointer; opacity: 0.7;"></i>
+                                        </div>
+                                        <!-- Staff tag -->
+                                        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--secondary); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--secondary);">
+                                            <i class="fas fa-chalkboard-teacher"></i> Prof. Ada Lovelace
+                                            <i class="fas fa-times" style="margin-left: 5px; cursor: pointer; opacity: 0.7;"></i>
+                                        </div>
+                                        <!-- Student tag -->
+                                        <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--success);">
+                                            <i class="fas fa-user-graduate"></i> John Doe (CSE)
+                                            <i class="fas fa-times" style="margin-left: 5px; cursor: pointer; opacity: 0.7;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- (c) Gallery -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--accent); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="color: var(--text-main);"><i class="fas fa-images" style="color: var(--accent);"></i> (c) Committee Events Gallery</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;">View and upload pictures from events managed by various committees.</p>
+                            </div>
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent), #e11d48);" onclick="saveSettings()"><i class="fas fa-upload"></i> Upload Event Photos</button>
+                        </div>
+                        
+                        <!-- Gallery Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <!-- Image Card -->
+                            <div style="background: var(--glass); border-radius: 12px; overflow: hidden; position: relative;">
+                                <div style="height: 140px; background: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=500&auto=format&fit=crop&q=60') center/cover;"></div>
+                                <div style="padding: 10px;">
+                                    <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Annual Cultural Fest</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-dim);">Cultural Committee</div>
+                                    <div style="font-size: 0.65rem; color: var(--accent); margin-top: 5px;">Added: Oct 12, 2026</div>
+                                    <div style="display: flex; gap: 5px; margin-top: 8px;">
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.65rem; flex: 1; justify-content: center;"><i class="fas fa-eye"></i> View</button>
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.65rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Image Card -->
+                            <div style="background: var(--glass); border-radius: 12px; overflow: hidden; position: relative;">
+                                <div style="height: 140px; background: url('https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=500&auto=format&fit=crop&q=60') center/cover;"></div>
+                                <div style="padding: 10px;">
+                                    <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-main); margin-bottom: 4px;">Inter-College Debate</div>
+                                    <div style="font-size: 0.7rem; color: var(--text-dim);">Literary Committee</div>
+                                    <div style="font-size: 0.65rem; color: var(--accent); margin-top: 5px;">Added: Sep 05, 2026</div>
+                                    <div style="display: flex; gap: 5px; margin-top: 8px;">
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.65rem; flex: 1; justify-content: center;"><i class="fas fa-eye"></i> View</button>
+                                        <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.65rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Admissions Setup -->
+            <div id="admissions" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Admissions & Records</h2>
+                    <p class="section-desc">Register new students (single or bulk), manage active/inactive student and parent status, and track first graduates.</p>
+                </div>
+
+                <!-- 1. Student Registration & 2. Import Student -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    
+                    <!-- 1. Student Registration -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 1.5; min-width: 350px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-plus" style="color: var(--primary);"></i> 1. Student Registration</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">One-page swift registration. Edit details later in the records viewer.</p>
+                        
+                        <div class="form-grid">
+                            <div class="form-group gap-column">
+                                <label>Branch</label>
+                                <select><option>Computer Science & Engineering</option></select>
+                            </div>
+                            <div class="form-group gap-column">
+                                <label>Batch</label>
+                                <select><option>2023-2027</option></select>
+                            </div>
+                            <div class="form-group gap-column">
+                                <label>Section</label>
+                                <select><option>A</option></select>
+                            </div>
+                            <div class="form-group" style="grid-column: span 3;">
+                                <label>Student Full Name</label>
+                                <input type="text" placeholder="e.g. Michael Scott">
+                            </div>
+                            <div class="form-group" style="grid-column: span 3;">
+                                <label>Primary Email</label>
+                                <input type="email" placeholder="student@example.com">
+                            </div>
+                            <div class="form-group" style="grid-column: span 3; display: flex; align-items: center; gap: 10px; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px;">
+                                <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--secondary);"> 
+                                <span style="font-size: 0.9rem; color: var(--text-main);">Opt-in for Campus Hostel Allocation</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Register Student</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Import Student -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-file-import" style="color: var(--secondary);"></i> 2. Bulk Import Students</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">Register 'N' students via CSV template.</p>
+                        
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label style="font-size: 0.75rem;">Target Batch / Branch</label>
+                                <select style="padding: 6px; font-size: 0.8rem;"><option>CSE (2023-2027)</option></select>
+                            </div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem;"><i class="fas fa-download"></i> Download File Template</button>
+                        </div>
+
+                        <div style="border: 2px dashed var(--border); padding: 1.5rem; text-align: center; border-radius: 12px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.borderColor='var(--secondary)'" onmouseout="this.style.borderColor='var(--border)'">
+                            <i class="fas fa-upload" style="font-size: 2rem; color: var(--text-dim); margin-bottom: 10px;"></i>
+                            <div style="font-size: 0.9rem; color: var(--text-main);">Click to Upload Populated CSV</div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: right;">
+                            <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem; background: linear-gradient(135deg, var(--secondary), #7c3aed); width: 100%; justify-content: center;" onclick="saveSettings()">Import Students</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Student/Parent Records -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="color: var(--text-main);"><i class="fas fa-folder-open" style="color: var(--success);"></i> 3. Student / Parent Records</h4>
+                        <div class="search-box" style="margin-bottom: 0;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search ID or Name...">
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                        
+                        <!-- (a) Active List -->
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--success);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(a) Active List</h5>
+                            <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">Actively studying records.</p>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.8rem; color: var(--success);"><i class="fas fa-user-graduate"></i> (1) Active Students</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem; color: var(--success);"><i class="fas fa-user-friends"></i> (2) Active Parents</button>
+                        </div>
+                        
+                        <!-- (b) Inactive List -->
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--accent);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(b) Inactive List</h5>
+                            <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">Readmissions, transferred, debarred etc.</p>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.8rem; color: var(--accent);"><i class="fas fa-user-slash"></i> (1) Inactive Students</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem; color: var(--accent);"><i class="fas fa-user-slash"></i> (2) Inactive Parents</button>
+                        </div>
+
+                        <!-- (c) First Graduates -->
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--primary);">
+                            <h5 style="margin-bottom: 0.8rem; color: var(--text-dim);">(c) First Graduates</h5>
+                            <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 10px;">First graduate students from family.</p>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem; color: var(--primary);"><i class="fas fa-award"></i> View FG List</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Human Resource Setup -->
+            <div id="hr" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Human Resource</h2>
+                    <p class="section-desc">Manage faculty registrations, handle incoming job applications via the website, and approve staff permissions or resignations.</p>
+                </div>
+
+                <!-- 1. Faculty Configuration -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-chalkboard-teacher" style="color: var(--primary);"></i> 1. Faculty Management</h4>
+                    
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <!-- (a) Create Faculty -->
+                        <div style="flex: 1.5; min-width: 350px;">
+                            <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">(a) Create Faculty</h5>
+                            <div class="form-grid">
+                                <div class="form-group gap-column">
+                                    <label>Role / Position</label>
+                                    <select><option>Associate Professor</option><option>HOD</option></select>
+                                </div>
+                                <div class="form-group gap-column">
+                                    <label>Department</label>
+                                    <select><option>Computer Science</option></select>
+                                </div>
+                                <div class="form-group gap-column" style="grid-column: span 3;">
+                                    <label>Employee Name</label>
+                                    <input type="text" placeholder="e.g. Dr. Ada Lovelace">
+                                </div>
+                                <div class="form-group" style="grid-column: span 3; display: flex; align-items: center; gap: 10px; border: 1px dashed var(--secondary); padding: 10px; border-radius: 8px;">
+                                    <input type="checkbox" style="width: 20px; height: 20px; accent-color: var(--secondary);"> 
+                                    <span style="font-size: 0.9rem; color: var(--text-main);">Opt-in for Staff Hostel Allocation</span>
+                                </div>
+                                <div class="form-group" style="grid-column: span 3; text-align: right; margin-top: 10px;">
+                                    <button class="btn btn-primary" style="display: inline-flex; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="saveSettings()">Register Faculty</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- (b) Import Faculty & Lists -->
+                        <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Import -->
+                            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border: 1px dashed var(--secondary);">
+                                <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">(b) Import Faculty</h5>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.75rem; margin-bottom: 10px;"><i class="fas fa-download"></i> Download Template</button>
+                                <button class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 0.75rem; background: var(--secondary);"><i class="fas fa-upload"></i> Bulk Upload CSV</button>
+                            </div>
+                            
+                            <!-- Tracking Lists -->
+                            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--success);">
+                                <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">Employee Database</h5>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.8rem; color: var(--success);"><i class="fas fa-user-check"></i> (1) Active Staff List</button>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.8rem; color: var(--accent);"><i class="fas fa-user-minus"></i> (2) Inactive Staff List</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Recruitment & 3. Permissions & 4. Resignations -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- 2. Recruitment -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-briefcase" style="color: var(--secondary);"></i> 2. Recruitment</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Process applicant forms submitted via the institution portal.</p>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--secondary); margin-bottom: 10px;">14</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Pending Applications</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--secondary); color: var(--secondary);"><i class="fas fa-external-link-alt"></i> (a) View Job Applications</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Permissions -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-clock" style="color: var(--success);"></i> 3. Permissions</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Review short-term time off requests generated by active staff.</p>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--success); margin-bottom: 10px;">3</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Action Required</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--success); color: var(--success);"><i class="fas fa-check-double"></i> View Permissions</button>
+                        </div>
+                    </div>
+
+                    <!-- 4. Resignations -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--accent); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-times" style="color: var(--accent);"></i> 4. Resignations</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Approve or reject official employee resignation requests.</p>
+                        
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;">1</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Resignation Pending</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);"><i class="fas fa-gavel"></i> Manage Resignations</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Interaction, Feedback & Ratings Setup -->
+            <div id="interaction" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Feedback, Ratings & Communications</h2>
+                    <p class="section-desc">Manage inter-college communication including complaints, discussion forums, and formal survey rating structures between staff and students.</p>
+                </div>
+
+                <!-- 1. Complaints & 2. Disciplinary Action & 3. Discussion Forum -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    
+                    <!-- 1. Complaints -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--accent); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-exclamation-triangle" style="color: var(--accent);"></i> 1. Complaints</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">View and reply to complaints raised directly by employees or students.</p>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;">7</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Unresolved Complaints</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);"><i class="fas fa-eye"></i> View Complaints</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Disciplinary Action -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-gavel" style="color: var(--text-dim);"></i> 2. Disciplinary Action</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Create and view official disciplinary logs against specific students.</p>
+                        <div style="text-align: center;">
+                            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 10px; font-size: 0.85rem; background: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border);"><i class="fas fa-plus"></i> Create Action Log</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.85rem;"><i class="fas fa-list"></i> View Student Logs</button>
+                        </div>
+                    </div>
+
+                    <!-- 3. Discussion Forum -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-comments" style="color: var(--primary);"></i> 3. Discussion Forum</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Moderate and edit forum conversations generated by staff and students.</p>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2rem; color: var(--primary); margin-bottom: 10px;">24</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Active Threads</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--primary); color: var(--primary);"><i class="fas fa-comments"></i> Enter Forum Moderation</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 4. Feedback & 5. Ratings -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- 4. Feedback -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 350px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-reply-all" style="color: var(--secondary);"></i> 4. Cross-Feedback Engine</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">View raw feedback routed between employees and students based on configured Feedback Parameters.</p>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <!-- (a) From Employee -->
+                            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1; text-align: center;">
+                                <div style="color: var(--secondary); font-size: 1.5rem; margin-bottom: 8px;"><i class="fas fa-chalkboard-teacher"></i> <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i> <i class="fas fa-user-graduate"></i></div>
+                                <h5 style="color: var(--text-main); margin-bottom: 5px;">(a) From Employee</h5>
+                                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 10px;">Feedback given by faculty targeting specific students.</p>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.75rem;">View E->S Feedback</button>
+                            </div>
+                            
+                            <!-- (b) From Student -->
+                            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; flex: 1; text-align: center;">
+                                <div style="color: var(--success); font-size: 1.5rem; margin-bottom: 8px;"><i class="fas fa-user-graduate"></i> <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i> <i class="fas fa-chalkboard-teacher"></i></div>
+                                <h5 style="color: var(--text-main); margin-bottom: 5px;">(b) From Students</h5>
+                                <p style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 10px;">Feedback aimed at faculty generated by students.</p>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.75rem;">View S->E Feedback</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Ratings / Survey -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1.5; min-width: 350px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="color: var(--text-main);"><i class="fas fa-star" style="color: var(--success);"></i> 5. Survey & Ratings</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;">Create dynamic surveys using parameter blocks (Open/Selectable questions) mapping to a 5-Star or 100-Point Scale.</p>
+                            </div>
+                            <!-- (b) Enable / Disable Toggle -->
+                            <div style="display: flex; align-items: center; gap: 8px; background: rgba(52, 211, 153, 0.1); border: 1px solid var(--success); padding: 5px 12px; border-radius: 20px;">
+                                <span style="font-size: 0.75rem; color: var(--success);">Survey Status (b):</span>
+                                <label class="switch" style="margin-bottom: 0;">
+                                  <input type="checkbox" checked>
+                                  <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                            <!-- (a) Create Rating Parameter -->
+                            <div style="flex: 1.5; background: var(--glass); padding: 1rem; border-radius: 12px;">
+                                <h5 style="color: var(--text-dim); margin-bottom: 1rem;">(a) <i class="fas fa-plus-circle"></i> Create Rating Parameters</h5>
+                                <div class="form-group" style="margin-bottom: 10px;">
+                                    <input type="text" placeholder="Survey Title (e.g. End of Semester Quality Survey)" style="font-size: 0.8rem; padding: 6px;">
+                                </div>
+                                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                                    <select style="flex: 1; font-size: 0.75rem; padding: 6px;"><option>Open Question</option><option>Selectable Choices</option></select>
+                                    <button class="btn btn-secondary" style="padding: 6px; font-size: 0.75rem;"><i class="fas fa-plus"></i> Add Q</button>
+                                </div>
+                                <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 10px;">
+                                    <label style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0;">Due Date:</label>
+                                    <input type="date" style="font-size: 0.75rem; padding: 4px; flex: 1;">
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 0.8rem; background: var(--success);">Initialize Survey</button>
+                            </div>
+
+                            <!-- (c) Score / View Ratings -->
+                            <div style="flex: 1; background: var(--glass); padding: 1rem; border-radius: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+                                <div style="font-size: 2.5rem; color: #fbbf24; margin-bottom: 5px;">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <div style="font-size: 1.5rem; color: var(--text-main); font-weight: 600;">86 / 100</div>
+                                <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 1rem;">Average Active Survey Score</div>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.75rem;"><i class="fas fa-chart-pie"></i> (c) Break Down Scores</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Management Setup -->
+            <div id="management" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Operations Management</h2>
+                    <p class="section-desc">Manage Faculty performance, Student Accommodations, Leave protocols, and Placement Drive parameters.</p>
+                </div>
+
+                <!-- 1. Faculty Participations & 2. Hospital -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    
+                    <!-- 1. Faculty Participations -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 2; min-width: 350px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-award" style="color: var(--primary);"></i> 1. Faculty Participations</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Track event participations, total working hours, performance reviews, and published papers.</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-calendar-check"></i> (a) Event Participations</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-business-time"></i> (b) Working Hours</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-chart-line"></i> (c) Performance Score</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-newspaper"></i> (d) Paper Publications</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Hospital -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--accent); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 250px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-hospital-alt" style="color: var(--accent);"></i> 2. Hospital</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Medical logs.</p>
+                        
+                        <div style="text-align: center; margin-top: 1rem;">
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.85rem; border-color: var(--accent); color: var(--accent);"><i class="fas fa-tint"></i> (a) View Blood Donors List</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Hostel Setup -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-hotel" style="color: var(--secondary);"></i> 3. Hostel Management</h4>
+                    
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                        <!-- (a) Setup -->
+                        <div style="flex: 1; min-width: 250px; background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--secondary);">
+                            <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">(a) Setup Infrastructure</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.75rem;"><i class="fas fa-plus"></i> (1) Add Hostel Block</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.75rem;"><i class="fas fa-clock"></i> (3) Add Frequency</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.75rem;"><i class="fas fa-door-open"></i> (4) Add Rooms</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.75rem; color: var(--secondary);"><i class="fas fa-list"></i> (5) View Rooms</button>
+                        </div>
+
+                        <!-- (b) Registrations -->
+                        <div style="flex: 1; min-width: 250px; background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--success);">
+                            <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">(b) Registrations</h5>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.75rem;"><i class="fas fa-user-plus"></i> (1) Register Occupant</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 6px; font-size: 0.75rem;"><i class="fas fa-bed"></i> (2) View Accommodations</button>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.75rem; color: var(--success);"><i class="fas fa-file-excel"></i> (3) Accommodation Report</button>
+                        </div>
+
+                        <!-- (c) Attendance -->
+                        <div style="flex: 1.5; min-width: 300px; background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--primary);">
+                            <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">(c) Check-In / Attendance</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="btn btn-primary" style="justify-content: center; font-size: 0.75rem;"><i class="fas fa-clipboard-check"></i> (1) Mark Attendance</button>
+                                <button class="btn btn-secondary" style="justify-content: center; font-size: 0.75rem;"><i class="fas fa-edit"></i> (2) Edit Marked</button>
+                                <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.7rem;"><i class="fas fa-file-excel"></i> (3) Student Att. Report</button>
+                                <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.7rem;"><i class="fas fa-file-excel"></i> (4) Employee Att. Report</button>
+                                <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.7rem; color: var(--accent);"><i class="fas fa-user-times"></i> (5) Absent Students</button>
+                                <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.7rem; color: var(--accent);"><i class="fas fa-user-times"></i> (6) Absent Employees</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Leave & 5. Placements & 6. Placement Trainings -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- 4. Leave -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1.2; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-calendar-minus" style="color: var(--success);"></i> 4. Leave Module</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-plus"></i> (a) Create Leave Type</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-user-check"></i> (b) Assign Leaves</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-list-ol"></i> (c) Viewing Leave Details (Counts)</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; border-color: var(--success); color: var(--success);"><i class="fas fa-stamp"></i> (d) Employee Leave Applications</button>
+                        </div>
+                    </div>
+
+                    <!-- 5. Placements -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 1.5; min-width: 350px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-user-tie" style="color: var(--primary);"></i> 5. Placement Drives</h4>
+                        
+                        <div style="display: flex; gap: 1rem;">
+                            <!-- Create Drive Box -->
+                            <div style="flex: 1; background: var(--glass); padding: 1rem; border-radius: 12px;">
+                                <button class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 0.8rem; margin-bottom: 15px;"><i class="fas fa-plus"></i> (a) Create Placement Drive</button>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.75rem;"><i class="fas fa-eye"></i> (b) View Active Drives / Selections</button>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; margin-bottom: 8px; font-size: 0.75rem;"><i class="fas fa-user-check"></i> (c) Eligibility Reports</button>
+                                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start; font-size: 0.75rem; color: var(--success);"><i class="fas fa-file-download"></i> (e) Hired / Drive Reports</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Placement Trainings -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-chalkboard-teacher" style="color: var(--secondary);"></i> 6. Placement Trainings</h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn btn-primary" style="justify-content: center; font-size: 0.8rem; background: var(--secondary); margin-bottom: 10px;"><i class="fas fa-plus"></i> (a) Create Training Drive</button>
+                            <button class="btn btn-secondary" style="justify-content: center; font-size: 0.75rem;"><i class="fas fa-calendar-day"></i> (b) Day-Wise Report</button>
+                            <button class="btn btn-secondary" style="justify-content: center; font-size: 0.75rem;"><i class="fas fa-history"></i> (c) Historical Report</button>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. Scholarship -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--accent); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 280px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                            <div>
+                                <h4 style="color: var(--text-main);"><i class="fas fa-graduation-cap" style="color: var(--accent);"></i> 7. Scholarship</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;">Manage applications and active portal links.</p>
+                            </div>
+                            <!-- (a) Open/Close Toggle -->
+                            <div style="display: flex; align-items: center; gap: 8px; background: rgba(244, 63, 94, 0.1); border: 1px solid var(--accent); padding: 5px 12px; border-radius: 20px;">
+                                <span style="font-size: 0.75rem; color: var(--accent);">(a) Status:</span>
+                                <label class="switch" style="margin-bottom: 0;">
+                                  <input type="checkbox" checked>
+                                  <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <div style="font-size: 2rem; color: var(--accent); margin-bottom: 10px;">12</div>
+                            <div style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Pending Applications</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);"><i class="fas fa-list"></i> (b) View Scholarships</button>
+                        </div>
+                    </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 8. Tutor -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 300px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-people-arrows" style="color: var(--primary);"></i> 8. Tutor Management</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Manage employee-student mentoring links and view tracking details.</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="btn btn-primary" style="justify-content: flex-start; font-size: 0.8rem; margin-bottom: 5px;"><i class="fas fa-plus"></i> (a) Assign Tutors</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-list-ul"></i> (b) Tutors List & Edit View</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-hands-helping"></i> (c) Student Counselling Details</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-project-diagram"></i> (d) Program Participations</button>
+                            <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem; color: var(--success);"><i class="fas fa-chart-line"></i> (e) Student Performance Report</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+                </div>
+            </div>
+
+            <!-- Network & Alerts Setup -->
+            <div id="network" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Network & Alerts Engine</h2>
+                    <p class="section-desc">Monitor live system usage, dispatch mass SMS notifications, and setup static email broadcast groups.</p>
+                </div>
+
+                <!-- 1. Online Users -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--primary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <h4 style="color: var(--text-main);"><i class="fas fa-globe" style="color: var(--primary);"></i> 1. Online Users & Access Logs</h4>
+                        
+                        <div style="display: flex; align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.1); border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px;">
+                            <div style="width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite;"></div>
+                            <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">143 Active Sessions</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; color: var(--primary); border-color: var(--primary);"><i class="fas fa-user-check"></i> (1) Logged In Users Currently</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-history"></i> (2) Logged In History Tracking</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; color: var(--accent);"><i class="fas fa-user-slash"></i> (3) Deactivated Users Vault</button>
+                    </div>
+                </div>
+
+                <!-- 2. SMS & Email Groups / 3. SMS Details -->
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    
+                    <!-- SMS & Email Groups -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; flex: 2; min-width: 400px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-paper-plane" style="color: var(--secondary);"></i> 2. SMS & Email Groups Broadcast</h4>
+                        
+                        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                            <!-- Targeted SMS Blocks -->
+                            <div style="flex: 1; min-width: 200px;">
+                                <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">Direct SMS Broadcasts</h5>
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-user-graduate"></i> (1) SMS Target: Students</button>
+                                    <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-chalkboard-teacher"></i> (2) SMS Target: Employees</button>
+                                    <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.75rem;"><i class="fas fa-user-friends"></i> (3) SMS Target: Parents</button>
+                                </div>
+                            </div>
+
+                            <!-- Bulk / Group Blocks -->
+                            <div style="flex: 1.5; min-width: 250px;">
+                                <h5 style="color: var(--text-dim); margin-bottom: 0.8rem;">Bulk Upload & Email Lists</h5>
+                                
+                                <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border-left: 3px solid var(--secondary);">
+                                    <div style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px;">(4) Custom Bulk SMS</div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-secondary" style="flex: 1; justify-content: center; font-size: 0.7rem;"><i class="fas fa-download"></i> Template</button>
+                                        <button class="btn btn-primary" style="flex: 1; justify-content: center; font-size: 0.7rem; background: var(--secondary);"><i class="fas fa-upload"></i> Upload CSV</button>
+                                    </div>
+                                </div>
+
+                                <div style="background: var(--glass); padding: 1rem; border-radius: 12px; border-left: 3px solid var(--success);">
+                                    <div style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 6px;">(5) Email Group Setup</div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-primary" style="flex: 1; justify-content: center; font-size: 0.7rem;"><i class="fas fa-plus"></i> (a) Create Group</button>
+                                        <button class="btn btn-secondary" style="flex: 1; justify-content: center; font-size: 0.7rem;"><i class="fas fa-envelope-open-text"></i> (b) View / Edit Lists</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMS Details Info -->
+                    <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--success); padding: 1.5rem; border-radius: 16px; flex: 1; min-width: 250px;">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-shipping-fast" style="color: var(--success);"></i> 3. SMS Details Log</h4>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.5rem;">Review individual delivery tracking timestamps generated by your SMS network API.</p>
+                        
+                        <div style="background: var(--glass); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 1.5rem; color: var(--success); margin-bottom: 5px;"><i class="fas fa-check-circle"></i></div>
+                            <div style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 10px;">98.4% Delivery Match</div>
+                            <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.8rem; border-color: var(--success); color: var(--success);"><i class="fas fa-receipt"></i> (1) View Delivery Logs</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Holidays Setup -->
+            <div id="holidays" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Holidays & Closures</h2>
+                    <p class="section-desc">Define single or multi-day holidays. Once a day is marked as a holiday, employee attendance cannot be recorded for that day.</p>
+                </div>
+
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Add New Holiday</h4>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Holiday Name</label>
+                            <input type="text" placeholder="e.g. Summer Break, Thanksgiving, Independence Day">
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date (Optional for single day)</label>
+                            <input type="date">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Create Holiday</button>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Scheduled Holidays</h4>
+                
+                <div class="data-list">
+                    <!-- Single Day Holiday Card -->
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Independence Day</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
+                            <div><i class="fas fa-calendar-day" style="color: var(--primary); margin-right: 5px;"></i> Date: August 15, 2026</div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--accent);">
+                                <i class="fas fa-lock"></i> Attendance Locked
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Day Holiday Card -->
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Winter Break</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-dim);">
+                            <div><i class="fas fa-calendar-week" style="color: var(--primary); margin-right: 5px;"></i> Dec 20, 2026 - Jan 2, 2027</div>
+                            <div style="margin-top: 8px; font-size: 0.75rem; color: var(--accent);">
+                                <i class="fas fa-lock"></i> Attendance Locked (14 Days)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Modules Config -->
+            <div id="modules" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Core Module Activator</h2>
+                    <p class="section-desc">Activate or deactivate predefined institutional modules. Once activated, they unlock directly in the main navigation sidebar.</p>
+                </div>
+
+                <div class="data-list">
+                    <!-- Academic Module -->
+                    <div class="data-card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-university" style="color: var(--primary);"></i> Academic Module
+                            </h3>
+                            <div style="margin-top: 5px; font-size: 0.85rem; color: var(--text-dim);">
+                                Manage branches, batches, groups, and all core structural academic details.
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 24px; height: 24px; accent-color: var(--success);" onchange="toggleModuleVisibility('academic')">
+                                <span style="font-weight: bold; color: var(--success);">Activated</span>
+                            </label>
+                            <a href="academic-module.html" class="btn btn-secondary" style="margin-top: 10px; font-size: 0.8rem; padding: 4px 10px;">
+                                <i class="fas fa-external-link-alt"></i> Go to Module
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Transport Module -->
+                    <div class="data-card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-bus" style="color: var(--accent);"></i> Transport Module
+                            </h3>
+                            <div style="margin-top: 5px; font-size: 0.85rem; color: var(--text-dim);">
+                                Track vehicle routes, assign bus passes, and manage transit.
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" style="width: 24px; height: 24px; accent-color: var(--success);" onchange="toggleModuleStatus(this)">
+                                <span style="font-weight: bold; color: var(--text-dim);">Deactivated</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Hostel Module -->
+                    <div class="data-card" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; color: #fff; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-building" style="color: #F59E0B;"></i> Hostel Module
+                            </h3>
+                            <div style="margin-top: 5px; font-size: 0.85rem; color: var(--text-dim);">
+                                Allocate hostel rooms, manage dorms, and track residence passes.
+                            </div>
+                        </div>
+                        <div>
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 24px; height: 24px; accent-color: var(--success);" onchange="toggleModuleStatus(this)">
+                                <span style="font-weight: bold; color: var(--success);">Activated</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extracurricular Setup -->
+            <div id="extra" class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">Extracurricular Activities</h2>
+                    <p class="section-desc">Create and manage college clubs, sports, and technical societies.</p>
+                </div>
+
+                <!-- Add New Activity Form -->
+                <div style="background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem;">
+                    <h4 style="margin-bottom: 1rem; color: var(--text-main);"><i class="fas fa-plus-circle" style="color: var(--primary);"></i> Register New Activity</h4>
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <div class="form-group">
+                            <label>Activity Name</label>
+                            <input type="text" placeholder="e.g. Robotics Club">
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select>
+                                <option>Technical Society</option>
+                                <option>Sports / Athletics</option>
+                                <option>Arts & Culture</option>
+                                <option>Community Service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Faculty Coordinator</label>
+                            <input type="text" placeholder="Coordinator Name">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem; text-align: right;">
+                        <button class="btn btn-primary" style="display: inline-flex;" onclick="saveSettings()">Add Activity</button>
+                    </div>
+                </div>
+
+                <!-- Existing Activities List -->
+                <h4 style="color: var(--text-dim); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Active Programs</h4>
+                
+                <div class="data-list">
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Coding Bootcamp</h3>
+                            <span class="data-tag">Technical Society</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 10px 0;">Algorithmic problem solving and hackathon preparation society.</p>
+                        <div style="font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-user-tie" style="color: var(--primary)"></i> Dr. Alan Turing
+                        </div>
+                    </div>
+
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Varsity Basketball</h3>
+                            <span class="data-tag" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">Sports</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 10px 0;">Official male and female college basketball athletic teams.</p>
+                        <div style="font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-user-tie" style="color: var(--primary)"></i> Coach Carter
+                        </div>
+                    </div>
+
+                    <div class="data-card">
+                        <div class="data-card-header">
+                            <h3 style="font-size: 1.1rem; color: #fff;">Drama Club</h3>
+                            <span class="data-tag" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e;">Arts & Culture</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin: 10px 0;">Theatrical performances and stage play organization.</p>
+                        <div style="font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-user-tie" style="color: var(--primary)"></i> Prof. Sarah Jenkins
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Settings saved successfully!</span>
+    </div>
+
+    <!-- CSV Template Tool Modal -->
+    <div id="csvModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; width: 500px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.3rem; margin: 0;"><i class="fas fa-calendar-alt" style="color: var(--primary)"></i> Academic Calendar Orders</h3>
+                <i class="fas fa-times" style="cursor: pointer; color: var(--text-dim);" onclick="toggleCsvModal()"></i>
+            </div>
+            
+            <div style="background: rgba(99, 102, 241, 0.1); border-left: 3px solid var(--primary); padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.9rem;">
+                <strong>Step 1:</strong> Download the official Day-order CSV template. Fill it out with the dates and respective Day-order labels (e.g. Day 1, Day 2), mapping them to "All" branches or specific ones.
+            </div>
+
+            <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-bottom: 2rem; border-color: var(--primary); color: white;" onclick="downloadTemplate()"><i class="fas fa-download"></i> Download Blank Template (.csv)</button>
+
+            <div style="background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--success); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                <strong>Step 2:</strong> Upload your completed Day-order spreadsheet to populate the ERP global calendar.
+            </div>
+
+            <div style="border: 2px dashed var(--border); padding: 2rem 1rem; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; margin-bottom: 1.5rem;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border)'" onclick="document.getElementById('csvUploadInput').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--text-dim); margin-bottom: 10px;"></i>
+                <div style="font-weight: 500;">Click to select file</div>
+                <div style="font-size: 0.8rem; color: var(--text-dim);">Supported formats: .csv</div>
+                <input type="file" id="csvUploadInput" accept=".csv" style="display: none;" onchange="handleCsvUpload()">
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="toggleCsvModal()">Done</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleCsvModal() {
+            const modal = document.getElementById('csvModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function downloadTemplate() {
+            // Triggers a fetch to our new CsvHelper backend endpoint
+            fetch('/api/AcademicCalendar/template')
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'DayOrderTemplate.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(err => {
+                    alert("Could not download template. Error: " + err);
+                    console.log("For demo purposes, falling back to static download");
+                    downloadStaticDemoTemplate();
+                });
+        }
+
+        function downloadStaticDemoTemplate() {
+            const staticCsv = "Date,DayOrder,TargetBranch,Description\n2026-03-01,Day 1,All,First day of month\n2026-03-02,Day 2,CSE,Specific branch day order";
+            const blob = new Blob([staticCsv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Demo_DayOrderTemplate.csv';
+            document.body.appendChild(a);
+            a.click();
+        }
+
+        function handleCsvUpload() {
+            const fileInput = document.getElementById('csvUploadInput');
+            if(fileInput.files.length > 0) {
+                // In a real app this would POST FormData to /api/AcademicCalendar/import
+                const toast = document.getElementById('toast');
+                toast.querySelector('span').innerText = fileInput.files[0].name + " successfully parsed and day-orders imported!";
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toggleCsvModal();
+                }, 3000);
+            }
+        }
+        
+        function toggleModuleStatus(checkbox) {
+            const span = checkbox.nextElementSibling;
+            if (checkbox.checked) {
+                span.innerText = "Activated";
+                span.style.color = "var(--success)";
+            } else {
+                span.innerText = "Deactivated";
+                span.style.color = "var(--text-dim)";
+            }
+        }
+        function toggleModuleVisibility(moduleName) {
+            // Logic to fetch/update sidebar visibility can be mapped here.
+            toggleModuleStatus(event.target);
+        }
+        function switchTab(tabId, element) {
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Add active class to clicked item
+            element.classList.add('active');
+
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Show target section
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function saveSettings() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

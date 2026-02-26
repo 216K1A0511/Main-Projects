@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Login Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.85);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .brand-header i {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .brand-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .brand-header p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .form-control:focus + i {
+            color: var(--primary);
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        select.form-control option {
+            background: var(--bg);
+            color: white;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-wrapper">
+        <div class="brand-header">
+            <i class="fas fa-university"></i>
+            <h1>IDEAL-CMS</h1>
+            <p>Unified Campus Management System</p>
+        </div>
+
+        <div class="login-card">
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                
+                <div class="form-group">
+                    <label class="form-label">Select Your Role</label>
+                    <div class="input-group">
+                        <i class="fas fa-user-shield"></i>
+                        <select class="form-control" id="roleSelector" required>
+                            <option value="" disabled selected>Select Access Level...</option>
+                            <option value="admin">Main Administrator</option>
+                            <option value="principal">Principal / Director</option>
+                            <option value="hod">Head of Department (HOD)</option>
+                            <option value="employee">Faculty / Employee</option>
+                            <option value="student">Student</option>
+                            <option value="parent">Parent / Guardian</option>
+                            <option value="warden">Hostel Warden</option>
+                            <option value="placement">Placement Coordinator</option>
+                        </select>
+                        <i class="fas fa-chevron-down select-arrow"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Username / ID</label>
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" placeholder="Enter Registration ID or Email" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" placeholder="Enter Password" value="password123" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span>Secure Login</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+
+                <div class="footer-links">
+                    <a href="#"><i class="fas fa-question-circle"></i> Help & Support</a>
+                    <a href="#"><i class="fas fa-key"></i> Forgot Password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('spinner');
+            const text = btn.querySelector('span');
+            const icon = btn.querySelector('.fa-arrow-right');
+            const role = document.getElementById('roleSelector').value;
+
+            // Simple validation
+            if(!role) {
+                alert("Please select a role to login as.");
+                return;
+            }
+
+            // UI Feedback state
+            text.innerText = 'Authenticating...';
+            icon.style.display = 'none';
+            spinner.style.display = 'block';
+            btn.style.opacity = '0.8';
+
+            // Role routing map
+            const routes = {
+                'admin': 'admin-dashboard.html',
+                'principal': 'principal-dashboard.html',
+                'hod': 'hod-dashboard.html',
+                'employee': 'employee-dashboard.html',
+                'student': 'student-dashboard.html',
+                'parent': 'parent-dashboard.html',
+                'warden': 'warden-dashboard.html',
+                'placement': 'placement-coordinator-dashboard.html'
+            };
+
+            // Simulate network delay
+            setTimeout(() => {
+                const targetPage = routes[role];
+                if(targetPage) {
+                    window.location.href = targetPage;
+                } else {
+                    alert('Routing configuration missing for this role.');
+                    // Reset UI
+                    text.innerText = 'Secure Login';
+                    icon.style.display = 'block';
+                    spinner.style.display = 'none';
+                    btn.style.opacity = '1';
+                }
+            }, 1200);
+        }
+    </script>
+</body>
+</html>

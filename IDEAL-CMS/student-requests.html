@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Student Support & Requests</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 5px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item i.main-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 35px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-left: 1px solid var(--border);
+            margin-left: 25px;
+        }
+
+        .nav-item.menu-open + .nav-submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 8px 10px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item i {
+            font-size: 0.7rem;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .submenu-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UI Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+
+        .btn-secondary { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--hover); }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background: rgba(0,0,0,0.4);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Generic Table Elements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+        /* Discussion Forum Bubble */
+        .forum-post {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 15px;
+        }
+
+        .forum-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .rating-stars {
+            color: var(--warning);
+            font-size: 1.1rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-life-ring"></i> Support Hub
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="student-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-home"></i> Back to Dashboard</button>
+            </a>
+        </div>
+
+        <div class="nav-category">Grievances & Outreach</div>
+        
+        <div class="nav-item active" onclick="toggleSubmenu('submenu-complaints', this)">
+            <div class="nav-item-content"><i class="fas fa-exclamation-triangle main-icon text-danger"></i> 1. Complaints</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-complaints" style="display: flex;">
+            <div class="submenu-item active" onclick="switchMainTab('sect-comp-raise', this, true)"><i class="fas fa-plus"></i> Raise Complaint</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-comp-view', this, true)"><i class="fas fa-list"></i> View Complaints</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-forum', this)">
+            <div class="nav-item-content"><i class="fas fa-comments main-icon text-info"></i> 2. Discussion Forum</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-feedback', this)">
+            <div class="nav-item-content"><i class="fas fa-star main-icon text-warning"></i> 3. Staff Feedback</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-feedback">
+            <div class="submenu-item" onclick="switchMainTab('sect-feed-submit', this, true)"><i class="fas fa-paper-plane"></i> Submit Feedback & Rating</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-feed-my', this, true)"><i class="fas fa-eye"></i> My Reviews (To Staff)</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-feed-from', this, true)"><i class="fas fa-inbox"></i> Feedback (From Staff)</div>
+        </div>
+
+        <div class="nav-category">Applications & Passes</div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-leave', this)">
+            <div class="nav-item-content"><i class="fas fa-calendar-times main-icon text-accent"></i> Leave Application</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-leave">
+            <div class="submenu-item" onclick="switchMainTab('sect-leave-apply', this, true)"><i class="fas fa-calendar-plus"></i> Apply for Leave</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-leave-view', this, true)"><i class="fas fa-history"></i> Leave History</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-gate', this)">
+            <div class="nav-item-content"><i class="fas fa-id-badge main-icon text-success"></i> Gate Pass</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-gate">
+            <div class="submenu-item" onclick="switchMainTab('sect-gate-apply', this, true)"><i class="fas fa-sign-out-alt"></i> Apply Gate Pass</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-gate-view', this, true)"><i class="fas fa-list-alt"></i> View Passes</div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Support & Approvals Hub</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Manage academic grievances, submit feedback, participate in forums, and request formal leaves or gate passes.</p>
+            </div>
+            <div>
+                <span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); font-size: 0.8rem;">
+                    Student Portal Mode
+                </span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1A. RAISE COMPLAINT
+        =========================================== -->
+        <div id="sect-comp-raise" class="content-section active">
+            <div class="card" style="max-width: 800px;">
+                <div class="card-header">
+                    <div><i class="fas fa-exclamation-triangle text-danger"></i> Submit a New Complaint</div>
+                </div>
+                
+                <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger); padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                    <p style="font-size: 0.85rem; color: var(--text-main);"><strong>Note:</strong> Formal complaints are heavily monitored by the Disciplinary Committee and HODs. Please provide detailed and accurate information.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Complaint Category/Type</label>
+                        <select class="form-control">
+                            <option>Academic Issue</option>
+                            <option>Hostel / Accommodation</option>
+                            <option>Harassment / Disciplinary</option>
+                            <option>Infrastructure / Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Against (Optional / If applicable)</label>
+                        <input type="text" class="form-control" placeholder="E.g., Name of Staff, Student, or Dept">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-control" placeholder="Brief summary of the issue">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Detailed Description</label>
+                    <textarea class="form-control" placeholder="Explain the grievance in full detail..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Attach Evidence (Optional)</label>
+                    <input type="file" class="form-control" style="background: transparent; border: 1px dashed var(--border);">
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn btn-secondary" style="margin-right: 10px;">Cancel</button>
+                    <button class="btn btn-danger"><i class="fas fa-paper-plane"></i> Submit Grievance</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1B. VIEW COMPLAINTS
+        =========================================== -->
+        <div id="sect-comp-view" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-list text-info"></i> My Complaints History & Status</div>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            <th>Filed On</th>
+                            <th>Latest Reply By</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#CMP-2026-901</td>
+                            <td>Wi-Fi not working in Hostel Block B</td>
+                            <td>Infrastructure</td>
+                            <td>22-Oct-2026</td>
+                            <td>IT Admin Dept</td>
+                            <td><span class="status-badge status-success">Resolved</span></td>
+                            <td><button class="btn btn-secondary text-primary" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                        <tr>
+                            <td>#CMP-2026-944</td>
+                            <td>Discrepancy in Mid-Term Marks (Subject: OS)</td>
+                            <td>Academic Issue</td>
+                            <td>25-Oct-2026</td>
+                            <td>-</td>
+                            <td><span class="status-badge status-warning">Pending Review</span></td>
+                            <td><button class="btn btn-secondary text-primary" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-eye"></i> View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             2. DISCUSSION FORUM
+        =========================================== -->
+        <div id="sect-forum" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-comments text-info"></i> Global Discussion Forum</div>
+                    <button class="btn btn-primary" onclick="alert('Open new thread form')"><i class="fas fa-plus"></i> Raise Question</button>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <input type="text" class="form-control" placeholder="Search forum topics, keywords...">
+                    <button class="btn btn-secondary"><i class="fas fa-search"></i> Search</button>
+                </div>
+
+                <div class="forum-post">
+                    <div class="forum-avatar"><i class="fas fa-user-astronaut"></i></div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h4 style="color: var(--primary); margin-bottom: 5px; cursor: pointer;">Best approach for the upcoming Machine Learning project?</h4>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);">12 mins ago</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.5; margin-bottom: 10px;">Hey guys, confused between using PyTorch vs TensorFlow for the Sem 5 Final ML assignment with Dr. Jenkins. Any thoughts?</p>
+                        <div style="display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-dim);">
+                            <span style="color: var(--accent); cursor: pointer;"><i class="fas fa-reply"></i> 5 Replies</span>
+                            <span><i class="fas fa-tag"></i> Academics</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forum-post">
+                    <div class="forum-avatar" style="background: rgba(16, 185, 129, 0.2); color: var(--success);"><i class="fas fa-user-graduate"></i></div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h4 style="color: var(--primary); margin-bottom: 5px; cursor: pointer;">Hostel Mess timings change for Winter?</h4>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);">1 day ago</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.5; margin-bottom: 10px;">Can someone confirm if the dinner timings for Block C have been extended by 30 minutes for the winter schedule?</p>
+                        <div style="display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-dim);">
+                            <span style="color: var(--accent); cursor: pointer;"><i class="fas fa-reply"></i> 12 Replies</span>
+                            <span><i class="fas fa-tag"></i> General</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3A. SUBMIT STAFF FEEDBACK & RATING
+        =========================================== -->
+        <div id="sect-feed-submit" class="content-section">
+            <div class="card" style="max-width: 800px;">
+                <div class="card-header">
+                    <div><i class="fas fa-star text-warning"></i> Faculty Feedback & Rating</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Select Faculty / Lecturer</label>
+                    <select class="form-control">
+                        <option>Dr. Sarah Connor (DBMS)</option>
+                        <option>Prof. Richard Hendricks (Computer Networks)</option>
+                        <option>Dr. Robert Chase (Software Engineering)</option>
+                    </select>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Teaching Effectiveness Rating</label>
+                        <select class="form-control" style="color: var(--warning); font-weight: bold;">
+                            <option>⭐⭐⭐⭐⭐ (5/5) Excellent</option>
+                            <option>⭐⭐⭐⭐ (4/5) Good</option>
+                            <option>⭐⭐⭐ (3/5) Average</option>
+                            <option>⭐⭐ (2/5) Poor</option>
+                            <option>⭐ (1/5) Very Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Syllabus Coverage</label>
+                        <select class="form-control">
+                            <option>Completed fully</option>
+                            <option>Mostly Completed</option>
+                            <option>Lags Behind</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Constructive Feedback (Anonymous to Staff, Visible to HOD)</label>
+                    <textarea class="form-control" placeholder="Provide detailed remarks on teaching style, lab assistance, doubts clarification..."></textarea>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn btn-primary"><i class="fas fa-check"></i> Submit Rating</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3B. MY FEEDBACKS (TO STAFF)
+        =========================================== -->
+        <div id="sect-feed-my" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-eye text-info"></i> Reviews Submitted (By Me)</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Faculty Name</th>
+                            <th>Subject Evaluated</th>
+                            <th>Rating Given</th>
+                            <th>Submission Date</th>
+                            <th>Feedback Snippet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dr. Sarah Connor</td>
+                            <td>Database Mgmt Systems</td>
+                            <td class="rating-stars">⭐⭐⭐⭐⭐</td>
+                            <td>15-Sep-2026</td>
+                            <td style="color: var(--text-dim); font-size: 0.85rem;">Excellent logical breakdown of Normalization forms. Highly recommended methodology.</td>
+                        </tr>
+                        <tr>
+                            <td>Prof. Richard Hendricks</td>
+                            <td>Computer Networks</td>
+                            <td class="rating-stars">⭐⭐⭐</td>
+                            <td>18-Oct-2026</td>
+                            <td style="color: var(--text-dim); font-size: 0.85rem;">Classes are theoretically good but need more real-world lab demonstrations using Packet Tracer.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3C. FEEDBACK FROM LECTURERS (TO ME)
+        =========================================== -->
+        <div id="sect-feed-from" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-inbox text-accent"></i> Academic Feedback Received</div>
+                </div>
+                
+                <div class="list-group">
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <h5 style="color: var(--text-main);"><i class="fas fa-user-tie text-primary"></i> Dr. Sarah Connor <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 400;">(DBMS)</span></h5>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);">10-Oct-2026</span>
+                        </div>
+                        <p style="font-size: 0.9rem; line-height: 1.5;">Solid performance in the mid-term evaluations. Excellent understanding of SQL triggers. Try to improve engagement during interactive tutorial sessions.</p>
+                        <div style="margin-top: 5px;">
+                            <span class="status-badge status-success">Positive Feedback</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             4A. APPLY LEAVE
+        =========================================== -->
+        <div id="sect-leave-apply" class="content-section">
+            <div class="card" style="max-width: 700px;">
+                <div class="card-header">
+                    <div><i class="fas fa-calendar-plus text-accent"></i> Apply for Formal Leave</div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Leave Type</label>
+                        <select class="form-control">
+                            <option>Sick Leave (Medical)</option>
+                            <option>Casual / Personal Leave</option>
+                            <option>On-Duty (Event/Sports)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Approving Authority</label>
+                        <select class="form-control" disabled>
+                            <option>HOD - Computer Science</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">To Date &nbsp;<span style="font-size: 0.75rem; color: var(--text-dim);">(Inclusive)</span></label>
+                        <input type="date" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Reason / Justification</label>
+                    <textarea class="form-control" placeholder="Provide valid reason. Note: Medical certificates required for Sick Leaves > 2 days."></textarea>
+                </div>
+
+                <div style="text-align: right;">
+                    <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> Submit Leave Request</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             4B. LEAVE HISTORY (VIEW)
+        =========================================== -->
+        <div id="sect-leave-view" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-history text-info"></i> Leave Application History</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Type of Leave</th>
+                            <th>Duration (Dates)</th>
+                            <th>Total Days</th>
+                            <th>Reason Summary</th>
+                            <th>Applied On</th>
+                            <th>Status / Approval</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>On-Duty (Event)</td>
+                            <td>12-Sep-2026 to 14-Sep-2026</td>
+                            <td>3 Days</td>
+                            <td>Attending Tech Symposium</td>
+                            <td>08-Sep-2026</td>
+                            <td><span class="status-badge status-success">Approved (HOD)</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sick Leave</td>
+                            <td>20-Oct-2026 to 21-Oct-2026</td>
+                            <td>2 Days</td>
+                            <td>Viral Fever</td>
+                            <td>20-Oct-2026</td>
+                            <td><span class="status-badge status-warning">Pending Review</span></td>
+                        </tr>
+                        <tr>
+                            <td>Casual Leave</td>
+                            <td>01-Aug-2026</td>
+                            <td>1 Day</td>
+                            <td>Family Function</td>
+                            <td>25-Jul-2026</td>
+                            <td><span class="status-badge status-danger">Rejected</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             5A. APPLY GATE PASS
+        =========================================== -->
+        <div id="sect-gate-apply" class="content-section">
+            <div class="card" style="max-width: 600px;">
+                <div class="card-header">
+                    <div><i class="fas fa-sign-out-alt text-success"></i> Request Out-Pass (Gate Pass)</div>
+                </div>
+                
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 0.85rem;">
+                    Passes are strictly vetted by security at the main gate via barcode.
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Date of Outing</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected Return Time</label>
+                        <input type="time" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Purpose of leaving campus</label>
+                    <input type="text" class="form-control" placeholder="E.g., Medical check-up, Purchasing project components...">
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="btn btn-success"><i class="fas fa-id-card"></i> Generate Pass Request</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             5B. VIEW GATE PASSES
+        =========================================== -->
+        <div id="sect-gate-view" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-list-alt text-primary"></i> Gate Pass Register</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Pass ID</th>
+                            <th>Date Issued</th>
+                            <th>Purpose</th>
+                            <th>Out Time</th>
+                            <th>In Time (Logged)</th>
+                            <th>Pass Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#GP-8821</td>
+                            <td>15-Sep-2026</td>
+                            <td>Logistics Purchase</td>
+                            <td>14:00 (2:00 PM)</td>
+                            <td>17:30 (5:30 PM)</td>
+                            <td><span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-dim);">Completed</span></td>
+                            <td><button class="btn btn-secondary text-primary" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-print"></i> Print</button></td>
+                        </tr>
+                        <tr>
+                            <td>#GP-9103</td>
+                            <td><strong style="color: var(--success);">26-Oct-2026 (Today)</strong></td>
+                            <td>Dental Appointment</td>
+                            <td>11:00 AM</td>
+                            <td>-</td>
+                            <td><span class="status-badge status-warning">Active (Out)</span></td>
+                            <td><button class="btn btn-secondary text-primary" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-print"></i> Print</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Tab Selection Logic
+        function switchMainTab(sectionId, element, isSubmenu = false) {
+            // Hide all content sections
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            
+            // Remove active status from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
+            if(element && !isSubmenu) element.classList.add('active');
+            
+            if(element && isSubmenu) {
+                element.classList.add('active');
+                element.parentElement.previousElementSibling.style.color = 'var(--primary)';
+            }
+
+            // Route to correct visual section
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Submenu Toggles
+        function toggleSubmenu(submenuId, element) {
+            element.classList.toggle('menu-open');
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon) {
+                if(element.classList.contains('menu-open')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

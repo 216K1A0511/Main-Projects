@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Communications Matrix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #f59e0b;     /* Amber */
+            --secondary: #ea580c;   /* Orange */
+            --accent: #10b981;      /* Emerald */
+            --success: #0ea5e9;     /* Blue */
+            --warning: #f43f5e;     /* Rose */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body {
+            background-color: var(--bg); color: var(--text-main); display: flex; min-height: 100vh;
+            background-image: radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.1) 0, transparent 40%),
+                              radial-gradient(at 100% 0%, rgba(234, 88, 12, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR
+        ------------------------- */
+        .sidebar {
+            width: 300px; background: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 1.5rem 1rem;
+            display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; padding-left: 10px;
+        }
+
+        .nav-header { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 10px 15px; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 15px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; color: var(--text-dim); font-weight: 500; margin-bottom: 5px;
+        }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(245, 158, 11, 0.1); color: var(--text-main); }
+        .nav-item.active { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(234, 88, 12, 0.2)); color: white; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        /* ------------------------
+           MAIN CONTENT
+        ------------------------- */
+        .main-content { flex: 1; padding: 2.5rem 3.5rem; overflow-y: auto; height: 100vh; }
+        .header-title { margin-bottom: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; }
+        .header-title h1 { font-size: 2.2rem; font-weight: 600; margin-bottom: 5px; }
+
+        .content-section { display: none; animation: fadeIn 0.4s ease forwards; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Reusable Components */
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; backdrop-filter: blur(10px); margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card-header { font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; color: var(--text-main); border-bottom: 1px dashed var(--border); padding-bottom: 0.75rem; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .form-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.9rem; color: var(--text-dim); font-weight: 500; }
+        .form-control { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border); color: white; padding: 0.8rem 1rem; border-radius: 12px; font-size: 0.95rem; outline: none; transition: all 0.3s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2); }
+
+        .btn { padding: 0.8rem 1.5rem; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); }
+        .btn-secondary { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+        /* Inner Tabs */
+        .inner-tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; overflow-x: auto; }
+        .inner-tab { padding: 8px 16px; border-radius: 8px; background: var(--glass); color: var(--text-dim); cursor: pointer; font-weight: 500; font-size: 0.9rem; border: 1px solid transparent; transition: all 0.3s; white-space: nowrap; }
+        .inner-tab:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+        .inner-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        .data-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+        .data-item { background: var(--glass); border: 1px solid var(--border); padding: 1.25rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-broadcast-tower"></i> Comm Setup
+        </div>
+        
+        <div class="nav-header">Network Dispatch</div>
+        <div class="nav-item active" onclick="switchTab('t-sms')">
+            <i class="fas fa-comment-sms"></i> 1. Explicit SMS Logic
+        </div>
+        <div class="nav-item" onclick="switchTab('t-bulk')">
+            <i class="fas fa-bolt"></i> 2. Bulk Extraction SMS
+        </div>
+        
+        <div class="nav-header">Analytics</div>
+        <div class="nav-item" onclick="switchTab('t-status')">
+            <i class="fas fa-truck-fast"></i> 3. SMS Delivery Details
+        </div>
+        
+        <div class="nav-header">Email Hierarchy</div>
+        <div class="nav-item" onclick="switchTab('t-email')">
+            <i class="fas fa-envelopes-bulk"></i> 4. Mass Email Groups
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px;">
+            <a href="admin-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-arrow-left"></i> Return to Dashboard</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Communication Architecture</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Bridge multi-channel alerts routing automated SMS endpoints and grouped Email notifications globally.</p>
+            </div>
+            <div>
+                <span style="background: rgba(245, 158, 11, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                    Notifications Protocol
+                </span>
+            </div>
+        </div>
+
+        <!-- 1. EXPLICIT SMS LOGIC -->
+        <div id="t-sms" class="content-section active">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-comment-sms text-primary"></i> Direct Cellular Dispatch</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Selectively choose target audiences natively mapped inside our ecosystem and blast SMS payloads to them.</p>
+
+                <div class="inner-tabs" style="border-width: 2px;">
+                    <div class="inner-tab active" onclick="switchInnerTab('sms', 's-students', this)"><i class="fas fa-user-graduate"></i> Students Scope</div>
+                    <div class="inner-tab" onclick="switchInnerTab('sms', 's-employees', this)"><i class="fas fa-user-tie"></i> Employees Scope</div>
+                    <div class="inner-tab" onclick="switchInnerTab('sms', 's-parents', this)"><i class="fas fa-users"></i> Parents Scope</div>
+                </div>
+
+                <!-- Template Body for all SMS inputs -->
+                <div class="form-grid" style="background: var(--glass); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border);">
+                    <div class="form-group full">
+                        <label>Target Audience Filters (E.g. specifically 3rd Year CSE)</label>
+                        <select class="form-control">
+                            <option>Load Selected Scope Batch...</option>
+                            <option>All Individuals</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>SMS Text Payload (160 Chars)</label>
+                        <textarea class="form-control" rows="4" placeholder="Enter strictly formatted text message to be pushed via SMS gateway..."></textarea>
+                    </div>
+                    <div class="form-group full" style="display: flex; justify-content: flex-end;">
+                        <button class="btn btn-primary" onclick="alert('Payload fired to respective selected scope successfully via API.')"><i class="fas fa-paper-plane"></i> Dispatch SMS Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. BULK EXTRACTION SMS -->
+        <div id="t-bulk" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-bolt text-accent"></i> Bulk External Compilation Dispatch</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">For pushing identical raw SMS text outside of current ecosystem scopes using raw numbers via file layouts.</p>
+                
+                <h4 style="margin-bottom: 10px; color: var(--accent);">Format Pre-requisites</h4>
+                <div class="form-group full" style="margin-bottom: 2rem;">
+                    <button class="btn btn-secondary" style="border-color: var(--accent);"><i class="fas fa-file-download text-accent"></i> Download Allowed Upload Formatting Document</button>
+                </div>
+
+                <h4 style="margin-bottom: 10px; color: var(--primary);">Mass Execution Phase</h4>
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 2.5rem; border-radius: 12px; border: 1px dashed var(--accent); text-align: center;">
+                    <i class="fas fa-file-csv text-accent" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p style="margin-bottom: 15px; font-size: 1rem;">Upload matrix holding unstructured raw phone nodes.</p>
+                    <button class="btn btn-primary" style="background: var(--accent);"><i class="fas fa-upload"></i> Append File</button>
+                    
+                    <div class="form-group full" style="margin-top: 25px; text-align: left;">
+                        <label>Universal Raw Message Payload</label>
+                        <textarea class="form-control" rows="3" placeholder="Message content executing against all appended numbers..."></textarea>
+                    </div>
+
+                    <div style="margin-top: 20px; border-top: 1px dashed rgba(16, 185, 129, 0.3); padding-top: 20px;">
+                        <button class="btn btn-primary" onclick="alert('Bulk SMS Execution queue established.')"><i class="fas fa-rocket"></i> Fire Extracted Payload Sequence</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SMS DELIVERY DETAILS -->
+        <div id="t-status" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-truck-fast text-success"></i> Dispatch Delivery Tracking</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Monitor real-time payload statuses returning from cellular networking endpoints.</p>
+
+                <div class="data-list">
+                    <div class="data-item" style="border-left: 3px solid var(--success);">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                <h4 style="font-size: 1.15rem; color: var(--text-main);">+91 9876543210 (Student Scope)</h4>
+                                <span style="background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Delivered</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px;">Timestamp: Nov 25, 2026 14:32:00</p>
+                            <p style="font-size: 0.85rem; color: var(--success); font-weight: 500;">Payload: "Reminder: Semester 3 Registration begins tomorrow."</p>
+                        </div>
+                    </div>
+                    
+                    <div class="data-item" style="border-left: 3px solid var(--warning);">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                <h4 style="font-size: 1.15rem; color: var(--text-main);">+91 9988776655 (Bulk Extraction)</h4>
+                                <span style="background: rgba(244, 63, 94, 0.15); color: var(--warning); border: 1px solid rgba(244, 63, 94, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Failed</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px;">Timestamp: Nov 25, 2026 14:31:12</p>
+                            <p style="font-size: 0.85rem; color: var(--warning); font-weight: 500;">Reason: Not a valid 10-digit format or Carrier Blocked.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. EMAIL GROUPS -->
+        <div id="t-email" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-envelopes-bulk text-success"></i> Centralized Email Hub Arrays</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Construct reusable static pools of exact employees mapping to bulk email blast endpoints.</p>
+
+                <div class="inner-tabs" style="border-width: 2px;">
+                    <div class="inner-tab active" onclick="switchInnerTab('email', 'e-create', this)"><i class="fas fa-plus"></i> Create Origin Group</div>
+                    <div class="inner-tab" onclick="switchInnerTab('email', 'e-view', this)"><i class="fas fa-cogs"></i> Manage & Deploy Group Logic</div>
+                </div>
+
+                <!-- Create Email Group -->
+                <div id="e-create" class="tab-content active" style="margin-top: 1.5rem;">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label>Origin Group Name Matrix</label>
+                            <input type="text" class="form-control" placeholder="E.g. Internal Auditing Team, Lab Operators">
+                        </div>
+                        <div class="form-group full" style="display: flex; justify-content: flex-end;">
+                            <button class="btn btn-primary" style="background: var(--success);"><i class="fas fa-check"></i> Register Group Hash Node</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View & Deploy -->
+                <div id="e-view" class="tab-content" style="margin-top: 1.5rem;">
+                    <div class="data-list">
+                        <div class="data-item" style="border-left: 3px solid var(--success);">
+                            <div>
+                                <h4 style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 5px;">Internal Auditing Team</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-dim);"><i class="fas fa-users text-success"></i> Contains 12 Explicit Nodes</p>
+                            </div>
+                            <div style="display: flex; gap: 5px;">
+                                <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.8rem;"><i class="fas fa-user-plus"></i> Add Entity</button>
+                                <button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.8rem; border-color: rgba(244,63,94,0.3); color: var(--warning);"><i class="fas fa-user-minus"></i> Remove Entity</button>
+                                <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.8rem; background: var(--success);" onclick="alert('Email protocol routing initiated for group.')"><i class="fas fa-envelope-open-text"></i> Execute Mail Sequence</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripting for interactivity -->
+    <script>
+        // Main Sidebar Tabs
+        function switchTab(tabId) {
+            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Inner Section Tabs Controller
+        function switchInnerTab(groupId, targetId, element) {
+            const tabsRow = element.parentElement;
+            tabsRow.querySelectorAll('.inner-tab').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            if(groupId === 'sms') {
+                // Shared UI container changes text based on click visually 
+                document.querySelector('#t-sms .card-header').innerHTML = `<i class="fas fa-comment-sms text-primary"></i> Dispatch Targeting (${targetId.replace('s-','')})`;
+            }
+
+            if(groupId === 'email') {
+                ['e-create', 'e-view'].forEach(id => document.getElementById(id).classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

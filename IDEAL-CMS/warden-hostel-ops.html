@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Hostel Management</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --header-bg: rgba(15, 23, 42, 0.85);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .menu-category {
+            padding: 10px 1.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .menu-item {
+            padding: 12px 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: var(--text-main);
+            background: var(--hover);
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .menu-item i.fa-chevron-down {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .submenu {
+            display: none;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+            padding: 5px 0;
+        }
+
+        .menu-item.menu-open + .submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 10px 1.5rem 10px 3rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .submenu-item:hover, .submenu-item.active {
+            color: var(--primary);
+            background: rgba(255,255,255,0.02);
+            font-weight: 600;
+        }
+
+        .submenu-item i {
+            font-size: 0.8rem;
+        }
+
+        /* ------------------------
+           MAIN CONTENT
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .top-header {
+            height: 70px;
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-title { font-size: 1.25rem; font-weight: 600; }
+
+        .content-area {
+            padding: 2.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .section-view {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .section-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ------------------------
+           UI COMPONENTS
+        ------------------------- */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-header h3 { font-size: 1.25rem; font-weight: 600; color: var(--text-main); }
+        .card-header p { font-size: 0.9rem; color: var(--text-dim); margin-top: 5px; font-weight: 400; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-size: 0.95rem; color: var(--text-dim); }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+        .form-control:focus { border-color: var(--primary); }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn-secondary { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--hover); border-color: var(--primary); }
+
+        .btn-danger { background: var(--danger); color: white; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .data-table th, .data-table td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .data-table th { color: var(--text-dim); font-weight: 600; background: rgba(0,0,0,0.2); text-transform: uppercase; font-size: 0.8rem; }
+        .data-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-accent { background: rgba(139, 92, 246, 0.15); color: var(--accent); }
+
+        .action-icon {
+            cursor: pointer; color: var(--text-dim); margin: 0 5px; transition: 0.2s;
+        }
+        .action-icon:hover { color: var(--primary); }
+        .action-icon.delete:hover { color: var(--danger); }
+        
+        /* Attendance Toggle */
+        .attendance-toggle {
+            display: flex; gap: 10px;
+        }
+        .toggle-btn {
+            padding: 5px 15px; border-radius: 4px; cursor: pointer; border: 1px solid var(--border); background: var(--glass); color: var(--text-dim); font-size: 0.85rem; font-weight: 600; transition: 0.2s;
+        }
+        .toggle-btn.present { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.1); }
+        .toggle-btn.absent { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+        .toggle-btn.leave { border-color: var(--warning); color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-building text-primary"></i> IDEAL-CMS
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="warden-dashboard.html" class="menu-item"><i class="fas fa-tachometer-alt"></i> Warden Dashboard</a>
+            
+            <div class="menu-category">Hostel Operations</div>
+
+            <!-- Setup Menu -->
+            <div class="menu-item menu-open" onclick="toggleMenu(this)">
+                <i class="fas fa-tools"></i> A. Setup
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="submenu">
+                <div class="submenu-item active" onclick="switchView('view-setup-floors', this)"><i class="fas fa-layer-group"></i> 1. Floors</div>
+                <div class="submenu-item" onclick="switchView('view-setup-freq', this)"><i class="fas fa-stopwatch"></i> 2. Attendance Frequency</div>
+                <div class="submenu-item" onclick="switchView('view-setup-addrooms', this)"><i class="fas fa-plus-square"></i> 3. Add Rooms</div>
+                <div class="submenu-item" onclick="switchView('view-setup-viewrooms', this)"><i class="fas fa-list-alt"></i> 4. View Rooms</div>
+            </div>
+
+            <!-- Registrations Menu -->
+            <div class="menu-item" onclick="toggleMenu(this)">
+                <i class="fas fa-user-plus"></i> B. Registrations
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="submenu">
+                <div class="submenu-item" onclick="switchView('view-reg-register', this)"><i class="fas fa-clipboard-check"></i> 1. Register Allocation</div>
+                <div class="submenu-item" onclick="switchView('view-reg-accomm', this)"><i class="fas fa-bed"></i> 2. Accommodations Map</div>
+                <div class="submenu-item" onclick="switchView('view-reg-report', this)"><i class="fas fa-file-excel"></i> 3. Accommodations Report</div>
+            </div>
+
+            <!-- Attendance Menu -->
+            <div class="menu-item" onclick="toggleMenu(this)">
+                <i class="fas fa-user-check"></i> C. Attendance
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="submenu">
+                <div class="submenu-item" onclick="switchView('view-att-mark', this)"><i class="fas fa-check-circle"></i> 1. Mark Attendance</div>
+                <div class="submenu-item" onclick="switchView('view-att-edit', this)"><i class="fas fa-edit"></i> 2. Edit Attendance</div>
+                <div class="submenu-item" onclick="switchView('view-att-reports', this)"><i class="fas fa-chart-bar"></i> 3-6. Extract Reports</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <header class="top-header">
+            <div class="header-title">Hostel Records & Operations</div>
+            <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+        </header>
+
+        <main class="content-area">
+
+            <!-- ==============================================
+                 A1. SETUP: FLOORS
+            =============================================== -->
+            <div id="view-setup-floors" class="section-view active">
+                <div class="card" style="max-width: 800px;">
+                    <div class="card-header">
+                        <div>
+                            <h3>Create & Manage Hostel Floors</h3>
+                            <p>Configure structural floors/blocks within the institution's hostels.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Hostel Name / Block</label>
+                            <select class="form-control">
+                                <option>Block A (Men's Hostel)</option>
+                                <option>Block B (Women's Hostel)</option>
+                                <option>PG Hostel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Floor Name/Number</label>
+                            <input type="text" class="form-control" placeholder="E.g., Ground Floor, Floor 1">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-bottom: 25px;"><i class="fas fa-plus"></i> Add Floor</button>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Sl. No.</th>
+                                <th>Hostel Block</th>
+                                <th>Floor Configuration</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Block A (Men's Hostel)</td>
+                                <td>Ground Floor</td>
+                                <td>
+                                    <i class="fas fa-edit action-icon"></i>
+                                    <i class="fas fa-trash action-icon delete"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Block A (Men's Hostel)</td>
+                                <td>First Floor</td>
+                                <td>
+                                    <i class="fas fa-edit action-icon"></i>
+                                    <i class="fas fa-trash action-icon delete"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 A2. SETUP: ATTENDANCE FREQUENCY
+            =============================================== -->
+            <div id="view-setup-freq" class="section-view">
+                <div class="card" style="max-width: 800px;">
+                    <div class="card-header">
+                        <div>
+                            <h3>Attendance Frequency Markers</h3>
+                            <p>Set specific time slots for marking resident attendance (e.g., Night Roll Call).</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Frequency Category Name</label>
+                            <input type="text" class="form-control" placeholder="E.g., Night Roll Call">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Time Window</label>
+                            <input type="time" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Applicable Hostels</label>
+                        <select class="form-control" multiple style="height: 80px;">
+                            <option selected>Block A (Men's Hostel)</option>
+                            <option selected>Block B (Women's Hostel)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" style="margin-bottom: 25px;"><i class="fas fa-plus"></i> Add Frequency</button>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Frequency Name</th>
+                                <th>Time Marker</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Morning Inspection</td>
+                                <td>07:00 AM</td>
+                                <td><span class="status-badge status-success">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit action-icon"></i>
+                                    <i class="fas fa-trash action-icon delete"></i>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Night Roll Call</td>
+                                <td>09:30 PM</td>
+                                <td><span class="status-badge status-success">Active</span></td>
+                                <td>
+                                    <i class="fas fa-edit action-icon"></i>
+                                    <i class="fas fa-trash action-icon delete"></i>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 A3. SETUP: ADD ROOMS
+            =============================================== -->
+            <div id="view-setup-addrooms" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Add Hostel Rooms</h3>
+                            <p>Generate rooms dynamically inside specific hostel floors with bed capacities.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label class="form-label">Hostel Block</label>
+                            <select class="form-control"><option>Block A (Men's Hostel)</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Select Floor</label>
+                            <select class="form-control"><option>First Floor</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Room Type</label>
+                            <select class="form-control">
+                                <option>A/C</option>
+                                <option selected>Non-A/C</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label class="form-label">Room Number / Name</label>
+                            <input type="text" class="form-control" placeholder="E.g., 101 or A-101">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Beds (Capacity)</label>
+                            <input type="number" class="form-control" value="4">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Fees applied (₹)</label>
+                            <input type="number" class="form-control" value="45000">
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Save Room Configuration</button>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 A4. SETUP: VIEW ROOMS
+            =============================================== -->
+            <div id="view-setup-viewrooms" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>View & Edit Rooms Inventory</h3>
+                            <p>Filter and inspect created rooms and available vs occupied bed capacities.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <select class="form-control"><option>Filter Block: A</option></select>
+                            <select class="form-control"><option>Filter Floor: All</option></select>
+                            <button class="btn btn-secondary"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Floor</th>
+                                <th>Type</th>
+                                <th>Bed Cap.</th>
+                                <th>Occupied</th>
+                                <th>Vacant</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>101</strong></td>
+                                <td>Ground Floor</td>
+                                <td><span class="status-badge status-info">Non-A/C</span></td>
+                                <td>4</td>
+                                <td><span class="text-danger">4</span></td>
+                                <td>0</td>
+                                <td><span class="status-badge status-danger">Full</span></td>
+                                <td><i class="fas fa-edit action-icon"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>102</strong></td>
+                                <td>Ground Floor</td>
+                                <td><span class="status-badge status-info">Non-A/C</span></td>
+                                <td>4</td>
+                                <td><span class="text-success">2</span></td>
+                                <td><strong>2</strong></td>
+                                <td><span class="status-badge status-success">Available</span></td>
+                                <td><i class="fas fa-edit action-icon"></i></td>
+                            </tr>
+                            <tr>
+                                <td><strong>103</strong></td>
+                                <td>Ground Floor</td>
+                                <td><span class="status-badge status-accent">A/C Room</span></td>
+                                <td>2</td>
+                                <td>0</td>
+                                <td><strong>2</strong></td>
+                                <td><span class="status-badge status-success">Available</span></td>
+                                <td><i class="fas fa-edit action-icon"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 B1. REGISTRATIONS: REGISTER ROOM
+            =============================================== -->
+            <div id="view-reg-register" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Resident Registration (Allocate Bed)</h3>
+                            <p>Assign hostel bounds (room & specific bed) to a Student or Employee.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 3px solid var(--accent);">
+                        <div class="grid-3" style="align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Select User Type</label>
+                                <select class="form-control">
+                                    <option selected>Student</option>
+                                    <option>Employee / Staff</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">Search Registration ID / Roll No</label>
+                                <input type="text" class="form-control" placeholder="E.g., CSE2026-001">
+                            </div>
+                            <button class="btn btn-secondary"><i class="fas fa-search"></i> Fetch Details</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                        <!-- Fetched Profile Card -->
+                        <div style="flex: 1; border: 1px dashed var(--border); border-radius: 12px; padding: 15px; text-align: center;">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--bg); border: 2px solid var(--primary); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                                <i class="fas fa-user-graduate text-text-main"></i>
+                            </div>
+                            <h4 style="color: var(--primary); font-size: 1.1rem; margin-bottom: 5px;">Alex Mercer</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px;">B.Tech CSE - Semester 5</p>
+                            <span class="status-badge status-warning">Pending Accommodation</span>
+                        </div>
+
+                        <!-- Routing Form -->
+                        <div style="flex: 2;">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label class="form-label">Hostel</label>
+                                    <select class="form-control"><option>Block A</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Floor</label>
+                                    <select class="form-control"><option>Ground Floor</option></select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Assign Room</label>
+                                    <select class="form-control">
+                                        <option>Room 102 (2 Beds Vacant)</option>
+                                        <option>Room 103 (2 Beds Vacant)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Assign specific Bed No.</label>
+                                    <select class="form-control"><option>Bed 3</option><option>Bed 4</option></select>
+                                </div>
+                            </div>
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button class="btn btn-success"><i class="fas fa-check-circle"></i> Confirm Allocation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 B2. REGISTRATIONS: ACCOMMODATIONS MAP (VIEW)
+            =============================================== -->
+            <div id="view-reg-accomm" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Active Accommodations Map</h3>
+                            <p>Verify which student/staff is mapped to which room globally.</p>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Resident Name</th>
+                                <th>Type / Dept</th>
+                                <th>Hostel Block</th>
+                                <th>Room No.</th>
+                                <th>Bed No.</th>
+                                <th>Allocated Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong style="color: var(--text-main);">Priya Patel</strong></td>
+                                <td>Student (MECH)</td>
+                                <td>Block B</td>
+                                <td><span class="status-badge status-info">RM-204</span></td>
+                                <td>Bed-1</td>
+                                <td>01-Aug-2026</td>
+                                <td><button class="btn btn-secondary text-danger" style="padding: 4px 10px; font-size: 0.75rem;">Vacate</button></td>
+                            </tr>
+                            <tr>
+                                <td><strong style="color: var(--text-main);">Dr. Subash</strong></td>
+                                <td>Staff (Physics)</td>
+                                <td>Block A</td>
+                                <td><span class="status-badge status-info">RM-101</span></td>
+                                <td>Bed-1</td>
+                                <td>01-Jul-2026</td>
+                                <td><button class="btn btn-secondary text-danger" style="padding: 4px 10px; font-size: 0.75rem;">Vacate</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 B3. REGISTRATIONS: REPORTS
+            =============================================== -->
+            <div id="view-reg-report" class="section-view">
+                <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+                    <i class="fas fa-file-excel text-success" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                    <h3 style="margin-bottom: 10px;">Download Accommodations Report</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px;">Export the complete layout of all allocated beds mapped to their respective resident records as an Excel file.</p>
+                    
+                    <div class="grid-2">
+                        <button class="btn btn-success" style="width: 100%;"><i class="fas fa-download"></i> Student Report</button>
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-download"></i> Employee Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 C1 & C2. ATTENDANCE: MARK & EDIT
+            =============================================== -->
+            <div id="view-att-mark" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="text-warning"><i class="fas fa-check-double"></i> Mark Today's Hostel Attendance</h3>
+                            <p>Record presence block-wise against specific frequency configurations.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-3" style="background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-control" value="2026-10-26">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Hostel Block</label>
+                            <select class="form-control"><option>Block A</option></select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label class="form-label">Frequency Slot</label>
+                            <select class="form-control"><option>Night Roll Call (9:30 PM)</option></select>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Room</th>
+                                <th>Resident Name (ID)</th>
+                                <th>Type</th>
+                                <th>Attendance Marking Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RM-101</td>
+                                <td>Alex Mercer (CSE001)</td>
+                                <td>Student</td>
+                                <td>
+                                    <div class="attendance-toggle">
+                                        <div class="toggle-btn present">Present</div>
+                                        <div class="toggle-btn" onclick="this.classList.toggle('absent');">Absent</div>
+                                        <div class="toggle-btn" onclick="this.classList.toggle('leave');">On Leave</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>RM-101</td>
+                                <td>Rohit K (MECH045)</td>
+                                <td>Student</td>
+                                <td>
+                                    <div class="attendance-toggle">
+                                        <div class="toggle-btn" onclick="this.classList.toggle('present');">Present</div>
+                                        <div class="toggle-btn absent">Absent</div>
+                                        <div class="toggle-btn" onclick="this.classList.toggle('leave');">On Leave</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button class="btn btn-warning"><i class="fas fa-save"></i> Submit Block Attendance</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="view-att-edit" class="section-view">
+                <!-- Reusing UI structure of Mark Attendance with slight header changes -->
+                <div class="card">
+                    <div class="card-header"><div><h3><i class="fas fa-edit text-info"></i> Edit Discrepancy Attendance</h3></div></div>
+                    <p style="color: var(--text-dim); text-align: center;">Select historic Date and Block to fetch and modify locked attendance records. (UI matches the Mark window above).</p>
+                </div>
+            </div>
+
+            <!-- ==============================================
+                 C3-C6. ATTENDANCE: REPORTS
+            =============================================== -->
+            <div id="view-att-reports" class="section-view">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3>Attendance Extract Reporting</h3>
+                            <p>Generate precise excel dumps for roll-calls.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2" style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                        <div class="form-group"><label class="form-label">From Date</label><input type="date" class="form-control"></div>
+                        <div class="form-group"><label class="form-label">To Date</label><input type="date" class="form-control"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div style="border: 1px solid var(--border); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-calendar-check text-primary" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h4 style="margin-bottom: 15px;">Complete Register Matrix</h4>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button class="btn btn-secondary text-success"><i class="fas fa-file-excel"></i> Student Report</button>
+                                <button class="btn btn-secondary text-primary"><i class="fas fa-file-excel"></i> Staff Report</button>
+                            </div>
+                        </div>
+
+                        <div style="border: 1px solid var(--danger); background: rgba(239, 68, 68, 0.05); padding: 1.5rem; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-user-times text-danger" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                            <h4 style="margin-bottom: 15px; color: var(--danger);">Filter: Absentees Only</h4>
+                            <div style="display: flex; gap: 10px; justify-content: center;">
+                                <button class="btn btn-danger"><i class="fas fa-file-excel"></i> Absent Students</button>
+                                <button class="btn btn-secondary text-danger"><i class="fas fa-file-excel"></i> Absent Staff</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+
+    <script>
+        // Menu Toggle Logic
+        function toggleMenu(element) {
+            const allMenus = document.querySelectorAll('.menu-item');
+            allMenus.forEach(menu => {
+                if(menu !== element && menu.classList.contains('menu-open')) {
+                    menu.classList.remove('menu-open');
+                }
+            });
+            element.classList.toggle('menu-open');
+        }
+
+        // View Switching Logic
+        function switchView(viewId, element) {
+            // Hide all views
+            document.querySelectorAll('.section-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            // Show requested view
+            const target = document.getElementById(viewId);
+            if(target) target.classList.add('active');
+
+            // Reset active state in sidebar
+            document.querySelectorAll('.submenu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            // Set current
+            element.classList.add('active');
+        }
+
+        // Attendance Radio Toggle Logic
+        function selectAttendance(element, type) {
+            // Find parent row container
+            const container = element.closest('.attendance-toggle');
+            // Remove active classes from all buttons in this row
+            container.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.className = 'toggle-btn';
+            });
+            // Add correct class to clicked element
+            element.classList.add(type);
+        }
+
+        // Set up attendance toggles
+        document.addEventListener('DOMContentLoaded', () => {
+             document.querySelectorAll('.attendance-toggle').forEach(container => {
+                 const btns = container.querySelectorAll('.toggle-btn');
+                 if(btns.length >= 3) {
+                     btns[0].setAttribute('onclick', "selectAttendance(this, 'present')");
+                     btns[1].setAttribute('onclick', "selectAttendance(this, 'absent')");
+                     btns[2].setAttribute('onclick', "selectAttendance(this, 'leave')");
+                 }
+             });
+
+             // Prototype feedback for ALL other buttons to show they "work" during demo
+             document.querySelectorAll('.btn, .action-icon').forEach(btn => {
+                 if (!btn.getAttribute('onclick') && !btn.getAttribute('href')) {
+                     btn.addEventListener('click', function(e) {
+                         e.preventDefault();
+                         let actionName = this.innerText.trim() || 'This action';
+                         alert(actionName + ' functionality will be connected to the backend database later!');
+                     });
+                 }
+             });
+        });
+    </script>
+</body>
+</html>

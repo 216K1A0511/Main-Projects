@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Student Extracurricular</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 5px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item i.main-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 35px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-left: 1px solid var(--border);
+            margin-left: 25px;
+        }
+
+        .nav-item.menu-open + .nav-submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 8px 10px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item i {
+            font-size: 0.7rem;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .submenu-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UI Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover);
+        }
+
+        /* Generic Table Elements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .status-accent { background: rgba(139, 92, 246, 0.15); color: var(--accent); }
+
+        /* Form Elements & Filters */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 180px;
+            background-color: rgba(0,0,0,0.3);
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .gallery-info {
+            padding: 1.25rem;
+        }
+
+        .gallery-info h5 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gallery-info p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* Activity Cards */
+        .activity-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+        
+        .activity-card.registered::before {
+            background: var(--success);
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-futbol"></i> Extracurricular
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="student-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-home"></i> Back to Dashboard</button>
+            </a>
+        </div>
+
+        <div class="nav-category">Campus Life</div>
+        
+        <div class="nav-item active" onclick="switchMainTab('sect-activities', this)">
+            <div class="nav-item-content"><i class="fas fa-running main-icon text-warning"></i> 1. Activities</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-committees', this)">
+            <div class="nav-item-content"><i class="fas fa-users main-icon text-success"></i> 2. Committee Members</div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleSubmenu('submenu-events', this)">
+            <div class="nav-item-content"><i class="fas fa-calendar-alt main-icon text-accent"></i> 3. Events</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-events">
+            <div class="submenu-item" onclick="switchMainTab('sect-events-view', this, true)"><i class="fas fa-list"></i> View Events</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-events-gallery', this, true)"><i class="fas fa-images"></i> Event Gallery</div>
+        </div>
+
+        <div class="nav-category">Institution</div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-course-info', this)">
+            <div class="nav-item-content"><i class="fas fa-info-circle main-icon text-info"></i> Course & Seat Details</div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Extracurricular & Organization Info</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Discover campus activities, view institutional committees, and check general admission program statistics.</p>
+            </div>
+            <div>
+                <span class="status-badge" style="background: rgba(139, 92, 246, 0.1); color: var(--accent); border: 1px solid var(--accent); font-size: 0.8rem;">
+                    Student Portal Mode
+                </span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1. ACTIVITIES
+        =========================================== -->
+        <div id="sect-activities" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-running text-warning"></i> Campus Activities & Clubs</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;"><option>All Categories</option><option>Sports</option><option>Technical Clubs</option><option>Cultural</option></select>
+                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Apply Filter</button>
+                </div>
+
+                <div class="activity-grid">
+                    <!-- Activity 1 -->
+                    <div class="activity-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="status-badge status-info" style="margin-bottom: 8px;">Technical Club</span>
+                                <h4 style="color: var(--text-main); margin-bottom: 5px;">Coding Club (CodeNinjas)</h4>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-users"></i> 150+ Members</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 15px;">Join the elite coders of the campus. Weekly algorithmic challenges, hackathon preparations, and peer programming sessions.</p>
+                        <hr style="border-top: 1px dashed var(--border); margin: 0 0 15px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="display: block; font-size: 0.75rem; color: var(--text-dim);">Registration Deadline</span>
+                                <strong style="color: var(--warning); font-size: 0.85rem;">28-Oct-2026</strong>
+                            </div>
+                            <button class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem;" onclick="alert('Successfully registered for Coding Club!')"><i class="fas fa-user-plus"></i> Register</button>
+                        </div>
+                    </div>
+
+                    <!-- Activity 2 -->
+                    <div class="activity-card registered">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="status-badge status-accent" style="margin-bottom: 8px;">Sports</span>
+                                <h4 style="color: var(--text-main); margin-bottom: 5px;">Inter-Dept Basketball</h4>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-users"></i> Tryouts Status</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 15px;">Annual inter-department basketball tournament. Seeking players for the CSE department team.</p>
+                        <hr style="border-top: 1px dashed var(--border); margin: 0 0 15px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="display: block; font-size: 0.75rem; color: var(--text-dim);">Role</span>
+                                <strong style="color: var(--success); font-size: 0.85rem;">Team Member (Selected)</strong>
+                            </div>
+                            <button class="btn btn-success" style="padding: 6px 15px; font-size: 0.8rem; opacity: 0.8; cursor: default;"><i class="fas fa-check"></i> Registered</button>
+                        </div>
+                    </div>
+
+                    <!-- Activity 3 -->
+                    <div class="activity-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="status-badge status-danger" style="margin-bottom: 8px;">Cultural</span>
+                                <h4 style="color: var(--text-main); margin-bottom: 5px;">Annual Theatre Fest</h4>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-ticket-alt"></i> Open Call</span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 15px;">Looking for actors, scriptwriters, and stage managers for the upcoming winter arts festival.</p>
+                        <hr style="border-top: 1px dashed var(--border); margin: 0 0 15px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <span style="display: block; font-size: 0.75rem; color: var(--text-dim);">Auditions</span>
+                                <strong style="color: var(--text-main); font-size: 0.85rem;">05-Nov-2026</strong>
+                            </div>
+                            <button class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem;" onclick="alert('Successfully registered for Theatre Fest auditions!')"><i class="fas fa-user-plus"></i> Register</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             2. COMMITTEE MEMBERS
+        =========================================== -->
+        <div id="sect-committees" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-users text-success"></i> Institution Committees</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;">
+                        <option>Anti-Ragging Committee</option>
+                        <option selected>Disciplinary Committee</option>
+                        <option>Student Welfare Board</option>
+                        <option>Internal Complaints Committee (ICC)</option>
+                    </select>
+                </div>
+
+                <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: var(--text-main); margin-bottom: 5px;">Disciplinary Committee</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-dim);">Oversees adherence to the institution's code of conduct and manages disciplinary proceedings.</p>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Member Name</th>
+                            <th>Designation / Dept</th>
+                            <th>Committee Role</th>
+                            <th>Member Type</th>
+                            <th>Contact Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Employee Members -->
+                        <tr>
+                            <td><div style="font-weight: 500;">Dr. Robert Chase</div></td>
+                            <td>Principal</td>
+                            <td><span class="status-badge status-warning">Chairperson</span></td>
+                            <td><span class="status-badge" style="background: rgba(255,255,255,0.1);">Employee</span></td>
+                            <td><span style="font-size: 0.8rem; color: var(--info);"><i class="fas fa-envelope"></i> admin@ideal.edu</span></td>
+                        </tr>
+                        <tr>
+                            <td><div style="font-weight: 500;">Prof. Sarah Jenkins</div></td>
+                            <td>HOD - ECE</td>
+                            <td><span class="status-badge status-info">Member</span></td>
+                            <td><span class="status-badge" style="background: rgba(255,255,255,0.1);">Employee</span></td>
+                            <td><span style="font-size: 0.8rem; color: var(--info);"><i class="fas fa-envelope"></i> s.jenkins@ideal.edu</span></td>
+                        </tr>
+                        <!-- Student Members -->
+                        <tr>
+                            <td><div style="font-weight: 500; color: var(--primary);">Alex Mercer</div></td>
+                            <td>CSE - Sem 5</td>
+                            <td><span class="status-badge status-success">Student Rep</span></td>
+                            <td><span class="status-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--primary);">Student</span></td>
+                            <td><span style="font-size: 0.8rem; color: var(--info);"><i class="fas fa-envelope"></i> stu_alex@ideal.edu</span></td>
+                        </tr>
+                        <tr>
+                            <td><div style="font-weight: 500; color: var(--primary);">Priya Patel</div></td>
+                            <td>MECH - Sem 7</td>
+                            <td><span class="status-badge status-success">Student Rep</span></td>
+                            <td><span class="status-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--primary);">Student</span></td>
+                            <td><span style="font-size: 0.8rem; color: var(--info);"><i class="fas fa-envelope"></i> stu_priya@ideal.edu</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3a. EVENTS (VIEW)
+        =========================================== -->
+        <div id="sect-events-view" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-calendar-alt text-accent"></i> Institution Events Schedule</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <input type="month" class="form-control" value="2026-10">
+                    <button class="btn btn-secondary"><i class="fas fa-sync"></i> Show Current Month</button>
+                </div>
+
+                <div class="list-group">
+                    <!-- Single Day Event -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: center;">
+                        <div style="background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 15px; text-align: center; min-width: 100px;">
+                            <div style="font-size: 0.9rem; color: var(--accent); font-weight: 600; text-transform: uppercase;">OCT</div>
+                            <div style="font-size: 2.2rem; font-weight: 700; line-height: 1;">15</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 5px;">Thursday</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <h3 style="color: var(--text-main);">Alumni Meet & Greet</h3>
+                                <span class="status-badge status-success">Single Day</span>
+                            </div>
+                            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; line-height: 1.5;">Annual networking event bringing back prominent alumni from the tech industry for interactive sessions with current final year students.</p>
+                            <div style="display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-main);">
+                                <span><i class="far fa-clock text-accent"></i> 10:00 AM - 04:00 PM</span>
+                                <span><i class="fas fa-map-marker-alt text-danger"></i> Main Auditorium</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Multi Day Event -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; gap: 20px; align-items: center;">
+                        <div style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 15px; text-align: center; min-width: 100px;">
+                            <div style="font-size: 0.9rem; color: var(--primary); font-weight: 600; text-transform: uppercase;">NOV</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; line-height: 1; margin: 5px 0;">10 - 12</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim);">Tue - Thu</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <h3 style="color: var(--text-main);">TechSymposium '26</h3>
+                                <span class="status-badge status-info">Multi Day</span>
+                            </div>
+                            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px; line-height: 1.5;">Three-day national level technical fest featuring hackathons, paper presentations, robotics competitions, and esports tournaments.</p>
+                            <div style="display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-main);">
+                                <span><i class="far fa-clock text-primary"></i> 09:00 AM Daily Start</span>
+                                <span><i class="fas fa-map-marker-alt text-danger"></i> Full Campus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3b. EVENTS GALLERY
+        =========================================== -->
+        <div id="sect-events-gallery" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-images text-accent"></i> Events Gallery</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;">
+                        <option>Graduation Ceremony 2025</option>
+                        <option selected>TechFEST Hackathon 2025</option>
+                        <option>Sports Day 2025</option>
+                    </select>
+                </div>
+
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <div class="gallery-img" style="background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');">
+                            <span class="status-badge bg-primary" style="position: absolute; top: 10px; right: 10px; color: white;">Hackathon</span>
+                        </div>
+                        <div class="gallery-info">
+                            <h5>24-Hour Coding Challenge</h5>
+                            <p>Teams working through the night to solve complex software problems.</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-img" style="background-image: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');">
+                            <span class="status-badge text-warning" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7);">Seminar</span>
+                        </div>
+                        <div class="gallery-info">
+                            <h5>Keynote Speech</h5>
+                            <p>Guest speaker addressing the students on AI advancements.</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-img" style="background-image: url('https://images.unsplash.com/photo-1523580494112-071dcb923115?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');">
+                            <span class="status-badge text-success" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7);">Awards</span>
+                        </div>
+                        <div class="gallery-info">
+                            <h5>Prize Distribution</h5>
+                            <p>Closing ceremony rewarding the best innovations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             GENERAL INFO (COURSE DETAILS)
+        =========================================== -->
+        <div id="sect-course-info" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-info-circle text-info"></i> Institution Program Details & Seat Matrix</div>
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.2); border: 1px dashed var(--border); border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                    <h3 style="color: var(--text-main); margin-bottom: 5px;">Academic Year: 2026-2027</h3>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">Overview of total intakes and current seat occupancies across all major departments.</p>
+                </div>
+
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;">
+                        <option>Undergraduate Programs (B.Tech)</option>
+                        <option>Postgraduate Programs (M.Tech)</option>
+                        <option>Management Programs (MBA)</option>
+                    </select>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Program / Course Name</th>
+                            <th>Duration</th>
+                            <th style="text-align: center;">Total Seats (Intake)</th>
+                            <th style="text-align: center;">Seats Filled</th>
+                            <th style="text-align: center;">Vacant Seats</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><div style="font-weight: 500;">B.Tech Computer Science (CSE)</div></td>
+                            <td>4 Years</td>
+                            <td style="text-align: center; font-weight: 600;">120</td>
+                            <td style="text-align: center; color: var(--success); font-weight: 600;">120</td>
+                            <td style="text-align: center; color: var(--text-dim);">0</td>
+                            <td><span class="status-badge status-danger">Seats Full</span></td>
+                        </tr>
+                        <tr>
+                            <td><div style="font-weight: 500;">B.Tech Electronics (ECE)</div></td>
+                            <td>4 Years</td>
+                            <td style="text-align: center; font-weight: 600;">120</td>
+                            <td style="text-align: center; color: var(--success); font-weight: 600;">105</td>
+                            <td style="text-align: center; color: var(--info); font-weight: 600;">15</td>
+                            <td><span class="status-badge status-success">Open</span></td>
+                        </tr>
+                        <tr>
+                            <td><div style="font-weight: 500;">B.Tech Mechanical (MECH)</div></td>
+                            <td>4 Years</td>
+                            <td style="text-align: center; font-weight: 600;">60</td>
+                            <td style="text-align: center; color: var(--success); font-weight: 600;">48</td>
+                            <td style="text-align: center; color: var(--info); font-weight: 600;">12</td>
+                            <td><span class="status-badge status-success">Open</span></td>
+                        </tr>
+                        <tr>
+                            <td><div style="font-weight: 500;">B.Tech Civil Engineering</div></td>
+                            <td>4 Years</td>
+                            <td style="text-align: center; font-weight: 600;">60</td>
+                            <td style="text-align: center; color: var(--success); font-weight: 600;">58</td>
+                            <td style="text-align: center; color: var(--warning); font-weight: 600;">2</td>
+                            <td><span class="status-badge status-warning">Filling Fast</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Tab Selection Logic
+        function switchMainTab(sectionId, element, isSubmenu = false) {
+            // Hide all content sections
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            
+            // Remove active status from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
+            if(element && !isSubmenu) element.classList.add('active');
+            
+            if(element && isSubmenu) {
+                element.classList.add('active');
+                element.parentElement.previousElementSibling.style.color = 'var(--primary)';
+            }
+
+            // Route to correct visual section
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Submenu Toggles
+        function toggleSubmenu(submenuId, element) {
+            element.classList.toggle('menu-open');
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon) {
+                if(element.classList.contains('menu-open')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

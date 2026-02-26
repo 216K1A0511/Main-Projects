@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - HOD Dashboard</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #8b5cf6;     /* Purple/Violet */
+            --secondary: #6366f1;   /* Indigo */
+            --accent: #f43f5e;      /* Rose */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.6); /* Slate 800 */
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* ------------------------
+           HEADER
+        ------------------------- */
+        header {
+            height: 70px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid var(--border);
+            padding: 5px 15px 5px 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-btn:hover {
+            background: var(--hover);
+            border-color: var(--primary);
+        }
+
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: url('https://ui-avatars.com/api/?name=HOD&background=8b5cf6&color=fff') center/cover;
+            border: 2px solid var(--bg);
+        }
+
+        /* ------------------------
+           DASHBOARD LAYOUT
+        ------------------------- */
+        .dashboard-container {
+            padding: 2.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .page-desc {
+            color: var(--text-dim);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Interactive Quote Block */
+        .quote-block {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
+        }
+
+        .quote-block i.fa-quote-left {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            font-size: 6rem;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: 1;
+        }
+
+        .quote-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .quote-actions {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Metrics Grids */
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .metric-sub {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        /* Buttons setup */
+        .btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: var(--glass);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--glass);
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+
+        /* Lists */
+        .event-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .event-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .event-date {
+            background: var(--glass);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 50px;
+        }
+        .event-date span:first-child { display: block; font-size: 0.75rem; color: var(--primary); font-weight: 700; text-transform: uppercase; }
+        .event-date span:last-child { display: block; font-size: 1.2rem; font-weight: 700; }
+
+        /* Navigation to Setup */
+        .setup-nav-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+            border: 1px solid var(--primary);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .setup-nav-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(139, 92, 246, 0.3); }
+
+        /* Floating action for Notice */
+        .create-notice-btn {
+            background: var(--warning);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-university"></i> IDEAL-CMS 
+            <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 300; margin-left: 5px;">| Department HOD Portal</span>
+        </div>
+        
+        <div class="header-actions">
+            <!-- 1. Email Icon Button -->
+            <button class="icon-btn" title="Internal Portal Email">
+                <i class="fas fa-envelope"></i>
+                <div class="badge" style="background: var(--primary);">8</div>
+            </button>
+            
+            <!-- 2. To-do Icon Button -->
+            <button class="icon-btn" title="Manage To-Do Tasks">
+                <i class="fas fa-tasks"></i>
+                <div class="badge" style="background: var(--warning);">2</div>
+            </button>
+
+            <!-- 5. Noticeboard -->
+            <button class="icon-btn" title="Noticeboard">
+                <i class="fas fa-bell"></i>
+                <div class="badge" style="background: var(--accent);">3</div>
+            </button>
+
+            <!-- 3. HOD Profile Button -->
+            <div class="profile-btn" title="Edit Profile & Password">
+                <div class="profile-img"></div>
+                <div style="display: flex; flex-direction: column; text-align: left;">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Dr. Alan Turing</span>
+                    <span style="font-size: 0.7rem; color: var(--text-dim);">HOD - Computer Science</span>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 0.8rem; color: var(--text-dim); margin-left: 5px;"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+        
+        <div class="page-desc">
+            <div>
+                <h1 class="page-title">Department Command Center</h1>
+                <p>Full authorization oversight for Computer Science Branch analytics and personnel.</p>
+            </div>
+            <div>
+                <a href="hod-academic-setup.html" class="btn btn-primary" style="font-size: 1rem; padding: 12px 24px;">
+                    <i class="fas fa-cogs"></i> Go to Academic Setup
+                </a>
+            </div>
+        </div>
+
+        <!-- Interactive Quote of the Day -->
+        <div class="quote-block">
+            <i class="fas fa-quote-left"></i>
+            <div class="quote-content">
+                <h4 style="color: var(--primary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Quote of the Day <span style="font-weight:400; color:var(--text-dim); text-transform:none;">(Randomly Generated)</span></h4>
+                <p style="font-size: 1.2rem; font-weight: 300; font-style: italic; max-width: 800px;">"The advance of technology is based on making it fit in so that you don't really even notice it, so it's part of everyday life."</p>
+            </div>
+            <div class="quote-actions">
+                <button class="btn btn-primary"><i class="fas fa-plus"></i> New Quote</button>
+                <button class="btn btn-outline"><i class="fas fa-pen"></i> Edit</button>
+                <button class="btn btn-outline" style="color: var(--accent); border-color: rgba(244, 63, 94, 0.3);"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+
+        <!-- Metric Cards: Top Tier (Personnel) -->
+        <div class="grid-4">
+            <!-- 6. Students Count -->
+            <div class="card" style="border-top: 3px solid var(--info);">
+                <h3>Total Active Students <i class="fas fa-user-graduate" style="color: var(--info);"></i></h3>
+                <div class="metric-value">1,248</div>
+                <div class="metric-sub"><span style="color: var(--success);"><i class="fas fa-arrow-up"></i> +42</span> vs last semester</div>
+            </div>
+
+            <!-- 7. Faculty Count -->
+            <div class="card" style="border-top: 3px solid var(--secondary);">
+                <h3>Total Active Faculty <i class="fas fa-chalkboard-teacher" style="color: var(--secondary);"></i></h3>
+                <div class="metric-value">64</div>
+                <div class="metric-sub"><span style="color: var(--success);"><i class="fas fa-arrow-up"></i> +2</span> additions</div>
+            </div>
+
+            <!-- 15. Tutor Count -->
+            <div class="card" style="border-top: 3px solid var(--primary);">
+                <h3>Active Tutors <i class="fas fa-user-friends" style="color: var(--primary);"></i></h3>
+                <div class="metric-value">32</div>
+                <div class="metric-sub">View Tutor Allocation List</div>
+            </div>
+
+            <!-- 13. Online User Count -->
+            <div class="card" style="border-top: 3px solid var(--success);">
+                <h3>Users Online Now <span class="badge" style="position:relative; top:0; right:0; display:inline-flex; width:10px; height:10px; background:var(--success);"></span></h3>
+                <div class="metric-value" style="color: var(--success);">142</div>
+                <div class="metric-sub">Live concurrent sessions</div>
+            </div>
+        </div>
+
+        <!-- Metric Cards: Mid Tier (Operational Health) -->
+        <div class="grid-3">
+            <!-- 4. Attendance Count -->
+            <div class="card">
+                <h3>Global Branch Attendance <i class="fas fa-users-viewfinder" style="color: var(--success);"></i></h3>
+                <div style="display: flex; gap: 1rem; margin-top: 10px;">
+                    <div>
+                        <div style="font-size: 1.8rem; font-weight: 700;">84.2%</div>
+                        <span style="font-size: 0.8rem; color: var(--text-dim);">Present Today</span>
+                    </div>
+                    <div style="border-left: 1px solid var(--border); padding-left: 1rem;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--accent);">15.8%</div>
+                        <span style="font-size: 0.8rem; color: var(--text-dim);">Absent / OD</span>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 15px;"><i class="fas fa-chart-bar"></i> View Batch Breakdown</button>
+            </div>
+
+            <!-- 11. Syllabus Completion -->
+            <div class="card">
+                <h3>Syllabus Progress <i class="fas fa-book-open" style="color: var(--warning);"></i></h3>
+                <div class="metric-value">68% <span class="metric-sub">Average global</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 68%;"></div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 10px;">Aggregated across all assigned subjects.</p>
+            </div>
+
+            <!-- 8. Alteration Count -->
+            <div class="card">
+                <h3>Faculty Substitutions <i class="fas fa-exchange-alt" style="color: var(--accent);"></i></h3>
+                <div class="metric-value">12 <span class="metric-sub">Active Alterations</span></div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 10px;">Review cross-department structural changes.</p>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 5px;"><i class="fas fa-clipboard-list"></i> View Alteration Log</button>
+            </div>
+        </div>
+
+        <!-- Metric Cards: Leave Tracking -->
+        <div class="grid-2">
+            <!-- 9. Student Leave Count -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));">
+                <div style="display: flex; justify-content: space-between;">
+                    <h3>Student Leaves <i class="fas fa-user-minus"></i></h3>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--warning);">24 <span style="font-size:0.8rem; color:var(--text-dim);">pending</span></span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Awaiting HOD/Tutor structural approvals.</p>
+                <button class="btn btn-outline" style="width: 100%;">Process Student Leaves</button>
+            </div>
+
+            <!-- 10. Faculty Leave Count -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));">
+                <div style="display: flex; justify-content: space-between;">
+                    <h3>Faculty Leaves <i class="fas fa-chalkboard"></i></h3>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">8 <span style="font-size:0.8rem; color:var(--text-dim);">on leave</span></span>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Review active faculty absenteeism protocols.</p>
+                <button class="btn btn-outline" style="width: 100%;">View Leave Register</button>
+            </div>
+        </div>
+
+        <!-- Informational Modules (Events, Placement, News, Notices) -->
+        <div class="grid-4">
+            
+            <!-- 5. Noticeboard (Direct Edit logic) / 17. News -->
+            <div class="card" style="grid-column: span 2;">
+                <h3>Internal Noticeboard & News <a href="#" class="create-notice-btn">+ Create Notice</a></h3>
+                <ul class="event-list">
+                    <li class="event-item">
+                        <div class="event-date"><span>Nov</span><span>15</span></div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.95rem;">Mid-Term Examination Schedules Released</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">Posted by Examination Dept.</div>
+                        </div>
+                    </li>
+                    <li class="event-item">
+                        <div class="event-date" style="background: rgba(16, 185, 129, 0.1); color: var(--success);"><span>News</span><span><i class="fas fa-newspaper"></i></span></div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.95rem;">CS Dept wins National Hackathon 2026!</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">Live on Campus Newsfeed</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 12. Placement Drives & 14. Events / 16. Holidays -->
+            <div class="card" style="grid-column: span 2;">
+                <h3>Upcoming Drives & Events <i class="fas fa-calendar-check" style="color: var(--primary);"></i></h3>
+                <ul class="event-list">
+                    <li class="event-item">
+                        <div class="event-date" style="background: rgba(14, 165, 233, 0.1); color: var(--info);"><span>Drive</span><span><i class="fas fa-briefcase"></i></span></div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.95rem;">Google Software Eng. Placement Drive</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">Nov 20th • Final Year CS Students</div>
+                        </div>
+                    </li>
+                    <li class="event-item">
+                        <div class="event-date" style="background: rgba(244, 63, 94, 0.1); color: var(--accent);"><span>Hol</span><span><i class="fas fa-sun"></i></span></div>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.95rem;">Diwali Break Commences</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">Official Monthly Holiday</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

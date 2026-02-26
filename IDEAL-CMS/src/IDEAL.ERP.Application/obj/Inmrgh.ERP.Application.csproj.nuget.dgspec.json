@@ -1,0 +1,150 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Application\\Inmrgh.ERP.Application.csproj": {}
+  },
+  "projects": {
+    "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Application\\Inmrgh.ERP.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Application\\Inmrgh.ERP.Application.csproj",
+        "projectName": "Inmrgh.ERP.Application",
+        "projectPath": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Application\\Inmrgh.ERP.Application.csproj",
+        "packagesPath": "C:\\Users\\BACKOFFICE\\.nuget\\packages\\",
+        "outputPath": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Application\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\BACKOFFICE\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\Inmrgh.ERP.Domain.csproj": {
+                "projectPath": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\Inmrgh.ERP.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[13.0.1, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
+              "target": "Package",
+              "version": "[11.9.0, )"
+            },
+            "MediatR": {
+              "target": "Package",
+              "version": "[12.2.0, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.418/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\Inmrgh.ERP.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\Inmrgh.ERP.Domain.csproj",
+        "projectName": "Inmrgh.ERP.Domain",
+        "projectPath": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\Inmrgh.ERP.Domain.csproj",
+        "packagesPath": "C:\\Users\\BACKOFFICE\\.nuget\\packages\\",
+        "outputPath": "E:\\data storage  laptop for given mani\\downloads\\Telegram Desktop\\all\\dude projects\\Inmrgh-CMS\\src\\Inmrgh.ERP.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\BACKOFFICE\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.418/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

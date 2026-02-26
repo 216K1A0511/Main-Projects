@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Student Placements & Scholarships</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 5px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item i.main-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 35px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-left: 1px solid var(--border);
+            margin-left: 25px;
+        }
+
+        .nav-item.menu-open + .nav-submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 8px 10px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item i {
+            font-size: 0.7rem;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .submenu-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UI Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+
+        .btn-secondary { background: var(--glass); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--hover); }
+        
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+
+        /* Form Elements & Filters */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        /* Generic Table Elements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+        .status-accent { background: rgba(139, 92, 246, 0.15); color: var(--accent); }
+
+        /* Custom Cards */
+        .drive-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .drive-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .company-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--bg);
+            flex-shrink: 0;
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-briefcase"></i> Career Center
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="student-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-home"></i> Back to Dashboard</button>
+            </a>
+        </div>
+
+        <div class="nav-category">Placements</div>
+        
+        <div class="nav-item active" onclick="toggleSubmenu('submenu-placements', this)">
+            <div class="nav-item-content"><i class="fas fa-building main-icon text-info"></i> 1. Placements Drives</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-placements" style="display: flex;">
+            <div class="submenu-item active" onclick="switchMainTab('sect-place-view', this, true)"><i class="fas fa-list"></i> View All Drives</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-place-my', this, true)"><i class="fas fa-user-check"></i> My Placements</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-trainings', this)">
+            <div class="nav-item-content"><i class="fas fa-chalkboard-teacher main-icon text-warning"></i> 2. Placement Training</div>
+        </div>
+
+        <div class="nav-category">Financial Aid</div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-scholarships', this)">
+            <div class="nav-item-content"><i class="fas fa-award main-icon text-accent"></i> Scholarships Status</div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Placements & Scholarships</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Track your campus placement drives, attend specialized training, and manage financial scholarships.</p>
+            </div>
+            <div>
+                <span class="status-badge" style="background: rgba(14, 165, 233, 0.1); color: var(--info); border: 1px solid var(--info); font-size: 0.8rem;">
+                    Student Portal Mode
+                </span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1A. VIEW PLACEMENTS (ALL DRIVES)
+        =========================================== -->
+        <div id="sect-place-view" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-building text-info"></i> Upcoming & Previous Campus Drives</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;">
+                        <option>Status: All</option>
+                        <option selected>Status: Upcoming</option>
+                        <option>Status: Completed</option>
+                    </select>
+                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Apply Filter</button>
+                </div>
+
+                <div class="list-group">
+                    <!-- Drive 1 -->
+                    <div class="drive-card">
+                        <div class="company-logo">
+                            <i class="fab fa-microsoft" style="color: #00a4ef;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <h3 style="color: var(--text-main);">Microsoft - Software Engineer (SDE I)</h3>
+                                <span class="status-badge status-info">Upcoming</span>
+                            </div>
+                            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px;">Eligible Branches: CSE, IT, ECE | Minimum CGPA: 8.5 (No Active Arrears)</p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-main);">
+                                <span><i class="far fa-calendar-alt text-warning"></i> Drive Date: 12-Nov-2026</span>
+                                <span><i class="fas fa-money-bill-wave text-success"></i> CTC: 15-20 LPA</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="alert('Checking eligibility and registering...')">Apply Now</button>
+                        </div>
+                    </div>
+
+                    <!-- Drive 2 -->
+                    <div class="drive-card">
+                        <div class="company-logo">
+                            <i class="fab fa-amazon" style="color: #ff9900;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <h3 style="color: var(--text-main);">Amazon - Cloud Support Associate</h3>
+                                <span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--text-dim);">Completed</span>
+                            </div>
+                            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 10px;">Eligible Branches: All Circuit Branches | Minimum CGPA: 7.0</p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-main);">
+                                <span><i class="far fa-calendar-alt text-warning"></i> Conducted On: 05-Sep-2026</span>
+                                <span><i class="fas fa-users text-info"></i> Selected: 12 Students</span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary text-primary" onclick="alert('Viewing selection list...')">View Results</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1B. MY PLACEMENTS
+        =========================================== -->
+        <div id="sect-place-my" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-user-check text-success"></i> My Placements History & Offers</div>
+                </div>
+                
+                <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h5 style="margin-bottom: 5px; color: var(--text-main);">Current Placement Status</h5>
+                    <p style="color: var(--text-dim); font-size: 0.9rem;">You are currently holding <strong style="color: var(--success);">1 Job Offer</strong>. As per campus policy, you can only apply for 'Dream Tier' companies now.</p>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Role / Position</th>
+                            <th>Applied On</th>
+                            <th>Interview Status</th>
+                            <th>Offer Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Cognizant Technology Solutions</td>
+                            <td>Programmer Analyst Trainee</td>
+                            <td>10-Aug-2026</td>
+                            <td><span class="status-badge status-success">Cleared</span></td>
+                            <td><span class="status-badge" style="background: var(--success); color: white;"><i class="fas fa-gift"></i> Offered</span></td>
+                            <td><a href="#" style="color: var(--primary); font-size: 0.9rem;"><i class="fas fa-download"></i> Offer Letter</a></td>
+                        </tr>
+                        <tr>
+                            <td>Tata Consultancy Services</td>
+                            <td>Ninja Profile</td>
+                            <td>05-Sep-2026</td>
+                            <td><span class="status-badge status-warning">Waitlisted</span></td>
+                            <td><span class="status-badge status-warning">Pending</span></td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Infosys</td>
+                            <td>Systems Engineer</td>
+                            <td>01-Oct-2026</td>
+                            <td><span class="status-badge status-danger">Not Cleared</span></td>
+                            <td><span class="status-badge status-danger">Rejected</span></td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             2. PLACEMENT TRAININGS
+        =========================================== -->
+        <div id="sect-trainings" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-chalkboard-teacher text-warning"></i> Upcoming Placement Training Drives</div>
+                </div>
+                
+                <div class="grid-2">
+                    <!-- Training 1 -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                        <span class="status-badge status-info" style="margin-bottom: 10px;">Aptitude Training</span>
+                        <h3 style="color: var(--text-main); margin-bottom: 5px;">Quantitative Aptitude & Logical Reasoning BootCamp</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.5;">Intensive 5-day training covering major aptitude topics frequently asked by service-based companies.</p>
+                        
+                        <div style="background: var(--glass); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);"><i class="far fa-calendar-alt"></i> Dates:</span>
+                                <span style="color: var(--text-main);">01-Nov to 05-Nov-2026</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);"><i class="fas fa-map-marker-alt"></i> Venue:</span>
+                                <span style="color: var(--text-main);">Main Auditorium</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-secondary text-success" style="width: 100%;"><i class="fas fa-check"></i> Registered Automatically</button>
+                    </div>
+
+                    <!-- Training 2 -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 20px;">
+                        <span class="status-badge status-accent" style="margin-bottom: 10px;">Technical Training</span>
+                        <h3 style="color: var(--text-main); margin-bottom: 5px;">Advanced Data Structures in C++ / Java / Python</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.5;">Mock coding interviews and competitive programming focused sessions for product-based company drives.</p>
+                        
+                        <div style="background: var(--glass); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);"><i class="far fa-calendar-alt"></i> Dates:</span>
+                                <span style="color: var(--text-main);">Every Saturday (Nov)</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);"><i class="fas fa-map-marker-alt"></i> Venue:</span>
+                                <span style="color: var(--text-main);">CSE Labs 1, 2 & 3</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-edit"></i> Enroll for Training</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3. SCHOLARSHIPS
+        =========================================== -->
+        <div id="sect-scholarships" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-award text-accent"></i> Academic Scholarships Status</div>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Apply for Scholarship</button>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Scholarship Name / Type</th>
+                            <th>Academic Year</th>
+                            <th>Amount (₹)</th>
+                            <th>Applied On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#SCH-2026-0812</td>
+                            <td>Merit-cum-Means Scholarship</td>
+                            <td>2026 - 2027</td>
+                            <td>25,000</td>
+                            <td>15-Aug-2026</td>
+                            <td><span class="status-badge status-success">Approved & Disbursed</span></td>
+                        </tr>
+                        <tr>
+                            <td>#SCH-2025-1105</td>
+                            <td>State Govt. SC/ST Post-Matric</td>
+                            <td>2025 - 2026</td>
+                            <td>18,500</td>
+                            <td>10-Sep-2025</td>
+                            <td><span class="status-badge status-warning">Pending Bank Processing</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Tab Selection Logic
+        function switchMainTab(sectionId, element, isSubmenu = false) {
+            // Hide all content sections
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            
+            // Remove active status from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
+            if(element && !isSubmenu) element.classList.add('active');
+            
+            if(element && isSubmenu) {
+                element.classList.add('active');
+                element.parentElement.previousElementSibling.style.color = 'var(--primary)';
+            }
+
+            // Route to correct visual section
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Submenu Toggles
+        function toggleSubmenu(submenuId, element) {
+            element.classList.toggle('menu-open');
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon) {
+                if(element.classList.contains('menu-open')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

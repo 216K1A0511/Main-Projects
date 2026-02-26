@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #38bdf8;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            height: 70px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            border-color: var(--primary);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .profile-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            object-fit: cover;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .kpi-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .kpi-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .kpi-info h3 {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .kpi-info p {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+        .span-4 { grid-column: span 4; }
+
+        .dashboard-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 1.75rem;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+
+        .dashboard-section:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Lists */
+        .scroll-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--glass);
+            margin-bottom: 0.75rem;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border);
+        }
+
+        .list-item-content h4 {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .list-item-content p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+
+        .priority {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .high { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+        .med { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .low { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            border-radius: 8px;
+        }
+
+        .btn-glass {
+            background: var(--glass);
+            border: 1px solid var(--border);
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger { background: rgba(244, 63, 94, 0.2); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+        .btn-danger:hover { background: #f43f5e; color: white; }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover { color: white; transform: rotate(90deg); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+        /* Notification Popup */
+        .notification-popup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+            border-left: 4px solid var(--accent);
+            padding: 1.25rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 350px;
+        }
+
+        .notification-popup.show {
+            transform: translateX(0);
+        }
+
+        .inst-dropdown {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            margin-right: 15px;
+        }
+
+        .inst-dropdown:focus, .inst-dropdown:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+        
+        .inst-dropdown option {
+            background: var(--bg);
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fas fa-university" style="color: var(--primary);"></i>
+            <span>IDEAL-CMS</span>
+            <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-dim); margin-left:10px; border-left: 1px solid var(--border); padding-left: 10px;">Office Admin</span>
+        </div>
+        
+        <div class="header-actions">
+            <select class="inst-dropdown" id="instSelector" onchange="changeInstitution(this.value)">
+                <option value="all">🌐 All Institutions System</option>
+                <option value="eng">Engineering College - Main</option>
+                <option value="med">Medical Institute</option>
+                <option value="arts">Arts & Science Academy</option>
+            </select>
+
+            <!-- Email Icon -->
+            <div class="icon-btn" title="Email Portal" onclick="openModal('emailModal')">
+                <i class="fas fa-envelope"></i>
+                <span class="badge" id="email-badge">3</span>
+            </div>
+
+            <!-- To-do Icon -->
+            <div class="icon-btn" title="To-Do List" onclick="openModal('todoModal')">
+                <i class="fas fa-list-check"></i>
+                <span class="badge" id="todo-badge">2</span>
+            </div>
+
+            <!-- Profile Dropdown -->
+            <div style="position: relative;">
+                <img src="https://ui-avatars.com/api/?name=Office+Admin&background=6366f1&color=fff" class="profile-img" id="profile-pic" onclick="openModal('profileModal')" title="Admin Profile">
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- KPI Row -->
+        <div class="kpi-card" onclick="alert('Navigating to Students List')">
+            <div class="kpi-icon" style="background: rgba(99, 102, 241, 0.2); color: #6366f1;"><i class="fas fa-user-graduate"></i></div>
+            <div class="kpi-info"><h3>Active Students</h3><p>3,450</p></div>
+        </div>
+        <div class="kpi-card" onclick="alert('Navigating to Faculties List')">
+            <div class="kpi-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="kpi-info"><h3>Active Faculties</h3><p>280</p></div>
+        </div>
+        <div class="kpi-card" onclick="alert('Navigating to Job Applications')">
+            <div class="kpi-icon" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;"><i class="fas fa-file-signature"></i></div>
+            <div class="kpi-info"><h3>Job Applications</h3><p>64</p></div>
+        </div>
+        <div class="kpi-card" onclick="alert('Navigating to Placement Drives')">
+            <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;"><i class="fas fa-briefcase"></i></div>
+            <div class="kpi-info"><h3>Placement Drives</h3><p>8</p></div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="dashboard-section span-2">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-bar" style="color: var(--primary)"></i> Department-Wise Students</h2>
+            </div>
+            <div style="position: relative; height: 100%; min-height: 250px;">
+                <canvas id="deptChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-section span-2">
+            <div class="section-header">
+                <h2><i class="fas fa-bullhorn" style="color: var(--accent)"></i> Notice Board</h2>
+                <button class="btn btn-sm btn-glass" onclick="openModal('noticeModal')"><i class="fas fa-plus"></i> Create Notice</button>
+            </div>
+            <div class="scroll-list" id="notice-list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>End Semester Exam Schedule</h4>
+                        <p><i class="fas fa-clock"></i> Posted by Office Admin • 2 hours ago</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Library Book Return Policy Update</h4>
+                        <p><i class="fas fa-clock"></i> Posted by Office Admin • 1 day ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-day" style="color: var(--warning)"></i> Upcoming Events</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Annual Cultural Fest 2026</h4>
+                        <p style="color: var(--warning);"><i class="fas fa-calendar-alt"></i> March 15th, 2026</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Alumni Meet & Greet</h4>
+                        <p style="color: var(--warning);"><i class="fas fa-calendar-alt"></i> April 5th, 2026</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Inter-College Hackathon</h4>
+                        <p style="color: var(--warning);"><i class="fas fa-calendar-alt"></i> April 20th, 2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-briefcase" style="color: var(--success)"></i> Placement Drives</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>TCS Ninja Recruitment</h4>
+                        <p><i class="fas fa-laptop-code"></i> Engineering Dept • <span style="color: var(--success);">Tomorrow</span></p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Infosys Campus Select</h4>
+                        <p><i class="fas fa-laptop-code"></i> All Depts • <span style="color: var(--success);">Next Week</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-umbrella-beach" style="color: var(--info)"></i> Monthly Holidays</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Holi</h4>
+                        <p><i class="fas fa-tree"></i> March 14, 2026</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>Good Friday</h4>
+                        <p><i class="fas fa-tree"></i> April 10, 2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper" style="color: var(--secondary)"></i> News Updates</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item" style="background: rgba(168, 85, 247, 0.1); border-left: 3px solid var(--secondary);">
+                    <div class="list-item-content">
+                        <h4>College Ranked #1</h4>
+                        <p>We are proud to announce our #1 state ranking in academic excellence for 2026.</p>
+                    </div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-content">
+                        <h4>New AI Robotics Lab Inaugurated</h4>
+                        <p>The state-of-the-art lab is now open for students.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section span-4">
+            <div class="section-header">
+                <h2><i class="fas fa-quote-left" style="color: var(--primary)"></i> Quote of the Day</h2>
+                <button class="btn btn-sm btn-glass" onclick="openModal('quoteModal')"><i class="fas fa-cog"></i> Manage Quotes</button>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1rem;">
+                <p id="daily-quote-text" style="font-size: 1.6rem; font-style: italic; color: var(--text-main); margin-bottom: 1rem;">"Education is the most powerful weapon which you can use to change the world."</p>
+                <h4 id="daily-quote-author" style="color: var(--primary); font-weight: 600; font-size: 1.1rem;">- Nelson Mandela</h4>
+            </div>
+        </div>
+    </main>
+
+    <!-- EMAIL MODAL -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-envelope" style="color: var(--primary)"></i> Internal Email System</h3>
+                <button class="close-btn" onclick="closeModal('emailModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <label>To (User / Department Group)</label>
+                <select class="form-control">
+                    <option>All Students</option>
+                    <option>All Faculties</option>
+                    <option>Specific Email ID</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" class="form-control" placeholder="Enter subject...">
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea class="form-control" rows="4" placeholder="Type your message here..."></textarea>
+            </div>
+            <button class="btn" style="width: 100%;" onclick="alert('Email Sent Successfully!'); closeModal('emailModal');"><i class="fas fa-paper-plane"></i> Send Email</button>
+        </div>
+    </div>
+
+    <!-- TO-DO MODAL -->
+    <div class="modal-overlay" id="todoModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-list-check" style="color: var(--success)"></i> My To-Do Tasks</h3>
+                <button class="close-btn" onclick="closeModal('todoModal')"><i class="fas fa-times"></i></button>
+            </div>
+
+            <!-- Create Todo Form -->
+            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem;">Add New Task</h4>
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+                    <input type="text" id="todo-text" class="form-control" placeholder="Task description...">
+                    <select id="todo-priority" class="form-control">
+                        <option value="high">High Priority</option>
+                        <option value="med">Medium Priority</option>
+                        <option value="low">Low Priority</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-top: 10px;">
+                    <input type="date" id="todo-date" class="form-control">
+                    <input type="time" id="todo-time" class="form-control">
+                    <button class="btn" onclick="addTodo()"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+
+            <div class="scroll-list" id="todo-list" style="max-height: 300px;">
+                <!-- Todos injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- PROFILE MODAL -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-circle" style="color: var(--secondary)"></i> Admin Profile</h3>
+                <button class="close-btn" onclick="closeModal('profileModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <img src="https://ui-avatars.com/api/?name=Office+Admin&background=6366f1&color=fff" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 10px;">
+                <h4>Office Admin</h4>
+                <p style="color: var(--text-dim); font-size: 0.85rem;">admin@ideal.com</p>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+
+            <div class="form-group">
+                <label>Upload New Profile Picture</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="file" class="form-control" style="padding: 0.5rem;">
+                    <button class="btn btn-glass" onclick="alert('Picture Uploaded!')">Upload</button>
+                </div>
+            </div>
+
+            <h4 style="margin: 1.5rem 0 1rem; font-size: 0.95rem;">Change Password</h4>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Current Password">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="New Password">
+            </div>
+            <button class="btn" style="width: 100%;" onclick="alert('Password Updated!'); closeModal('profileModal');"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+    </div>
+
+    <!-- NOTICE MODAL -->
+    <div class="modal-overlay" id="noticeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-bullhorn" style="color: var(--accent)"></i> Create Notice</h3>
+                <button class="close-btn" onclick="closeModal('noticeModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-group">
+                <label>Notice Title</label>
+                <input type="text" id="notice-title" class="form-control" placeholder="e.g. Campus Drive Schedule">
+            </div>
+            <div class="form-group">
+                <label>Details</label>
+                <textarea id="notice-desc" class="form-control" rows="4" placeholder="Write notice details..."></textarea>
+            </div>
+            <button class="btn" style="width: 100%; background: var(--accent);" onclick="addNotice()"><i class="fas fa-paper-plane"></i> Publish Notice</button>
+        </div>
+    </div>
+
+    <!-- QUOTE MODAL -->
+    <div class="modal-overlay" id="quoteModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-quote-right" style="color: var(--primary)"></i> Manage Quotes</h3>
+                <button class="close-btn" onclick="closeModal('quoteModal')"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div style="background: var(--glass); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem;">Add New Quote</h4>
+                <div class="form-group">
+                    <textarea id="new-quote-text" class="form-control" rows="2" placeholder="Quote text..."></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="new-quote-author" class="form-control" placeholder="Author Name (Optional)">
+                </div>
+                <button class="btn" style="width: 100%;" onclick="addQuote()"><i class="fas fa-plus"></i> Add Quote</button>
+            </div>
+
+            <div class="scroll-list" id="quote-list" style="max-height: 250px;">
+                <!-- Quotes injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Notification Popup -->
+    <div class="notification-popup" id="notificationPopup">
+        <div style="font-size: 1.5rem; color: var(--accent);"><i class="fas fa-bell"></i></div>
+        <div>
+            <h4 id="notif-title" style="margin-bottom: 4px; font-size: 0.95rem;">Reminder Alert</h4>
+            <p id="notif-desc" style="font-size: 0.8rem; color: var(--text-dim);">Task is due now.</p>
+        </div>
+        <button class="close-btn" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;" onclick="closeNotification()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- Modal Logic ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Close on overlay click
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // --- Chart.js ---
+        const ctx = document.getElementById('deptChart');
+        window.myDeptChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['CSE', 'ECE', 'MECH', 'CIVIL', 'IT', 'AI/DS'],
+                datasets: [{
+                    label: 'Active Students',
+                    data: [1200, 850, 420, 310, 450, 220],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.7)',
+                        'rgba(168, 85, 247, 0.7)',
+                        'rgba(244, 63, 94, 0.7)',
+                        'rgba(245, 158, 11, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(56, 189, 248, 0.7)'
+                    ],
+                    borderColor: [
+                        '#6366f1', '#a855f7', '#f43f5e', '#f59e0b', '#10b981', '#38bdf8'
+                    ],
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94a3b8', font: {family: 'Outfit'} }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: {family: 'Outfit'} }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: {family: 'Outfit', size: 14},
+                        bodyFont: {family: 'Outfit', size: 14},
+                        padding: 12,
+                        cornerRadius: 8,
+                        borderColor: 'rgba(255,255,255,0.1)',
+                        borderWidth: 1
+                    }
+                }
+            }
+        });
+
+        // --- To-Do Logic ---
+        let todos = [
+            { id: 1, text: 'Finalize Semester Fee Structure', priority: 'high', remDate: '2026-03-01', remTime: '10:00', done: false, notified: false },
+            { id: 2, text: 'Review Faculty Hiring Resumes', priority: 'med', remDate: '2026-03-02', remTime: '14:30', done: false, notified: false }
+        ];
+
+        function renderTodos() {
+            const list = document.getElementById('todo-list');
+            list.innerHTML = '';
+            
+            todos.forEach(todo => {
+                const priorityClass = todo.priority; // high, med, low
+                const priorityText = todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1);
+                
+                let dateDisplay = "";
+                if(todo.remDate) {
+                    dateDisplay = `<p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px;"><i class="fas fa-bell"></i> ${todo.remDate} at ${todo.remTime}</p>`;
+                }
+
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.style.opacity = todo.done ? '0.5' : '1';
+                item.innerHTML = `
+                    <div style="display: flex; align-items: flex-start; gap: 12px; flex: 1;">
+                        <input type="checkbox" ${todo.done ? 'checked' : ''} onchange="toggleTodoStatus(${todo.id})" style="margin-top: 5px; cursor: pointer; transform: scale(1.2);">
+                        <div>
+                            <h4 style="text-decoration: ${todo.done ? 'line-through' : 'none'}; margin-bottom: 2px; font-size: 0.95rem;">${todo.text}</h4>
+                            <span class="priority ${priorityClass}">${priorityText}</span>
+                            ${dateDisplay}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-glass" onclick="editTodo(${todo.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteTodo(${todo.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+            document.getElementById('todo-badge').innerText = todos.filter(t => !t.done).length;
+        }
+
+        function addTodo() {
+            const text = document.getElementById('todo-text').value;
+            const priority = document.getElementById('todo-priority').value;
+            const date = document.getElementById('todo-date').value;
+            const time = document.getElementById('todo-time').value;
+
+            if(!text) return alert('Please enter task description');
+
+            todos.push({
+                id: Date.now(),
+                text, priority, remDate: date, remTime: time, done: false, notified: false
+            });
+
+            document.getElementById('todo-text').value = '';
+            renderTodos();
+        }
+
+        function toggleTodoStatus(id) {
+            const todo = todos.find(t => t.id === id);
+            if(todo) todo.done = !todo.done;
+            renderTodos();
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            renderTodos();
+        }
+
+        function editTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if(todo) {
+                const newText = prompt("Edit Task Description:", todo.text);
+                if(newText) {
+                    todo.text = newText;
+                    renderTodos();
+                }
+            }
+        }
+
+        // --- Notice Board Logic ---
+        function addNotice() {
+            const title = document.getElementById('notice-title').value;
+            if(!title) return;
+
+            const list = document.getElementById('notice-list');
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.innerHTML = `
+                <div class="list-item-content">
+                    <h4>${title}</h4>
+                    <p><i class="fas fa-clock"></i> Posted by Office Admin • Just now</p>
+                </div>
+            `;
+            list.prepend(item);
+            
+            document.getElementById('notice-title').value = '';
+            document.getElementById('notice-desc').value = '';
+            closeModal('noticeModal');
+        }
+
+        // --- Notification System Engine ---
+        function triggerNotification(title, desc) {
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-desc').innerText = desc;
+            const popup = document.getElementById('notificationPopup');
+            popup.classList.add('show');
+            
+            // Auto hide after 6 seconds
+            setTimeout(() => {
+                closeNotification();
+            }, 6000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notificationPopup').classList.remove('show');
+        }
+
+        // Reminder Checker Loop
+        setInterval(() => {
+            const now = new Date();
+            const currentDate = now.toISOString().split('T')[0];
+            const currentHours = String(now.getHours()).padStart(2, '0');
+            const currentMins = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${currentHours}:${currentMins}`;
+
+            todos.forEach(todo => {
+                if(!todo.done && !todo.notified && todo.remDate && todo.remTime) {
+                    if(todo.remDate === currentDate && todo.remTime === currentTime) {
+                        triggerNotification('To-Do Reminder:', todo.text);
+                        todo.notified = true; // prevent re-triggering in same minute
+                    }
+                }
+            });
+        }, 10000); // Check every 10 seconds
+
+        // --- Quote Logic ---
+        let quotes = [
+            { id: 1, text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
+            { id: 2, text: "The roots of education are bitter, but the fruit is sweet.", author: "Aristotle" },
+            { id: 3, text: "The purpose of education is to replace an empty mind with an open one.", author: "Malcolm Forbes" }
+        ];
+
+        function renderQuotes() {
+            const list = document.getElementById('quote-list');
+            list.innerHTML = '';
+            quotes.forEach(q => {
+                const item = document.createElement('div');
+                item.className = 'list-item';
+                item.innerHTML = `
+                    <div class="list-item-content" style="flex: 1; padding-right: 15px;">
+                        <h4 style="font-weight: 500; font-style: italic; font-size: 0.95rem;">"${q.text}"</h4>
+                        <p style="color: var(--primary); font-size: 0.8rem; margin-top: 4px;">- ${q.author}</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-glass" onclick="editQuote(${q.id})" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteQuote(${q.id})" title="Delete"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function setRandomQuote() {
+            if (quotes.length === 0) {
+                document.getElementById('daily-quote-text').innerText = "No quotes available.";
+                document.getElementById('daily-quote-author').innerText = "";
+                return;
+            }
+            const random = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('daily-quote-text').innerText = '"' + random.text + '"';
+            document.getElementById('daily-quote-author').innerText = "- " + random.author;
+        }
+
+        function addQuote() {
+            const text = document.getElementById('new-quote-text').value;
+            const author = document.getElementById('new-quote-author').value || "Unknown";
+            if(!text) return alert("Quote text cannot be empty.");
+            
+            quotes.push({ id: Date.now(), text, author });
+            document.getElementById('new-quote-text').value = '';
+            document.getElementById('new-quote-author').value = '';
+            renderQuotes();
+        }
+
+        function editQuote(id) {
+            const quote = quotes.find(q => q.id === id);
+            if(quote) {
+                const newText = prompt("Edit quote text:", quote.text);
+                if(newText !== null && newText.trim() !== '') {
+                    const newAuthor = prompt("Edit author:", quote.author) || "Unknown";
+                    quote.text = newText;
+                    quote.author = newAuthor;
+                    renderQuotes();
+                    setRandomQuote();
+                }
+            }
+        }
+
+        function deleteQuote(id) {
+            if(confirm("Delete this quote?")) {
+                quotes = quotes.filter(q => q.id !== id);
+                renderQuotes();
+                setRandomQuote();
+            }
+        }
+
+        // Initialize display
+        renderTodos();
+        renderQuotes();
+        setRandomQuote();
+
+        // --- Notification Logic ---
+        function showNotification(title, desc) {
+            document.getElementById('notif-title').innerText = title;
+            document.getElementById('notif-desc').innerText = desc;
+            const popup = document.getElementById('notificationPopup');
+            popup.classList.add('show');
+            setTimeout(() => { popup.classList.remove('show'); }, 4000);
+        }
+
+        function closeNotification() {
+             document.getElementById('notificationPopup').classList.remove('show');
+        }
+
+        // --- Institution Selection Logic ---
+        function changeInstitution(inst) {
+            const dataMap = {
+                'all': {
+                    students: '3,450', faculties: '280', apps: '64', drives: '8',
+                    chartData: [1200, 850, 420, 310, 450, 220],
+                    notifName: "Consolidated Data Loaded for All Institutions"
+                },
+                'eng': {
+                    students: '1,800', faculties: '150', apps: '45', drives: '5',
+                    chartData: [800, 450, 250, 300, 0, 0],
+                    notifName: "Engineering College KPIs Synced successfully"
+                },
+                'med': {
+                    students: '900', faculties: '80', apps: '10', drives: '1',
+                    chartData: [0, 0, 0, 0, 0, 0],
+                    notifName: "Medical Institute KPIs Synced successfully"
+                },
+                'arts': {
+                    students: '750', faculties: '50', apps: '9', drives: '2',
+                    chartData: [0, 0, 0, 0, 0, 0],
+                    notifName: "Arts Academy KPIs Synced successfully"
+                }
+            };
+            
+            const selected = dataMap[inst];
+            if(!selected) return;
+
+            // DOM UI Update for Cards
+            const kpiCards = document.querySelectorAll('.kpi-card p');
+            if(kpiCards.length >= 4) {
+                kpiCards[0].innerText = selected.students;
+                kpiCards[1].innerText = selected.faculties;
+                kpiCards[2].innerText = selected.apps;
+                kpiCards[3].innerText = selected.drives;
+            }
+
+            // Chart update handling
+            if (window.myDeptChart) {
+                window.myDeptChart.data.datasets[0].data = selected.chartData;
+                window.myDeptChart.update();
+            }
+
+            showNotification('Institution Switch', selected.notifName);
+        }
+    </script>
+</body>
+</html>

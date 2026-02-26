@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - HOD Academic Setup</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8b5cf6;     /* Purple/Violet */
+            --secondary: #6366f1;   /* Indigo */
+            --accent: #f43f5e;      /* Rose */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.6); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-header {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin: 15px 0 10px 15px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+            color: white;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3rem;
+            overflow-y: auto;
+            background-image: radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        .header-title {
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Layout Grids */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Reusable Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1); border-color: var(--primary); color: var(--primary);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university"></i> IDEAL Setup
+        </div>
+        
+        <div class="nav-header">Academic Modules (1-6)</div>
+        
+        <div class="nav-item active" onclick="switchTab('m-batch')">
+            <i class="fas fa-layer-group"></i> 1. Batches
+        </div>
+        <div class="nav-item" onclick="switchTab('m-groups')">
+            <i class="fas fa-users-cog"></i> 3. Groups
+        </div>
+        <div class="nav-item" onclick="switchTab('m-semester')">
+            <i class="fas fa-calendar-alt"></i> 4. Semesters
+        </div>
+        <div class="nav-item" onclick="switchTab('m-subjects')">
+            <i class="fas fa-book"></i> 5. Subjects
+        </div>
+        <div class="nav-item" onclick="switchTab('m-electives')">
+            <i class="fas fa-project-diagram"></i> 6. Electives Mgmt
+        </div>
+        
+        <div class="nav-header">Academic Modules (7-10)</div>
+        
+        <div class="nav-item" onclick="switchTab('m-facultysubjects')">
+            <i class="fas fa-chalkboard-teacher"></i> 7. Faculty Subjects
+        </div>
+        <div class="nav-item" onclick="switchTab('m-timetables')">
+            <i class="fas fa-clock"></i> 8. Timetables
+        </div>
+        <div class="nav-item" onclick="switchTab('m-questionpapers')">
+            <i class="fas fa-file-alt"></i> 9. Question Papers
+        </div>
+        <div class="nav-item" onclick="switchTab('m-exams')">
+            <i class="fas fa-pen-alt"></i> 10. Exams
+        </div>
+        
+        <div class="nav-header">Academic Modules (12-18)</div>
+        <div class="nav-item" onclick="switchTab('m-studymaterial')">
+            <i class="fas fa-folder-open"></i> 12. Study Material
+        </div>
+        <div class="nav-item" onclick="switchTab('m-seminars')">
+            <i class="fas fa-chalkboard"></i> 13. Seminars
+        </div>
+        <div class="nav-item" onclick="switchTab('m-attendance')">
+            <i class="fas fa-users-viewfinder"></i> 14. Attendance
+        </div>
+        <div class="nav-item" onclick="switchTab('m-academicperc')">
+            <i class="fas fa-percent"></i> 15. Academic Percentage
+        </div>
+        <div class="nav-item" onclick="switchTab('m-internals')">
+            <i class="fas fa-calculator"></i> 16. Internal Components
+        </div>
+        <div class="nav-item" onclick="switchTab('m-assignments')">
+            <i class="fas fa-tasks"></i> 17. Assignments
+        </div>
+        <div class="nav-item" onclick="switchTab('m-tutorials')">
+            <i class="fas fa-vials"></i> 18. Tutorials / Class Test
+        </div>
+
+        <div class="nav-header">Extracurricular</div>
+        <div class="nav-item" onclick="switchTab('m-committee')">
+            <i class="fas fa-sitemap"></i> 2. Committee
+        </div>
+        <div class="nav-item" onclick="switchTab('m-events')">
+            <i class="fas fa-calendar-day"></i> 3. Events
+        </div>
+        <div class="nav-item" onclick="switchTab('m-facultyext')">
+            <i class="fas fa-award"></i> 4-5. Faculty Records
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 15px;">
+            <a href="hod-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start;"><i class="fas fa-arrow-left"></i> Return to HOD Dashboard</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 600;">HOD Academic Setup Matrix</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Configure foundational branch logic: Batches, Groups, Semesters, and Curriculums.</p>
+            </div>
+            <div><span style="background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Full Auth Granted</span></div>
+        </div>
+
+        <!-- 1. BATCHES -->
+        <div id="m-batch" class="content-section active">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-layer-group" style="color: var(--primary);"></i> 1. Batches Configuration</h2>
+            <div class="grid-2">
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header">(a) Create Batch</div>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">e.g., CSE (2017-2020)</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Initialize Batch</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) View Batches</div>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Monitor active and archived academic periods.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-eye"></i> View Batch Matrix</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. GROUPS -->
+        <div id="m-groups" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-users-cog" style="color: var(--success);"></i> 3. Groups Architecture</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px;">Sub-divide main sections for practical subjects (e.g., Sec-A into Group-1, Group-2).</p>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">(a) Create Group</div>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--success);"><i class="fas fa-object-group"></i> Define Group Capacity</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) View Groups</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-list"></i> View / Edit Logs</button>
+                </div>
+                <div class="card" style="border-left: 3px solid var(--success);">
+                    <div class="card-header">(c) Assign Data</div>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--success);"><i class="fas fa-user-tag"></i> Assign Selected Students</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SEMESTERS -->
+        <div id="m-semester" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-alt" style="color: var(--warning);"></i> 4. Semester Configuration</h2>
+            <div class="grid-3">
+                <div class="card" style="border-top: 3px solid var(--warning);">
+                    <div class="card-header">(a) Setup Duration</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Define 6-month durations + First/End sem toggle.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--warning); color: #000;"><i class="fas fa-calendar-plus"></i> Create Semester Layout</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) View / Edit</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Access globally defined academic frames.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-edit"></i> Modify Semesters</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c) Set Current</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Assign active term for physical system logic.</p>
+                    <button class="btn btn-secondary" style="width: 100%; color: var(--warning); border-color: var(--warning);"><i class="fas fa-check-circle"></i> Enable Current Sem</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. SUBJECTS -->
+        <div id="m-subjects" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-book" style="color: var(--primary);"></i> 5. Curriculum Subjects</h2>
+            
+            <div class="grid-3">
+                <!-- Create -->
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header">(a) Create Subject</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Define marks split-up, credits, & practical logic.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-book-medical"></i> Add Root Subject</button>
+                </div>
+                
+                <!-- View -->
+                <div class="card">
+                    <div class="card-header">(b) View / Edit</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Review internal vs external split parameters.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-list-alt"></i> Access Branch DB</button>
+                </div>
+
+                <!-- Load Prev -->
+                <div class="card">
+                    <div class="card-header">(c) Load Previous</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Clone complete subject hierarchies to new batch.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--primary); color: var(--primary);"><i class="fas fa-sync-alt"></i> Execute Clone Sync</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. ELECTIVE GROUP & SUBJECTS -->
+        <div id="m-electives" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-project-diagram" style="color: var(--info);"></i> 6. Elective Group & Subjects Matrix</h2>
+            
+            <!-- (A) Elective Groups -->
+            <div class="card">
+                <h3 style="margin-bottom: 15px; color: var(--info);"><i class="fas fa-folder"></i> (a) Elective Groups</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim);">Cluster logic for branching choices.</p>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-primary" style="background: var(--info);"><i class="fas fa-plus"></i> (1) Create Group</button>
+                    <button class="btn btn-secondary"><i class="fas fa-eye"></i> (2) View / Delete</button>
+                </div>
+            </div>
+
+            <!-- (B) Elective Subjects -->
+            <div class="card">
+                <h3 style="margin-bottom: 15px; color: var(--info);"><i class="fas fa-sitemap"></i> (b) Elective Subjects</h3>
+                <p style="font-size: 0.85rem; color: var(--text-dim);">Populate groups explicitly with courses. Limits: 1 per group assigned.</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-primary" style="background: var(--info);"><i class="fas fa-file-medical"></i> (1) Create Elective</button>
+                    <button class="btn btn-secondary"><i class="fas fa-file-alt"></i> (2) View Logic</button>
+                    <button class="btn btn-secondary" style="color: var(--info); border-color: var(--info);"><i class="fas fa-copy"></i> (3) Load Previous Electives</button>
+                </div>
+            </div>
+
+            <!-- (C) Assign Electives -->
+            <div class="card" style="border-left: 4px solid var(--info);">
+                <h3 style="margin-bottom: 15px; color: var(--text-main);"><i class="fas fa-users"></i> (c) Assign Electives via Branch</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary"><i class="fas fa-user-check"></i> (1) Assign Target Subjects</button>
+                    <button class="btn btn-secondary"><i class="fas fa-user-edit"></i> (2) View Allocated Records</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. FACULTY SUBJECTS -->
+        <div id="m-facultysubjects" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chalkboard-teacher" style="color: var(--secondary);"></i> 7. Faculty Subjects Overview</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Assign Core Output</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Lock branch-wise / batch-wise subject mapping for specific faculty. Allows cross-department logic.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-user-plus"></i> Assign Faculty to Subject</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) [+] Assign Employee Subjects</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Directly assign specific faculties to other departments / branches.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--secondary); color: var(--secondary);"><i class="fas fa-exchange-alt"></i> Cross-Department Assign</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c) View Validations</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Global view/edit/delete control over an individual faculty's entire load.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-search"></i> View Assigned Subject Logs</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(d) Employee Subjects</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Target a subject to view/delete which specific faculties hold the course.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-swatchbook"></i> Subject-Wise Tracker</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. TIMETABLES -->
+        <div id="m-timetables" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-clock" style="color: var(--accent);"></i> 8. Academic Timetables</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px;">Generate precise schedules (From-Date $\rightarrow$ To-Date) relying on Academic Calendar logic.</p>
+            <div class="grid-4" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                <div class="card" style="border-left: 4px solid var(--accent);">
+                    <div class="card-header">(a) Timetable Config</div>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--accent);"><i class="fas fa-calendar-plus"></i> Create New</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Active</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-play"></i> View Active Matrix</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c) Expired</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-history"></i> Access Archives</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(d) Reporting</div>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--accent); color: var(--accent);"><i class="fas fa-file-invoice"></i> "Day-Wise Hour" Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. QUESTION PAPERS -->
+        <div id="m-questionpapers" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-file-alt" style="color: var(--success);"></i> 9. Question Papers & Assessments</h2>
+            <div class="grid-3">
+                <!-- Offline Q-Paper -->
+                <div class="card" style="border-top: 3px solid var(--success);">
+                    <h3 style="color: var(--success); margin-bottom: 15px;">(a) Offline Papers</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-file-medical"></i> (1) Create New Exam Paper</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-cogs"></i> (2) Set CO-PO Marks</button>
+                        <hr style="border: 0; border-top: 1px dashed var(--border); margin: 5px 0;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-upload"></i> (3) Upload Prev Semester</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-search"></i> (4) View Validated Prev Papers</button>
+                    </div>
+                </div>
+
+                <!-- Online Q-Paper -->
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">(b) Online Papers (MCQ)</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-mouse-pointer"></i> (1) Create MCQ Parameter</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-download"></i> (2) View / Edit / Download</button>
+                    </div>
+                </div>
+
+                <!-- Online Assessments -->
+                <div class="card" style="border-top: 3px solid var(--warning);">
+                    <h3 style="color: var(--warning); margin-bottom: 15px;">(c) Active Assessments</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; font-size: 0.8rem; background: var(--warning);"><i class="fas fa-link"></i> (1) Assign Tracker Link</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-eye"></i> (2) View Status Matrix</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; border-color: var(--warning); color: var(--warning);"><i class="fas fa-file-excel"></i> (3) Dump Excel Payload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. EXAMS -->
+        <div id="m-exams" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-pen-alt" style="color: var(--info);"></i> 10. Exams Management</h2>
+            <div style="background: rgba(14, 165, 233, 0.1); border: 1px dashed var(--info); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                <p style="font-size: 0.85rem; color: var(--text-main);"><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> <strong>Logic Override Notice:</strong> Students with $<75\%$ attendance appear in "Not Eligible". Explicit Admin/HOD override logic is routed via the "Allowed After Permission" array map.</p>
+            </div>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <h3 style="color: var(--info); margin-bottom: 10px;">Setup & Tracking</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; background: var(--info);"><i class="fas fa-plus"></i> (a) Create Global Exam</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-list-ul"></i> (b) View Exams / Add Marks</button>
+                        <hr style="border: 0; border-top: 1px dashed var(--border); margin: 5px 0;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-calendar"></i> (g) Generate Timetable</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-eye"></i> (h) View Final Timetable</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="color: var(--warning); margin-bottom: 10px;">Analytics & Overrides</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-chart-line"></i> (d) Subject-Wise Analysis</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-chart-pie"></i> (e) Exam-Wide Analysis</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-history"></i> (f) Arrear Histories DB</button>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--info);">
+                    <h3 style="color: var(--text-main); margin-bottom: 10px;">(i) Output Reporting Logs</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--info); border-color: var(--info);"><i class="fas fa-file-pdf"></i> (1) Monthly Report</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--info); border-color: var(--info);"><i class="fas fa-file-pdf"></i> (2) Subject Report (Graph/PDF)</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--info); border-color: var(--info);"><i class="fas fa-file-pdf"></i> (3) Result Analysis Array</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. STUDY MATERIAL -->
+        <div id="m-studymaterial" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-folder-open" style="color: var(--primary);"></i> 12. Study Materials</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Create / Upload</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Target by branch, batch, and section structure.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-cloud-upload-alt"></i> Upload Material</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Peer Review</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Access global repository created by other department faculty.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-eye"></i> View Global Repository</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 13. SEMINARS -->
+        <div id="m-seminars" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chalkboard" style="color: var(--success);"></i> 13. Seminar Operations</h2>
+            <div class="grid-4" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                <div class="card">
+                    <div class="card-header">(a) Setup</div>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--success);"><i class="fas fa-plus"></i> Initialize Seminar</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Viewer</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-list"></i> Log Summary</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c) Assignments</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-user-plus"></i> Map Students</button>
+                </div>
+                <div class="card" style="border-left: 3px solid var(--success);">
+                    <div class="card-header">(d) Date Matrix</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-calendar-check"></i> View Schedule Matrix</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14. ATTENDANCE -->
+        <div id="m-attendance" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-users-viewfinder" style="color: var(--warning);"></i> 14. Full-Spectrum Attendance</h2>
+            
+            <div class="card" style="margin-bottom: 1rem; border-top: 3px solid var(--warning);">
+                <h3 style="color: var(--warning); margin-bottom: 15px;">(a) Student Matrices</h3>
+                <div class="grid-3" style="margin-bottom: 0;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Actions</span>
+                        <button class="btn btn-primary" style="justify-content: flex-start; background: var(--warning); color: #000; font-size: 0.8rem;"><i class="fas fa-check"></i> Mark Standard / Whole Day</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit Records</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Data Reports</span>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-file-excel"></i> Missed Out Details</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-file-excel"></i> Monthly / Historical / %</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Visual Graphs</span>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; border-color: var(--warning); color: var(--warning);"><i class="fas fa-chart-line"></i> Day Graph View</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem; border-color: var(--warning); color: var(--warning);"><i class="fas fa-chart-pie"></i> Subject / Hour Vectors</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--text-main); margin-bottom: 15px;">(b) Employee Tracking</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="btn btn-secondary" style="font-size: 0.8rem;"><i class="fas fa-check"></i> Mark / Edit Log</button>
+                    <button class="btn btn-secondary" style="font-size: 0.8rem;"><i class="fas fa-file-excel"></i> Report Matrix (Monthly / %)</button>
+                    <button class="btn btn-secondary" style="font-size: 0.8rem;"><i class="fas fa-chart-bar"></i> Visual Graph Payload</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15. ACADEMIC PERCENTAGE -->
+        <div id="m-academicperc" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-percent" style="color: var(--info);"></i> 15. Academic Percentages</h2>
+            <div class="grid-2">
+                <div class="card" style="border-top: 3px solid var(--info);">
+                    <div class="card-header">(a) Import Array</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Inject raw metrics using the core template (Auto-fuels Placement logic).</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" style="flex: 1;"><i class="fas fa-download"></i> Get Template</button>
+                        <button class="btn btn-primary" style="flex: 1; background: var(--info);"><i class="fas fa-file-import"></i> Upload CSV</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Final Review</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">View global historical structures imported.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--info); color: var(--info);"><i class="fas fa-database"></i> Access Student Logs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 16. INTERNAL COMPONENTS -->
+        <div id="m-internals" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calculator" style="color: var(--primary);"></i> 16. Internal Component Logic Core</h2>
+            <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.8));">
+                <div style="display: flex; gap: 2rem;">
+                    <div style="flex: 1;">
+                        <h3 style="margin-bottom: 15px; color: var(--primary);">Global CIA Ruleset Locked</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 10px;">System automatically carves default parameters out of "Total Internal Marks":</p>
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <span style="background: rgba(139, 92, 246, 0.1); color: #fff; padding: 5px 15px; border-radius: 8px; border: 1px solid var(--primary);">CIA-1 = <strong>6</strong> point</span>
+                            <span style="background: rgba(139, 92, 246, 0.1); color: #fff; padding: 5px 15px; border-radius: 8px; border: 1px solid var(--primary);">CIA-2 = <strong>6</strong> point</span>
+                            <span style="background: rgba(139, 92, 246, 0.1); color: #fff; padding: 5px 15px; border-radius: 8px; border: 1px solid var(--primary);">CIA-3 = <strong>8</strong> point</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Maximum remaining components Weightage cannot exceed remaining total marks.</p>
+                    </div>
+                    <div style="flex: 1; border-left: 1px dashed var(--border); padding-left: 2rem;">
+                        <h3 style="margin-bottom: 15px;">Custom Components Setup</h3>
+                        <button class="btn btn-primary" style="margin-bottom: 10px; width: 100%;"><i class="fas fa-plus"></i> Define Sub-Component (e.g. Mini-Project)</button>
+                        <button class="btn btn-secondary" style="margin-bottom: 10px; width: 100%;"><i class="fas fa-cogs"></i> Assignment "Best Of" Rule Set</button>
+                        <button class="btn btn-secondary" style="width: 100%; border-color: var(--success); color: var(--success);"><i class="fas fa-file-import"></i> End-Semester Mark Upload Push</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17/18. ASSIGNMENTS & TUTORIALS -->
+        <div id="m-assignments" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-tasks text-success"></i> 17. Assignments Vault</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Create Output</div>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--success);"><i class="fas fa-plus"></i> Generate Assignment & Upload Q-Paper</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Viewer</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-list"></i> Assignment Matrix</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="m-tutorials" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-vials text-accent"></i> 18. Tutorials / Class Test Module</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Deploy Test</div>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--accent);"><i class="fas fa-flask"></i> Setup Live Tutorial Array</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Status Engine</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-database"></i> View Class Test Database</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXTRACURRICULAR -->
+        <div id="m-committee" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-sitemap" style="color: var(--primary);"></i> Committee Architect</h2>
+            <div class="grid-2">
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header">(a) Create & Assure</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Build strict groups and mass-assign Student/Employee nodes (e.g. Disciplinary).</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-network-wired"></i> Construct Committee</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Log Check</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Audit cross-department active groups globally.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-eye"></i> Access Master Index</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="m-events" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-day" style="color: var(--warning);"></i> Event Matrix Engine</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">(a) Create Event Base</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Single or multi-day span arrays tied to physical halls.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--warning); color: #000;"><i class="fas fa-star"></i> Setup Global Event</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) View Array Logs</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Edit physical parameters pre-launch.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-edit"></i> Review Settings</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c/d) Resource Links</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Access dedicated gallery or link to Dashboard logic.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--warning); color: var(--warning);"><i class="fas fa-images"></i> Media Vault</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="m-facultyext" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-award" style="color: var(--info);"></i> Faculty Public / Participation</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">4. Faculty Publications</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Journal names and explicit paper titles creation/view.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--info);"><i class="fas fa-book-reader"></i> Post Publication Data</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">5. Faculty Participations</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Track event presence across various external platforms.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-running"></i> Manage Active Array</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS for Tabs -->
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

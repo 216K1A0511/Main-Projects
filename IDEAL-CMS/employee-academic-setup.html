@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Academic Configuration Setup</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;     /* Indigo */
+            --secondary: #3b82f6;   /* Blue */
+            --accent: #ec4899;      /* Pink */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.6); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-header {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin: 15px 0 10px 15px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(59, 130, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3rem;
+            overflow-y: auto;
+            background-image: radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.1) 0, transparent 40%);
+        }
+
+        .header-title {
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Layout Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Reusable Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .tag {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university"></i> IDEAL-CMS Setup
+        </div>
+        
+        <div class="nav-header">Academic Modules Config</div>
+        
+        <!-- Module Links -->
+        <div class="nav-item active" onclick="switchTab('m-internal')">
+            <i class="fas fa-calculator"></i> 1. Internal Components
+        </div>
+        <div class="nav-item" onclick="switchTab('m-assignment')">
+            <i class="fas fa-file-signature"></i> 2. Assignments
+        </div>
+        <div class="nav-item" onclick="switchTab('m-tutorial')">
+            <i class="fas fa-chalkboard-teacher"></i> 3. Tutorials / Class Tests
+        </div>
+        <div class="nav-item" onclick="switchTab('m-attendance')">
+            <i class="fas fa-user-check"></i> 4. Attendance
+        </div>
+        <div class="nav-item" onclick="switchTab('m-courseplan')">
+            <i class="fas fa-project-diagram"></i> 5. Course Plan
+        </div>
+        
+        <div class="nav-header">Exams & Reports Data</div>
+        
+        <div class="nav-item" onclick="switchTab('m-qpapers')">
+            <i class="fas fa-file-alt"></i> 6. Exams & Question Papers
+        </div>
+        <div class="nav-item" onclick="switchTab('m-exams')">
+            <i class="fas fa-calendar-alt"></i> 7. Timetables & Exams
+        </div>
+        <div class="nav-item" onclick="switchTab('m-scorecard')">
+            <i class="fas fa-id-card-alt"></i> 8. Exam Score Card
+        </div>
+        <div class="nav-item" onclick="switchTab('m-arrears')">
+            <i class="fas fa-history"></i> 9. Arrear Histories
+        </div>
+        <div class="nav-item" onclick="switchTab('m-reports')">
+            <i class="fas fa-chart-pie"></i> 10. Analytics & Reports
+        </div>
+        
+        <div class="nav-header">Faculty & Mentoring</div>
+        <div class="nav-item" onclick="switchTab('m-seminars')">
+            <i class="fas fa-chalkboard"></i> 11. Seminars
+        </div>
+        <div class="nav-item" onclick="switchTab('m-timetable-alt')">
+            <i class="fas fa-clock"></i> 12. Timetable & Alterations
+        </div>
+        <div class="nav-item" onclick="switchTab('m-fac-pub')">
+            <i class="fas fa-book-open"></i> 13. Faculty Publication
+        </div>
+        <div class="nav-item" onclick="switchTab('m-fac-part')">
+            <i class="fas fa-medal"></i> 14. Faculty Participation
+        </div>
+        <div class="nav-item" onclick="switchTab('m-tutor')">
+            <i class="fas fa-user-friends"></i> 15. Tutor
+        </div>
+
+        <div class="nav-header">Extracurricular</div>
+        <div class="nav-item" onclick="switchTab('m-committee')">
+            <i class="fas fa-users-cog"></i> 1. Committee Members
+        </div>
+        <div class="nav-item" onclick="switchTab('m-events')">
+            <i class="fas fa-calendar-day"></i> 2. Events
+        </div>
+
+        <div class="nav-header">Grievances</div>
+        <div class="nav-item" onclick="switchTab('m-complaints')">
+            <i class="fas fa-frown"></i> 1. Complaints
+        </div>
+        <div class="nav-item" onclick="switchTab('m-disciplinary')">
+            <i class="fas fa-gavel"></i> 2. Disciplinary Action
+        </div>
+        <div class="nav-item" onclick="switchTab('m-forum')">
+            <i class="fas fa-comments"></i> 3. Discussion Forum
+        </div>
+        <div class="nav-item" onclick="switchTab('m-feedback')">
+            <i class="fas fa-comment-dots"></i> 4. Feedback
+        </div>
+
+        <div class="nav-header">Leave & Gate Pass</div>
+        <div class="nav-item" onclick="switchTab('m-leave')">
+            <i class="fas fa-calendar-minus"></i> 1. Leave Application
+        </div>
+        <div class="nav-item" onclick="switchTab('m-gatepass')">
+            <i class="fas fa-door-open"></i> 2. Gate Passes
+        </div>
+
+        <div class="nav-header">Career & Comms</div>
+        <div class="nav-item" onclick="switchTab('m-placement')">
+            <i class="fas fa-briefcase"></i> 1. Placement Trainings
+        </div>
+        <div class="nav-item" onclick="switchTab('m-sms')">
+            <i class="fas fa-sms"></i> 2. SMS Broadcast
+        </div>
+        <div class="nav-item" onclick="switchTab('m-smsdetails')">
+            <i class="fas fa-envelope-open-text"></i> 3. SMS Details
+        </div>
+        <div class="nav-item" onclick="switchTab('m-resignation')">
+            <i class="fas fa-sign-out-alt"></i> 4. Resignation
+        </div>
+
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+            <a href="employee-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start;"><i class="fas fa-arrow-left"></i> Return to Dashboard</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- Header Global Title -->
+        <div class="header-title">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 600;">Academic Modules Setup</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Define user interfaces and calculation parameters for internal exams, grading structures, and tracking logic.</p>
+            </div>
+            <div>
+                <span class="tag" style="background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success);">System Online</span>
+            </div>
+        </div>
+
+        <!-- MODULE 1: INTERNAL COMPONENT EVALUATION -->
+        <div id="m-internal" class="content-section active">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calculator" style="color: var(--primary);"></i> 1. Internal Component Evaluation</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem; max-width: 800px;">Configure components like assignments and projects. System automatically reserves CIA marks (CIA-1 = 6, CIA-2 = 6, CIA-3 = 8). Note: Internal component marks cannot exceed maximum designated values.</p>
+            
+            <div class="grid-2">
+                <!-- Configuration Form -->
+                <div class="card" style="border-top: 4px solid var(--primary);">
+                    <div class="card-header">Create Internal Component</div>
+                    <div class="form-group">
+                        <label>Target Subject</label>
+                        <select><option>Advanced Algorithms (CS-401)</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Component Name</label>
+                        <input type="text" placeholder="e.g. Mini Project / Seminar">
+                    </div>
+                    <div class="grid-2" style="margin-bottom: 0;">
+                        <div class="form-group">
+                            <label>Assigned Weightage</label>
+                            <input type="number" placeholder="Marks limit: 20">
+                        </div>
+                        <div class="form-group">
+                            <label>Calculation Mode</label>
+                            <select><option>Standard</option><option>Best of Option (For Assignments)</option></select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-save"></i> Save Component</button>
+                    </div>
+                </div>
+
+                <!-- Existing Components Info -->
+                <div class="card">
+                    <div class="card-header">Internal Marks Distribution Preview</div>
+                    
+                    <div style="background: var(--glass); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-weight: 500;">Locked CIA Logic</span>
+                            <span style="color: var(--warning);"><i class="fas fa-lock"></i> 20 Marks</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">CIA-1 (6) • CIA-2 (6) • CIA-3 (8)</p>
+                    </div>
+
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--success); padding: 15px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-weight: 500;">Available Component Marks</span>
+                            <span style="color: var(--success);"><i class="fas fa-unlock"></i> Remainder</span>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">(Total Internal Marks - 20). Import/edit available directly to end-semester marks logic.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 2: ASSIGNMENTS -->
+        <div id="m-assignment" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-file-signature" style="color: var(--secondary);"></i> 2. Assignments Configuration</h2>
+            
+            <div class="card">
+                <div class="card-header">(a) Create Assignment</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <select><option>Database Management (CS-302)</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Assignment Title</label>
+                        <input type="text" placeholder="e.g. Normalization Theory Models">
+                    </div>
+                    <div class="form-group">
+                        <label>Attach Question Paper File</label>
+                        <div style="border: 1px dashed var(--border); padding: 10px; border-radius: 8px; text-align: center; color: var(--text-dim); font-size: 0.85rem; cursor: pointer; background: var(--bg);">
+                            <i class="fas fa-upload"></i> Upload PDF / Word
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Publish Assignment</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-top-secondary">
+                <div class="card-header">(b) View & Edit Assignments</div>
+                <div class="tag" style="background: var(--glass); border: 1px solid var(--border); display: inline-block; margin-bottom: 10px;">Normalization Theory Models - CS-302</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</button>
+                    <button class="btn btn-secondary"><i class="fas fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 3: TUTORIALS -->
+        <div id="m-tutorial" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chalkboard-teacher" style="color: var(--warning);"></i> 3. Tutorials (Class Tests)</h2>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Create Class Test</div>
+                    <div class="form-group"><input type="text" placeholder="Test Name (e.g. Chapter 4 Quiz)"></div>
+                    <div class="form-group"><input type="date"></div>
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Save Test</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) View Tutorials</div>
+                    <div style="background: var(--glass); padding: 15px; border-radius: 8px;">
+                        <div style="font-weight: 500;">Chapter 3 Algorithms Test</div>
+                        <div style="color: var(--text-dim); font-size: 0.8rem; margin: 5px 0;">Date: 12-Oct-2026</div>
+                        <button class="btn btn-secondary" style="font-size: 0.75rem; padding: 5px 10px;"><i class="fas fa-trash"></i> Delete Test</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 4: ATTENDANCE -->
+        <div id="m-attendance" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-user-check" style="color: var(--success);"></i> 4. Attendance Protocols</h2>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">Action Modules</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-check-square"></i> (1) Mark Student Attendance</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-edit"></i> (2) Edit Student Attendance</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--warning);"><i class="fas fa-calendar-times"></i> (3) Missed Out Details Viewer</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">Reporting Modules</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--success);"><i class="fas fa-file-excel"></i> (4) Student Attendance Report (Excel)</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; color: var(--primary);"><i class="fas fa-chart-bar"></i> (5) Student Attendance Graph (Visual GUI)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODULE 5: COURSE PLAN -->
+        <div id="m-courseplan" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-project-diagram" style="color: var(--accent);"></i> 5. Course Plan Engine</h2>
+            
+            <div class="card">
+                <div class="card-header">Design Course Workflow</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px;">Setup internal teaching plans. Connect specific modules to Internal/External exams.</p>
+                <div class="form-group"><input type="text" placeholder="Subject Target"></div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <button class="btn btn-secondary" style="width: 100%; border: 1px dashed var(--accent);"><i class="fas fa-plus"></i> Add Plan Block</button>
+                </div>
+                <p style="color: var(--success); font-size: 0.8rem; margin-top: 15px;"><i class="fas fa-info-circle"></i> View toggle correlates mapped external/internal exams directly to active course parameters.</p>
+            </div>
+        </div>
+
+        <!-- MODULE 6: EXAMS & QUESTION PAPERS -->
+        <div id="m-qpapers" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-file-alt" style="color: var(--secondary);"></i> 6. Exams & Question Papers</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Manage online/offline papers, CO/PO mapping, and assessment links.</p>
+
+            <div class="grid-2">
+                <!-- Offline Papers -->
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-edit"></i> (a) Offline Question Papers</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Set CO/PO parameters and configure marks per question.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-upload"></i> (1) Set Exam Q-Paper</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-eye"></i> (2) View Exam Q-Paper</button>
+                    </div>
+                </div>
+
+                <!-- Online Papers -->
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-globe"></i> (b) Online Exams</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Create MCQ exams and upload options database.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; background: linear-gradient(135deg, var(--secondary), var(--success));"><i class="fas fa-laptop"></i> (1) Set Question Paper (MCQ)</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-eye"></i> (2) View / Edit Generated Papers</button>
+                    </div>
+                </div>
+
+                <!-- Assessments -->
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-tasks"></i> (c) Online Assessments</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Activate assessment links within student portals.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-link"></i> (1) Assign Assessment Link</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-server"></i> (2) View Assessment Status</button>
+                    </div>
+                </div>
+
+                <!-- Question Bank -->
+                <div class="card border-top-secondary">
+                    <div class="card-header"><i class="fas fa-archive"></i> (d) Question Bank Vault</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Centralize previous year papers.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; border-color: var(--secondary); color: var(--secondary);"><i class="fas fa-file-upload"></i> (1) Add Previous Paper</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-folder-open"></i> (2) View Vault</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXAM & TIMETABLES -->
+        <div id="m-exams" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-alt" style="color: var(--warning);"></i> 7. Exam Timetables</h2>
+            <div class="card">
+                <div class="card-header">Exam Timetable Structure</div>
+                <button class="btn btn-primary"><i class="fas fa-eye"></i> View Master Timetable</button>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-top: 15px;">Live integration pulling directly from Setup parameters mapping dates to external exams.</p>
+            </div>
+        </div>
+
+        <!-- SCORE CARD -->
+        <div id="m-scorecard" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-id-card-alt" style="color: var(--primary);"></i> 8. Exam Score Card</h2>
+            <div class="card">
+                <div class="card-header">Student Score Viewer</div>
+                <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 15px;">Read-only mapping parsing exam-wise student marks globally.</p>
+                <div class="form-group">
+                    <input type="text" placeholder="Search Student ID / Name">
+                </div>
+                <button class="btn btn-secondary"><i class="fas fa-search"></i> Extract Score Card</button>
+            </div>
+        </div>
+
+        <!-- ARREAR HISTORIES -->
+        <div id="m-arrears" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-history" style="color: var(--danger);"></i> 9. Student Arrear Histories</h2>
+            <div class="card">
+                <div class="card-header">Backlog & Arrear Vault</div>
+                <button class="btn btn-secondary" style="color: var(--danger); border-color: var(--danger);"><i class="fas fa-file-invoice"></i> Compile Arrear Report</button>
+            </div>
+        </div>
+
+        <!-- REPORTS / ANALYTICS -->
+        <div id="m-reports" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chart-pie" style="color: var(--secondary);"></i> 10. Advanced Reports Parsing</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px;">Deep statistical breakdown generators mapping percentages, monthly metrics, and global results.</p>
+            
+            <div class="grid-2">
+                <div class="card" style="margin-bottom: 0;">
+                    <div class="card-header">Generate Formats</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-file-pdf"></i> (1) Monthly Report (PDF / Graph)</button>
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-book"></i> (2) Subject-Wise Report (PDF / Graph)</button>
+                        <button class="btn btn-success" style="background: var(--success); color: white; border: none; justify-content: flex-start; padding: 10px 20px; border-radius: 8px;"><i class="fas fa-poll"></i> (3) Result Analysis Summary (PDF)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEMINARS -->
+        <div id="m-seminars" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chalkboard" style="color: var(--primary);"></i> 11. Seminars</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Create & View</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-plus"></i> [+] Create Seminar</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-eye"></i> View Seminars Details</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Assign & Track</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-users"></i> Assign Seminars to Batch</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-calendar-check"></i> View Seminar Dates</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIMETABLE & ALTERATIONS -->
+        <div id="m-timetable-alt" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-clock" style="color: var(--secondary);"></i> 12. Timetable & Alterations</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Timetable Dashboard</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">View daily schedule, create substitutions, and mark easy attendance (3-digit sync).</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-calendar-day"></i> Open Day-Wise Timetable</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Alterations Log</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">View substituted employee details across your teaching periods.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-exchange-alt"></i> View Alteration Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FACULTY PUBLICATION & PARTICIPATION -->
+        <div id="m-fac-pub" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-book-open" style="color: var(--success);"></i> 13. Faculty Publication</h2>
+            <div class="card">
+                <div class="card-header">Publication Register</div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Log papers and articles (Visible to HOD and Admin).</p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary"><i class="fas fa-pen-nib"></i> Log Publication</button>
+                    <button class="btn btn-secondary"><i class="fas fa-list"></i> View / Edit Ledger</button>
+                </div>
+            </div>
+        </div>
+        <div id="m-fac-part" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-medal" style="color: var(--warning);"></i> 14. Faculty Participation</h2>
+            <div class="card">
+                <div class="card-header">Extracurricular Engagements</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary"><i class="fas fa-award"></i> Submit Activity</button>
+                    <button class="btn btn-secondary"><i class="fas fa-eye"></i> View Active Participations</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TUTOR -->
+        <div id="m-tutor" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-user-friends" style="color: var(--accent);"></i> 15. Tutor & Mentoring</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-comments"></i> (a) Counselling</div>
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Create / View Detail</button>
+                    <p style="font-size: 0.75rem; color: var(--text-dim);">For explicitly assigned students.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header"><i class="fas fa-bullhorn"></i> (b) Tutor Mgmt / Circulars</div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-bottom: 10px;">Deploy Circular</button>
+                </div>
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-header"><i class="fas fa-chart-line"></i> (c) Program Participation</div>
+                    <button class="btn btn-secondary">Track Student Progress / Activities</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXTRACURRICULAR -->
+        <div id="m-committee" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-users-cog" style="color: var(--primary);"></i> Extracurricular: Committees</h2>
+            <div class="card">
+                <div class="card-header">My Committees</div>
+                <button class="btn btn-secondary"><i class="fas fa-users"></i> View Disciplinary & Assorted Committees</button>
+            </div>
+        </div>
+        <div id="m-events" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-day" style="color: var(--secondary);"></i> Extracurricular: Events</h2>
+            <div class="card">
+                <div class="card-header">Campus Events Engine</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary"><i class="fas fa-eye"></i> View Listed Events</button>
+                    <button class="btn btn-secondary"><i class="fas fa-images"></i> Event Gallery Vault</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRIEVANCES -->
+        <div id="m-complaints" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-frown" style="color: var(--danger);"></i> Grievances: Complaints</h2>
+            <div class="card">
+                <div class="card-header">Complaint Desk</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" style="background: var(--danger);"><i class="fas fa-plus"></i> Raise Issue</button>
+                    <button class="btn btn-secondary"><i class="fas fa-envelope-open-text"></i> View / Reply Log</button>
+                </div>
+            </div>
+        </div>
+        <div id="m-disciplinary" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-gavel" style="color: var(--warning);"></i> Grievances: Disciplinary Action</h2>
+            <div class="card">
+                <div class="card-header">Student Disciplinary Matrix</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" style="background: var(--warning); color: #000;"><i class="fas fa-gavel"></i> Log Action</button>
+                    <button class="btn btn-secondary"><i class="fas fa-eye"></i> View Active Penalties</button>
+                </div>
+            </div>
+        </div>
+        <div id="m-forum" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-comments" style="color: var(--success);"></i> Grievances: Discussion Forum</h2>
+            <div class="card">
+                <div class="card-header">Community Forum</div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" style="background: var(--success);"><i class="fas fa-plus-circle"></i> Create Thread</button>
+                    <button class="btn btn-secondary"><i class="fas fa-comment-alt"></i> View Open Threads</button>
+                </div>
+            </div>
+        </div>
+        <div id="m-feedback" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-comment-dots" style="color: var(--primary);"></i> Grievances: Cross-Feedback Loop</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Faculty to Student Feedback</div>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-pen"></i> Submit Direct Feedback</button>
+                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 10px;">Visible to HOD/Admin</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Student to Faculty Appraisals</div>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-star"></i> View Anonymized Score/Notes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEAVE APPLICATION -->
+        <div id="m-leave" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-minus" style="color: var(--accent);"></i> Leave Application</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) My Leaves</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Apply for your own leaves or check status logs.</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start;"><i class="fas fa-plus-circle"></i> [+] Apply / Create Leave</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start;"><i class="fas fa-list-ul"></i> View Applied Details</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Student Leave Approvals</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Review leaves requested by your assigned students.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--secondary);"><i class="fas fa-tasks"></i> View / Approve Student Leaves</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GATE PASSES -->
+        <div id="m-gatepass" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-door-open" style="color: var(--success);"></i> Gate Passes</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">1. My Gate Pass</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Apply for an outside-campus pass (Approval by HOD/Admin).</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-ticket-alt"></i> [+] Apply Gate Pass</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">2. Student Gate Passes</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Approve or reject passes applied by your mapped students.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-check-double"></i> View / Approve Student Passes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLACEMENT TRAININGS -->
+        <div id="m-placement" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-briefcase" style="color: var(--primary);"></i> Placement Trainings</h2>
+            <div class="card">
+                <div class="card-header">Placement Training Details</div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">View upcoming placement training drives mapped for your students.</p>
+                <button class="btn btn-primary"><i class="fas fa-eye"></i> View Upcoming Drives</button>
+            </div>
+        </div>
+
+        <!-- SMS -->
+        <div id="m-sms" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-sms" style="color: var(--warning);"></i> SMS Broadcast</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">1. Students</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Send SMS to selected students at a time.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-paper-plane"></i> Send Student SMS</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">2. Parents</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Send SMS to selected student parents at a time.</p>
+                    <button class="btn btn-secondary" style="width: 100%; text-align: center; justify-content: center;"><i class="fas fa-paper-plane"></i> Send Parent SMS</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SMS DETAILS -->
+        <div id="m-smsdetails" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-envelope-open-text" style="color: var(--success);"></i> SMS Details</h2>
+            <div class="card">
+                <div class="card-header">1. View Delivery Details</div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">View delivery status of each SMS sent.</p>
+                <div style="display: flex; gap: 10px;">
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px; flex: 1;">
+                        <h4 style="color: var(--success); margin: 0;">Delivered</h4>
+                        <div style="font-size: 1.5rem; font-weight: 700;">142</div>
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px; flex: 1;">
+                        <h4 style="color: var(--danger); margin: 0;">Failed</h4>
+                        <div style="font-size: 1.5rem; font-weight: 700;">3</div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" style="margin-top: 15px;"><i class="fas fa-list"></i> Detailed Delivery Log</button>
+            </div>
+        </div>
+
+        <!-- RESIGNATION -->
+        <div id="m-resignation" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-sign-out-alt" style="color: var(--accent);"></i> Resignation</h2>
+            <div class="card">
+                <div class="card-header">Apply and View Resignation</div>
+                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Apply for resignation to be approved/rejected by Admin.</p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" style="background: var(--accent);"><i class="fas fa-file-signature"></i> Apply Resignation</button>
+                    <button class="btn btn-secondary"><i class="fas fa-eye"></i> View Current Status</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS for Tabs -->
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - College Setup</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #c026d3;     /* Fuchsia */
+            --secondary: #4f46e5;   /* Indigo */
+            --accent: #e11d48;      /* Rose */
+            --success: #059669;     /* Emerald */
+            --warning: #d97706;     /* Amber */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: radial-gradient(at 100% 0%, rgba(192, 38, 211, 0.1) 0, transparent 40%),
+                              radial-gradient(at 0% 100%, rgba(79, 70, 229, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(192, 38, 211, 0.1);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(79, 70, 229, 0.2));
+            color: white;
+            border: 1px solid rgba(192, 38, 211, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Reusable Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(192, 38, 211, 0.2);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(192, 38, 211, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lists and Tables styling */
+        .data-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .data-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .data-item:hover {
+            border-color: var(--text-dim);
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Switches */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Day Checboxes */
+        .day-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .day-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .day-check input {
+            accent-color: var(--primary);
+            width: 18px; height: 18px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university"></i> College Setup
+        </div>
+        
+        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 10px 15px;">Setup Modules</div>
+        
+        <div class="nav-item active" onclick="switchTab('t-branch')">
+            <i class="fas fa-code-branch"></i> 1. Branch
+        </div>
+        <div class="nav-item" onclick="switchTab('t-complaint')">
+            <i class="fas fa-exclamation-triangle"></i> 2. Complaint Params
+        </div>
+        <div class="nav-item" onclick="switchTab('t-calendar')">
+            <i class="fas fa-calendar-alt"></i> 3. Academic Calendar
+        </div>
+        <div class="nav-item" onclick="switchTab('t-program')">
+            <i class="fas fa-book-open"></i> 4. Program Details
+        </div>
+        <div class="nav-item" onclick="switchTab('t-feedback')">
+            <i class="fas fa-star-half-alt"></i> 5. Feedback Params
+        </div>
+        <div class="nav-item" onclick="switchTab('t-qualifications')">
+            <i class="fas fa-certificate"></i> 6. Qualifications
+        </div>
+        <div class="nav-item" onclick="switchTab('t-workingdays')">
+            <i class="fas fa-briefcase"></i> 7. Employee Working Days
+        </div>
+        <div class="nav-item" onclick="switchTab('t-holiday')">
+            <i class="fas fa-umbrella-beach"></i> 8. Holiday
+        </div>
+        <div class="nav-item" onclick="switchTab('t-modules')">
+            <i class="fas fa-puzzle-piece"></i> 9. System Modules
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px;">
+            <a href="admin-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-arrow-left"></i> Return to Dashboard</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>College Configuration Master</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Configure the basic building blocks for the institution structure.</p>
+            </div>
+            <div>
+                <button class="btn btn-primary" onclick="alert('Configuration Saved!')"><i class="fas fa-save"></i> Save Global Changes</button>
+            </div>
+        </div>
+
+        <!-- 1. BRANCH MODULE -->
+        <div id="t-branch" class="content-section active">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-code-branch text-primary"></i> Branch Management</div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Create New Branch</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-control" style="flex: 1;" placeholder="e.g. Computer Science and Engineering">
+                            <input type="text" class="form-control" style="width: 150px;" placeholder="Code (e.g. CSE)">
+                            <button class="btn btn-primary" onclick="triggerAlert('Branch added successfuly!')"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="data-list">
+                    <div class="data-item">
+                        <div>
+                            <strong style="font-size: 1.1rem;">Computer Science and Engineering</strong>
+                            <p style="color: var(--text-dim); font-size: 0.85rem;">Code: CSE</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent); border-color: rgba(225,29,72,0.3);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div>
+                            <strong style="font-size: 1.1rem;">Mechanical Engineering</strong>
+                            <p style="color: var(--text-dim); font-size: 0.85rem;">Code: MECH</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent); border-color: rgba(225,29,72,0.3);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. COMPLAINT PARAMETERS -->
+        <div id="t-complaint" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-exclamation-triangle"></i> Complaint Parameters</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Create complaint parameters. Visible for Employee, HOD, Student to create complaints. Principal & Chairman can only view.</p>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-control" style="flex: 1;" placeholder="Parameter Name (e.g. Indiscipline, Maintenance, etc.)">
+                            <button class="btn btn-primary"><i class="fas fa-plus"></i> Create Parameter</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="data-list">
+                    <div class="data-item">
+                        <strong style="font-size: 1.05rem;">Indiscipline</strong>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <strong style="font-size: 1.05rem;">Hostel Maintenance</strong>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. ACADEMIC CALENDAR -->
+        <div id="t-calendar" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-calendar-alt text-success"></i> Academic Calendar (Day-Orders)</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Import Day-Order templates for specific branches or all branches.</p>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 2rem; background: var(--glass); padding: 1.5rem; border-radius: 12px;">
+                    <button class="btn btn-secondary"><i class="fas fa-download"></i> Download Template</button>
+                    <div style="border-left: 1px solid var(--border); padding-left: 15px; display: flex; gap: 10px; flex: 1;">
+                        <input type="file" class="form-control" style="flex: 1; padding: 0.6rem;">
+                        <button class="btn btn-primary"><i class="fas fa-file-import"></i> Import File Template</button>
+                    </div>
+                </div>
+
+                <div class="data-list">
+                    <h4 style="margin-bottom: 5px;">Created Day-Orders (Date Wise)</h4>
+                    <div class="data-item">
+                        <div>
+                            <strong>Day-Order 1</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-calendar-day"></i> 2026-06-01</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <div>
+                            <strong>Day-Order 2</strong>
+                            <p style="font-size: 0.8rem; color: var(--text-dim);"><i class="fas fa-calendar-day"></i> 2026-06-02</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. PROGRAM DETAILS -->
+        <div id="t-program" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-book-open"></i> Program Details</div>
+                <div class="form-grid" style="margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label>Ref. Branch</label>
+                        <select class="form-control">
+                            <option>Computer Science and Engineering (CSE)</option>
+                            <option>Mechanical Engineering (MECH)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Program Level</label>
+                        <select class="form-control">
+                            <option>Undergraduate (B.Tech/B.Sc)</option>
+                            <option>Postgraduate (M.Tech/M.Sc)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Years</label>
+                        <input type="number" class="form-control" value="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Semesters</label>
+                        <input type="number" class="form-control" value="8">
+                    </div>
+                    <div class="form-group">
+                        <label>Maximum Seats Availability</label>
+                        <input type="number" class="form-control" placeholder="e.g. 120">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Create Program Details</button>
+                    </div>
+                </div>
+
+                <div class="data-list">
+                    <div class="data-item">
+                        <div>
+                            <strong style="font-size: 1.1rem; color: var(--primary);">B.Tech in CSE</strong>
+                            <p style="color: var(--text-dim); font-size: 0.85rem;">4 Years / 8 Semesters • Undergraduate</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem;">Seats Allocation: <span style="font-weight: 600; color: var(--success);">85 / 120</span></div>
+                            <div style="display: flex; gap: 10px; margin-top: 5px; justify-content: flex-end;">
+                                <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-eye"></i> View</button>
+                                <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.8rem; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. FEEDBACK PARAMETERS -->
+        <div id="t-feedback" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-star-half-alt text-warning"></i> Feedback Parameters</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Feedback Target Type</label>
+                        <select class="form-control" id="feedback-type">
+                            <option value="student">For Student</option>
+                            <option value="employee">For Employee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Parameter Name</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-control" style="flex: 1;" placeholder="e.g. Teaching Quality">
+                            <button class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-list">
+                    <div class="data-item">
+                        <div>
+                            <strong>Teaching Quality</strong>
+                            <span style="font-size: 0.7rem; background: rgba(217, 119, 6, 0.2); color: var(--warning); padding: 3px 8px; border-radius: 10px; margin-left: 10px;">Employee</span>
+                        </div>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="data-item">
+                        <div>
+                            <strong>Class Participation</strong>
+                            <span style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 3px 8px; border-radius: 10px; margin-left: 10px;">Student</span>
+                        </div>
+                        <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. QUALIFICATIONS -->
+        <div id="t-qualifications" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-certificate text-primary"></i> Qualifications Array</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Create required qualifications available in student profile edits.</p>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" class="form-control" style="flex: 1;" placeholder="Qualification Name (e.g. 10th Standard / Matriculation)">
+                            <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Qualification</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-list">
+                    <div class="data-item">
+                        <strong>10th Standard (SSC)</strong>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                    <div class="data-item">
+                        <strong>12th Standard (HSC)</strong>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. EMPLOYEE WORKING DAYS -->
+        <div id="t-workingdays" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-briefcase"></i> Employee Working Days</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure the active working days strictly for internal employee attendance calculation logic.</p>
+                
+                <h4 style="margin-bottom: 15px;">Select Active Days</h4>
+                <div class="day-group">
+                    <label class="day-check"><input type="checkbox" checked> Monday</label>
+                    <label class="day-check"><input type="checkbox" checked> Tuesday</label>
+                    <label class="day-check"><input type="checkbox" checked> Wednesday</label>
+                    <label class="day-check"><input type="checkbox" checked> Thursday</label>
+                    <label class="day-check"><input type="checkbox" checked> Friday</label>
+                    <label class="day-check"><input type="checkbox" checked> Saturday</label>
+                    <label class="day-check"><input type="checkbox"> Sunday</label>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button class="btn btn-primary"><i class="fas fa-save"></i> Save Employee Week Cycle</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. HOLIDAY -->
+        <div id="t-holiday" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-umbrella-beach text-info"></i> Holiday Manager</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Declare college holidays. Once created, attendance marking gets permanently blocked for the set dates.</p>
+                
+                <div class="form-grid" style="margin-bottom: 2rem;">
+                    <div class="form-group full">
+                        <label>Holiday Event Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Summer Vacation, Diwali, etc.">
+                    </div>
+                    <div class="form-group full">
+                        <label>Holiday Type</label>
+                        <select class="form-control" onchange="toggleMultiDay(this.value)">
+                            <option value="single">Single Day Holiday</option>
+                            <option value="multi">Multi-Day Holiday Block</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="start-date-label">Holiday Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group" id="end-date-group" style="display: none;">
+                        <label>End Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-plus"></i> Lock Holiday</button>
+                    </div>
+                </div>
+
+                <div class="data-list">
+                    <div class="data-item">
+                        <div>
+                            <strong style="color: var(--accent); font-size: 1.1rem;">Christmas Eve</strong>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;">Single Day • 25th Dec 2026</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="padding: 5px 10px;"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn btn-secondary" style="padding: 5px 10px; color: var(--accent);"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. MODULES -->
+        <div id="t-modules" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-puzzle-piece text-secondary"></i> System Modules Authority</div>
+                <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem;">Globally activate or deactivate system modules. An active module directly registers into the sidebar architecture.</p>
+                
+                <div class="switch-container">
+                    <div>
+                        <strong style="font-size: 1.1rem;">Hostel Management Module</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-dim);">Controls room allocation, warden tracking, and gate pass logics.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-container">
+                    <div>
+                        <strong style="font-size: 1.1rem;">Library Management System</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-dim);">Enables book borrowing, fine calculation, and stock auditing.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-container">
+                    <div>
+                        <strong style="font-size: 1.1rem;">Alumni Network</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-dim);">Graduated student networking directory and events tracking.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="switch-container">
+                    <div>
+                        <strong style="font-size: 1.1rem;">Transportation System</strong>
+                        <p style="font-size: 0.85rem; color: var(--text-dim);">Manage bus routes, student driver tracking, and fees allocation.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripting for interactivity -->
+    <script>
+        function switchTab(tabId) {
+            // Remove active classes
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            
+            // Add active to current
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function triggerAlert(msg) {
+            alert(msg);
+        }
+
+        function toggleMultiDay(val) {
+            if(val === 'multi') {
+                document.getElementById('start-date-label').innerText = 'Start Date';
+                document.getElementById('end-date-group').style.display = 'flex';
+            } else {
+                document.getElementById('start-date-label').innerText = 'Holiday Date';
+                document.getElementById('end-date-group').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

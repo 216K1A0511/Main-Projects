@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Employee Dashboard</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;     /* Indigo */
+            --secondary: #3b82f6;   /* Blue */
+            --accent: #ec4899;      /* Pink */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.6); /* Slate 800 */
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* ------------------------
+           HEADER & NAVIGATION
+        ------------------------- */
+        header {
+            height: 70px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid var(--border);
+            padding: 5px 15px 5px 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-btn:hover {
+            background: var(--hover);
+            border-color: var(--primary);
+        }
+
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: url('https://ui-avatars.com/api/?name=Employee&background=6366f1&color=fff') center/cover;
+            border: 2px solid var(--bg);
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        /* ------------------------
+           MAIN LAYOUT GRID
+        ------------------------- */
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .page-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px dashed var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .metric-data h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+        }
+
+        .metric-data p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Complex Widgets Row */
+        .widget-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .widget-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .widget-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .widget-action {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .widget-action:hover {
+            text-decoration: underline;
+        }
+
+        /* Lists */
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            background: var(--glass);
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+            transition: 0.2s;
+        }
+
+        .list-item:hover {
+            background: var(--hover);
+        }
+
+        /* Miscellaneous utilities */
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-accent { color: var(--accent); }
+        .text-success { color: var(--success); }
+        .text-warning { color: var(--warning); }
+
+        .bg-primary-light { background: rgba(99, 102, 241, 0.1); }
+        .bg-secondary-light { background: rgba(59, 130, 246, 0.1); }
+        .bg-accent-light { background: rgba(236, 72, 153, 0.1); }
+        .bg-success-light { background: rgba(16, 185, 129, 0.1); }
+        .bg-warning-light { background: rgba(245, 158, 11, 0.1); }
+
+        /* Syllabus progress specific */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--glass);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        }
+
+        /* Third Row Grid */
+        .triple-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i> IDEAL-CMS 
+            <span style="font-size: 0.8rem; color: var(--text-dim); font-weight: 300; margin-left: 5px;">| Employee Portal</span>
+        </div>
+        
+        <div class="header-actions">
+            <!-- 1. Email Icon Button -->
+            <button class="icon-btn" title="Internal Portal Email">
+                <i class="fas fa-envelope"></i>
+                <div class="badge">4</div>
+            </button>
+            
+            <!-- 2. To-do Icon Button -->
+            <button class="icon-btn" title="My To-Do Tasks">
+                <i class="fas fa-check-square"></i>
+                <div class="badge" style="background: var(--warning); box-shadow: 0 0 10px var(--warning);">2</div>
+            </button>
+
+            <!-- 6. Noticeboard / Notifications (merged visually to header for utility) -->
+            <button class="icon-btn" title="Noticeboard">
+                <i class="fas fa-bell"></i>
+                <div class="badge" style="background: var(--primary); box-shadow: 0 0 10px var(--primary);">7</div>
+            </button>
+
+            <!-- 3. Employee Profile Button -->
+            <div class="profile-btn" title="View Profile & Institution Info">
+                <div class="profile-img"></div>
+                <div class="profile-info">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Prof. Alan Turing</span>
+                    <span style="font-size: 0.7rem; color: var(--text-dim);">Comp. Science • ID: EMP-104</span>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--text-dim); margin-left: 5px;"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+        
+        <!-- Welcome Message -->
+        <h1 class="page-title">Welcome back, Alan.</h1>
+        <p class="page-desc">Here's your academic workflow and active subject tracking for today.</p>
+
+        <!-- Quote of the Day -->
+        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1)); border: 1px dashed var(--secondary); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; position: relative; overflow: hidden;">
+            <i class="fas fa-quote-left" style="position: absolute; top: -10px; left: -10px; font-size: 5rem; color: rgba(255, 255, 255, 0.03);"></i>
+            <div style="display: flex; gap: 1rem; align-items: center; position: relative; z-index: 1;">
+                <div style="background: var(--glass); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary);">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div>
+                    <h5 style="color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Quote of the Day</h5>
+                    <p style="font-size: 1rem; color: var(--text-main); font-style: italic;">"The beautiful thing about learning is that no one can take it away from you." <span style="font-size: 0.85rem; color: var(--text-dim); font-style: normal; margin-left: 10px;">— B.B. King</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="metrics-grid">
+            <!-- 4. Attendance Count -->
+            <div class="metric-card">
+                <div class="metric-icon bg-secondary-light text-secondary"><i class="fas fa-users"></i></div>
+                <div class="metric-data">
+                    <h3>92%</h3>
+                    <p>Avg. Student Attendance</p>
+                </div>
+            </div>
+
+            <!-- 7. Alteration Count (My Substitution) -->
+            <div class="metric-card">
+                <div class="metric-icon bg-warning-light text-warning"><i class="fas fa-exchange-alt"></i></div>
+                <div class="metric-data">
+                    <h3 class="text-warning">2</h3>
+                    <p>My Substitutions (Alterations)</p>
+                </div>
+            </div>
+
+            <!-- 8. Leave Count -->
+            <div class="metric-card">
+                <div class="metric-icon bg-accent-light text-accent"><i class="fas fa-calendar-minus"></i></div>
+                <div class="metric-data">
+                    <h3>4/12</h3>
+                    <p>Leaves Taken This Year</p>
+                </div>
+            </div>
+
+            <!-- 9. Faculty publication Count -->
+            <div class="metric-card">
+                <div class="metric-icon bg-success-light text-success"><i class="fas fa-book-open"></i></div>
+                <div class="metric-data">
+                    <h3>5</h3>
+                    <p>Total Publications</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. Syllabus Completion & 10. Assignments Count Row -->
+        <div class="widget-grid">
+            
+            <!-- Syllabus Completion Percentage -->
+            <div class="widget-card">
+                <div class="widget-header" style="margin-bottom: 1rem;">
+                    <div class="widget-title"><i class="fas fa-tasks text-primary"></i> 11. Assigned Subjects Syllabus Completion</div>
+                    <button class="widget-action">Update Tracker</button>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <!-- Subject 1 -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span><i class="fas fa-code"></i> Advanced Algorithms (CS-401)</span>
+                            <span style="font-weight: 600; color: var(--secondary);">85%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                    </div>
+
+                    <!-- Subject 2 -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span><i class="fas fa-database"></i> Database Management (CS-302)</span>
+                            <span style="font-weight: 600; color: var(--secondary);">45%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 45%;"></div></div>
+                    </div>
+
+                    <!-- Subject 3 -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px;">
+                            <span><i class="fas fa-shield-alt"></i> Cyber Security Fundamentals (CS-505)</span>
+                            <span style="font-weight: 600; color: var(--secondary);">12%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 12%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignments Count -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title"><i class="fas fa-file-signature text-secondary"></i> 10. Assignments Count</div>
+                    <button class="widget-action">View All</button>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 3rem; font-weight: 700; color: var(--text-main); line-height: 1;">18</div>
+                    <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 5px;">Total Active Assignments Given</div>
+                </div>
+
+                <div class="list-group">
+                    <div class="list-item" style="border-left-color: var(--success);">
+                        <div style="font-size: 0.85rem;">Reviewing Submissions</div>
+                        <div style="background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">12</div>
+                    </div>
+                    <div class="list-item" style="border-left-color: var(--warning);">
+                        <div style="font-size: 0.85rem;">Pending Due Dates</div>
+                        <div style="background: rgba(245, 158, 11, 0.2); color: var(--warning); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem;">6</div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Triple Grid: Events, Holidays, News -->
+        <div class="triple-grid">
+            
+            <!-- 5. Upcoming Events -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title"><i class="fas fa-calendar-alt text-accent"></i> 5. Upcoming Events (<span class="text-accent">3</span>)</div>
+                </div>
+                <div class="list-group">
+                    <div class="list-item" style="flex-direction: column; align-items: flex-start;">
+                        <span style="font-size: 0.9rem; font-weight: 500;">Tech Symposium 2026</span>
+                        <div style="display: flex; gap: 10px; margin-top: 5px; font-size: 0.75rem; color: var(--text-dim);">
+                            <span><i class="far fa-clock"></i> Oct 12, 10:00 AM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Main Auditorium</span>
+                        </div>
+                    </div>
+                    <div class="list-item" style="flex-direction: column; align-items: flex-start;">
+                        <span style="font-size: 0.9rem; font-weight: 500;">Faculty Meeting</span>
+                        <div style="display: flex; gap: 10px; margin-top: 5px; font-size: 0.75rem; color: var(--text-dim);">
+                            <span><i class="far fa-clock"></i> Oct 15, 02:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Board Room</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 12. Monthly Holidays -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title"><i class="fas fa-umbrella-beach text-success"></i> 12. Monthly Holidays</div>
+                </div>
+                <div class="list-group">
+                    <div class="list-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="background: rgba(16, 185, 129, 0.15); color: var(--success); width: 40px; height: 40px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;">
+                                <span style="font-size: 0.7rem;">OCT</span>
+                                <span style="font-weight: 700;">24</span>
+                            </div>
+                            <span style="font-size: 0.9rem;">Diwali Festival</span>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="background: rgba(16, 185, 129, 0.15); color: var(--success); width: 40px; height: 40px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;">
+                                <span style="font-size: 0.7rem;">NOV</span>
+                                <span style="font-weight: 700;">01</span>
+                            </div>
+                            <span style="font-size: 0.9rem;">State Formation Day</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 13. News -->
+            <div class="widget-card">
+                <div class="widget-header">
+                    <div class="widget-title"><i class="fas fa-bullhorn text-warning"></i> 13. Live News feed</div>
+                </div>
+                <div class="list-group" style="gap: 15px;">
+                    <div style="display: flex; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=100&h=100&fit=crop" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;">
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Campus recognized globally</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Ranked #43 in structural engineering...</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="width: 50px; height: 50px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); color: var(--secondary); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Hackathon Winners</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">CS Dept students secure 1st place globally.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Warden Dashboard</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --header-bg: rgba(15, 23, 42, 0.85);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .menu-item {
+            padding: 12px 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: var(--text-main);
+            background: var(--hover);
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        /* ------------------------
+           MAIN CONTENT
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* ------------------------
+           TOP HEADER
+        ------------------------- */
+        .top-header {
+            height: 70px;
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: var(--hover);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--header-bg);
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--glass);
+            padding: 5px 15px 5px 5px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-btn:hover {
+            background: var(--hover);
+        }
+
+        .profile-avatar {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ------------------------
+           DASHBOARD CONTENT
+        ------------------------- */
+        .dashboard-canvas {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Snapshot Metric Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .stat-icon {
+            width: 50px; height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .icon-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .icon-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .icon-primary { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+        .icon-accent { background: rgba(139, 92, 246, 0.15); color: var(--accent); }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .stat-info p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Sub-Grid for Widgets */
+        .widget-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .widget-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Moderation List (e.g., Complaints) */
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .list-item:hover {
+            border-color: var(--border);
+            background: var(--glass);
+        }
+
+        .item-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 3px;
+            color: var(--text-main);
+        }
+
+        .item-info p {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-resolved { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+        /* ------------------------
+           MODALS
+        ------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-container {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px dashed var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-btn:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); }
+
+        /* Todo List specific inside modal */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--glass);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--warning);
+        }
+        
+        .todo-item.priority-high { border-left-color: var(--danger); }
+        .todo-item.priority-low { border-left-color: var(--success); }
+        .todo-item.completed { opacity: 0.5; text-decoration: line-through; border-left-color: var(--text-dim); }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-shield-alt text-primary"></i> IDEAL-CMS
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-building"></i> Hostel Registration
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i> Manage Residents
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-exclamation-triangle"></i> Grievances / Complaints
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-bed"></i> Room Allocation
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i> Gate Passes
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-times"></i> Leave Applications
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- HEADER -->
+        <header class="top-header">
+            <div class="header-title">
+                Hostel Warden Portal
+            </div>
+            
+            <div class="header-actions">
+                <!-- 1. Email Icon Button -->
+                <button class="action-btn" title="Internal Mail" onclick="openModal('emailModal')">
+                    <i class="fas fa-envelope"></i>
+                    <span class="badge">3</span>
+                </button>
+                
+                <!-- 2. To-do Icon Button -->
+                <button class="action-btn" title="To-Do Planner" onclick="openModal('todoModal')">
+                    <i class="fas fa-tasks"></i>
+                    <span class="badge" style="background: var(--warning);">2</span>
+                </button>
+                
+                <!-- 3. Warden Profile Button -->
+                <div class="profile-btn" onclick="openModal('profileModal')">
+                    <div class="profile-avatar">W</div>
+                    <span style="font-size: 0.9rem; font-weight: 500;">Warden</span>
+                    <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: var(--text-dim);"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CANVAS -->
+        <main class="dashboard-canvas">
+            
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h1>Welcome back, Warden!</h1>
+                    <p>Here's the current overview of the hostel blocks and resident registrations.</p>
+                </div>
+                <div style="font-size: 3rem; color: rgba(59, 130, 246, 0.4);">
+                    <i class="fas fa-building"></i>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <!-- 5. Complaint count | 6. Available leaves count | 7. Hostel Reg count | 8. Hostel Population count -->
+            <div class="stats-grid">
+                
+                <div class="stat-card">
+                    <div class="stat-icon icon-primary">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>142</h3>
+                        <p>Hostel Registrations</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-success">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>850</h3>
+                        <p>Total Hostel Population</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>15</h3>
+                        <p>Active Complaints</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon icon-accent">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>12</h3>
+                        <p>My Available Leaves</p> <!-- Assuming this is Warden's personal leaves based on brief, or student leaves pending approval -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="widget-grid">
+                <!-- Left Column -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-pie text-accent"></i> Population by Block</h3>
+                        </div>
+                        <div style="height: 300px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="hostelChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-exclamation-triangle text-danger"></i> Recent Complaints</h3>
+                            <a href="#" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">View All</a>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-item">
+                                <div class="item-info">
+                                    <h4>Wi-Fi Outage in Block B</h4>
+                                    <p>Reported by: Alex Mercer (Room 204) • 2 hours ago</p>
+                                </div>
+                                <span class="status-badge status-pending">Pending</span>
+                            </div>
+                            <div class="list-item">
+                                <div class="item-info">
+                                    <h4>Plumbing Issue in Washroom</h4>
+                                    <p>Reported by: John Doe (Block A, 3rd Floor) • 1 day ago</p>
+                                </div>
+                                <span class="status-badge status-pending">Pending</span>
+                            </div>
+                            <div class="list-item">
+                                <div class="item-info">
+                                    <h4>Mess Food Quality</h4>
+                                    <p>Reported by: Student Council • 2 days ago</p>
+                                </div>
+                                <span class="status-badge status-resolved">Resolved</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-sign-out-alt text-warning"></i> Recent Gate Passes</h3>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-item">
+                                <div class="item-info">
+                                    <h4>Priya Patel</h4>
+                                    <p>Medical Emergency • <span class="text-danger">Out</span></p>
+                                </div>
+                                <span style="font-size: 0.8rem; font-weight: 600;">11:30 AM</span>
+                            </div>
+                            <div class="list-item">
+                                <div class="item-info">
+                                    <h4>Rahul Sharma</h4>
+                                    <p>Local Guardian Visit • <span class="text-success">Returned</span></p>
+                                </div>
+                                <span style="font-size: 0.8rem; font-weight: 600;">02:15 PM</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button class="btn btn-secondary" style="width: 100%; font-size: 0.85rem;">Manage Passes</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-calendar-times text-info"></i> Pending Leave Approvals</h3>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-item" style="flex-direction: column; align-items: flex-start;">
+                                <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 5px;">
+                                    <h4 style="font-size: 0.95rem; color: var(--text-main);">Anita Desai <span style="color: var(--text-dim); font-size: 0.8rem;">(Room 105)</span></h4>
+                                </div>
+                                <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px;">Attending cousin's wedding (2 Days)</p>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn" style="background: rgba(16, 185, 129, 0.2); color: var(--success); padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-check"></i> Approve</button>
+                                    <button class="btn" style="background: rgba(239, 68, 68, 0.2); color: var(--danger); padding: 4px 10px; font-size: 0.75rem;"><i class="fas fa-times"></i> Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ==========================================
+         MODALS
+    =========================================== -->
+
+    <!-- Email Modal -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Internal Mail</h2>
+                <button class="close-btn" onclick="closeModal('emailModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">To Group/Student ID</label>
+                    <input type="text" class="form-control" placeholder="E.g., All Block A Residents">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input type="text" class="form-control" placeholder="Subject...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-control" style="height: 120px; resize: vertical;" placeholder="Type your message..."></textarea>
+                </div>
+                <div style="text-align: right;">
+                    <button class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Mail</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- To-Do Modal -->
+    <div class="modal-overlay" id="todoModal">
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Warden To-Do Planner</h2>
+                <button class="close-btn" onclick="closeModal('todoModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" class="form-control" placeholder="New Task Description..." style="flex: 2;">
+                    <select class="form-control" style="flex: 1;">
+                        <option>High Priority</option>
+                        <option selected>Med Priority</option>
+                        <option>Low Priority</option>
+                    </select>
+                    <input type="datetime-local" class="form-control" title="Reminder Time" style="flex: 1.5;">
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add</button>
+                </div>
+
+                <div class="list-group">
+                    <div class="todo-item priority-high">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox">
+                            <div>
+                                <span style="display: block; color: var(--text-main);">Inspect Block B Water Supply</span>
+                                <span style="font-size: 0.75rem; color: var(--danger);"><i class="far fa-bell"></i> Reminder: Today 14:00</span>
+                            </div>
+                        </div>
+                        <button class="close-btn" style="font-size: 1rem;"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="todo-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox">
+                            <div>
+                                <span style="display: block; color: var(--text-main);">Review gate pass register</span>
+                            </div>
+                        </div>
+                        <button class="close-btn" style="font-size: 1rem;"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="todo-item completed priority-low">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" checked>
+                            <div>
+                                <span style="display: block; color: var(--text-main);">Approve weekend leaves</span>
+                            </div>
+                        </div>
+                        <button class="close-btn" style="font-size: 1rem;"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Warden Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Warden Profile Settings</h2>
+                <button class="close-btn" onclick="closeModal('profileModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body text-center">
+                
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: var(--glass); border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-dim); position: relative; cursor: pointer;" title="Upload new photo">
+                        <i class="fas fa-camera"></i>
+                        <span style="position: absolute; bottom: 0; right: 0; background: var(--primary); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: white; border: 2px solid var(--bg);"><i class="fas fa-pencil-alt"></i></span>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--text-main);">Mr. John Warden</h3>
+                        <p style="color: var(--text-dim); font-size: 0.9rem;">Chief Warden - Men's Hostel</p>
+                    </div>
+                </div>
+
+                <div style="text-align: left; padding-top: 15px; border-top: 1px solid var(--border);">
+                    <h4 style="margin-bottom: 15px; color: var(--text-main); font-size: 1rem;">Change Password</h4>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Current Password">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="New Password">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Confirm New Password">
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="btn btn-primary">Update Password</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal Logic
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Chart.js initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('hostelChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Block A (Boys)', 'Block B (Boys)', 'Block C (Girls)', 'Block D (PG)'],
+                    datasets: [{
+                        data: [300, 250, 200, 100],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',   // Primary
+                            'rgba(14, 165, 233, 0.8)',   // Info
+                            'rgba(139, 92, 246, 0.8)',   // Accent
+                            'rgba(245, 158, 11, 0.8)'    // Warning
+                        ],
+                        borderColor: 'transparent',
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { family: "'Outfit', sans-serif" }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        });
+    </script>
+</body>
+</html>

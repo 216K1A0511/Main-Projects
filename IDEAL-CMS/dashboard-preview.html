@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL ERP - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #f43f5e;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar & Header */
+        header {
+            height: 70px;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .inst-dropdown {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .icon-btn {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+
+        /* Main Grid */
+        main {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .kpi-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .kpi-info h3 {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .kpi-info p {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Larger Sections */
+        .span-2 { grid-column: span 2; }
+        .span-3 { grid-column: span 3; }
+
+        .dashboard-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            min-height: 300px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Lists Styles */
+        .scroll-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child { border: none; }
+
+        .priority {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .high { background: rgba(244, 63, 94, 0.2); color: #f43f5e; }
+        .med { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .low { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+
+        /* News & Holidays */
+        .news-card {
+            background: var(--glass);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .news-card h4 { font-size: 0.95rem; margin-bottom: 5px; }
+        .news-card p { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* Modal / Profile Popup */
+        #profileModal {
+            display: none;
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 300px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">IDEAL ERP</div>
+        
+        <div class="header-actions">
+            <select class="inst-dropdown">
+                <option>Engineering College - Main</option>
+                <option>Medical Institute</option>
+                <option>Arts & Science Academy</option>
+            </select>
+
+            <div class="icon-btn" title="System Setup" onclick="window.location.href='setup-preview.html'">
+                <i class="fas fa-cog"></i>
+            </div>
+
+            <div class="icon-btn" title="Email Portal">
+                <i class="fas fa-envelope"></i>
+                <span class="badge">3</span>
+            </div>
+
+            <div class="icon-btn" title="To-Do List" onclick="toggleTodo()">
+                <i class="fas fa-list-check"></i>
+                <span class="badge">5</span>
+            </div>
+
+            <img src="https://ui-avatars.com/api/?name=Admin+IDEAL&background=6366f1&color=fff" class="profile-img" onclick="toggleProfile()">
+        </div>
+    </header>
+
+    <div id="profileModal">
+        <h3 style="margin-bottom: 1rem;">Admin Profile</h3>
+        <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1rem;">Logged in as: admin@ideal.com</p>
+        <button class="btn" style="background: var(--glass); border: 1px solid var(--border)">Change Password</button>
+        <button class="btn" style="background: var(--glass); border: 1px solid var(--border)">Upload Picture</button>
+        <button class="btn" onclick="toggleProfile()">Close</button>
+    </div>
+
+    <main>
+        <!-- KPI Row -->
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(99, 102, 241, 0.2); color: #6366f1;"><i class="fas fa-user-graduate"></i></div>
+            <div class="kpi-info"><h3>Students</h3><p>1,280</p></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="kpi-info"><h3>Faculties</h3><p>145</p></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e;"><i class="fas fa-file-invoice"></i></div>
+            <div class="kpi-info"><h3>Job Apps</h3><p>42</p></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;"><i class="fas fa-briefcase"></i></div>
+            <div class="kpi-info"><h3>Placements</h3><p>18</p></div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="dashboard-section span-2">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-pie" style="color: var(--primary)"></i> Department Stats</h2>
+            </div>
+            <canvas id="deptChart" height="200"></canvas>
+        </div>
+
+        <div class="dashboard-section span-2">
+            <div class="section-header">
+                <h2><i class="fas fa-bullhorn" style="color: var(--accent)"></i> Notice Board</h2>
+                <button class="btn" style="width: auto; padding: 4px 12px; font-size: 0.8rem;">+ Create</button>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <div>
+                        <div style="font-weight: 600;">Final Exam Schedule Published</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Posted by Admin • 2h ago</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-dim)"></i>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div style="font-weight: 600;">Inter-College Sports Meet</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Posted by HOD • Yesterday</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-dim)"></i>
+                </div>
+                <div class="list-item">
+                    <div>
+                        <div style="font-weight: 600;">Campus Maintenance Notice</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">Posted by Registrar • 3 days ago</div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-dim)"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-check-double" style="color: #10b981"></i> My To-Do</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <span style="font-size: 0.85rem;">Approve Payroll</span>
+                    <span class="priority high">High</span>
+                </div>
+                <div class="list-item">
+                    <span style="font-size: 0.85rem;">HOD Meeting</span>
+                    <span class="priority med">Med</span>
+                </div>
+                <div class="list-item">
+                    <span style="font-size: 0.85rem;">Website Update</span>
+                    <span class="priority low">Low</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-day" style="color: #f59e0b"></i> Upcoming Events</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="news-card">
+                    <h4>Tech Fest 2026</h4>
+                    <p><i class="fas fa-clock"></i> March 15 • Auditorium</p>
+                </div>
+                <div class="news-card">
+                    <h4>Annual Meet</h4>
+                    <p><i class="fas fa-clock"></i> April 02 • Grounds</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-umbrella-beach" style="color: #38bdf8"></i> Holidays</h2>
+            </div>
+            <div class="scroll-list">
+                <div class="list-item">
+                    <span>Holi Festival</span>
+                    <span style="color: var(--text-dim)">March 14</span>
+                </div>
+                <div class="list-item">
+                    <span>Good Friday</span>
+                    <span style="color: var(--text-dim)">April 10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fas fa-newspaper" style="color: #a855f7"></i> Latest News</h2>
+            </div>
+            <div class="news-card">
+                <h4>Top Ranking Secured</h4>
+                <p>College ranked #1 in state for Computer Science.</p>
+            </div>
+            <div class="news-card">
+                <h4>New Lab Opened</h4>
+                <p>AI Research center inaugurated.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Chart Integration
+        const ctx = document.getElementById('deptChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['CS', 'ECE', 'MECH', 'CIVIL', 'IT', 'AI'],
+                datasets: [{
+                    label: 'Students',
+                    data: [420, 310, 180, 150, 200, 220],
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(168, 85, 247, 0.6)',
+                        'rgba(244, 63, 94, 0.6)',
+                        'rgba(245, 158, 11, 0.6)',
+                        'rgba(16, 185, 129, 0.6)',
+                        'rgba(56, 189, 248, 0.6)'
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        function toggleProfile() {
+            const modal = document.getElementById('profileModal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTodo() {
+            alert("Reminder: 2 Tasks reaching deadline! \n1. approve Payroll \n2. Review Exam Papers");
+        }
+
+        // Simulate To-Do Reminder
+        setTimeout(() => {
+            console.log("To-Do Reminder Triggered");
+        }, 5000);
+    </script>
+</body>
+</html>

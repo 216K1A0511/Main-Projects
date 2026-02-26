@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Student Academic Setup</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;     /* Blue */
+            --secondary: #2563eb;   /* Darker Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #0ea5e9;        /* Sky Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 5px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item i.main-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 35px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-left: 1px solid var(--border);
+            margin-left: 25px;
+        }
+
+        .nav-item.menu-open + .nav-submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 8px 10px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item i {
+            font-size: 0.7rem;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .submenu-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UI Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover);
+        }
+
+        /* Generic Table Elements */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+
+        /* Form Elements */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Inner Tabs */
+        .inner-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .inner-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--glass);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .inner-tab:hover {
+            color: var(--text-main);
+            background: var(--hover);
+        }
+
+        .inner-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* File Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: rgba(0,0,0,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-dim); }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university"></i> Academics Hub
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="student-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-home"></i> Back to Dashboard</button>
+            </a>
+        </div>
+
+        <div class="nav-category">Coursework</div>
+        
+        <div class="nav-item active" onclick="toggleSubmenu('submenu-assignments', this)">
+            <div class="nav-item-content"><i class="fas fa-file-alt main-icon text-warning"></i> 1. Assignments</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-assignments" style="display: flex;">
+            <div class="submenu-item active" onclick="switchMainTab('sect-assign-upload', this, true)"><i class="fas fa-upload"></i> Upload Assignments</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-assign-my', this, true)"><i class="fas fa-check-circle"></i> View My Submissions</div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleSubmenu('submenu-attendance', this)">
+            <div class="nav-item-content"><i class="fas fa-user-check main-icon text-success"></i> 2. Attendance</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-attendance">
+            <div class="submenu-item" onclick="switchMainTab('sect-att-view', this, true)"><i class="fas fa-table"></i> My Attendance (Logs)</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-att-graph', this, true)"><i class="fas fa-chart-bar"></i> Graphical View</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-course-plan', this)">
+            <div class="nav-item-content"><i class="fas fa-map main-icon text-accent"></i> 3. Course Plan</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-study-mat', this)">
+            <div class="nav-item-content"><i class="fas fa-book-open main-icon text-info"></i> Study Materials</div>
+        </div>
+
+        <div class="nav-category">Evaluation</div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-tutorials', this)">
+            <div class="nav-item-content"><i class="fas fa-chalkboard main-icon text-primary"></i> 4. Tutorials (Class Tests)</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-exams', this)">
+            <div class="nav-item-content"><i class="fas fa-pen-square main-icon text-danger"></i> 5. Exams & Q-Papers</div>
+        </div>
+
+        <div class="nav-category">Participation</div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-seminars', this)">
+            <div class="nav-item-content"><i class="fas fa-microphone-alt main-icon text-warning"></i> 8. My Seminars</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-subjects', this)">
+            <div class="nav-item-content"><i class="fas fa-book main-icon text-success"></i> 9. Assigned Subjects & Staff</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-timetable', this)">
+            <div class="nav-item-content"><i class="fas fa-calendar-week main-icon text-primary"></i> 10. Timetable (Day Order)</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-counselling', this)">
+            <div class="nav-item-content"><i class="fas fa-user-md main-icon text-accent"></i> 11. Counselling Details</div>
+        </div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-program', this)">
+            <div class="nav-item-content"><i class="fas fa-users-cog main-icon text-info"></i> 12. Program Participation</div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Academic Operations Setup</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">View curriculum structures, submit critical assignments, track evaluation scores, and monitor daily attendance.</p>
+            </div>
+            <div>
+                <span class="status-badge" style="background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem;">
+                    Student Portal Mode
+                </span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             1. ASSIGNMENTS
+        =========================================== -->
+        <div id="sect-assign-upload" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-upload text-warning"></i> Upload Active Assignments</div>
+                </div>
+                
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;"><option>Select Subject...</option><option>Database Management Systems (CS302)</option></select>
+                    <select class="form-control" style="flex: 1;"><option>Select Assignment...</option><option>Module 3: Normalization Problems</option></select>
+                </div>
+
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt text-primary" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <h4 style="margin-bottom: 5px;">Drag & Drop your completed assignment here</h4>
+                    <p class="text-muted" style="font-size: 0.85rem;">or click to browse local files (PDF, DOCX accepted. Max 10MB)</p>
+                    <input type="file" id="fileInput" style="display: none;">
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary" style="padding: 10px 30px;"><i class="fas fa-paper-plane"></i> Final Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="sect-assign-my" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-check-circle text-success"></i> My Submissions & Scores</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Assignment Title</th>
+                            <th>Submitted On</th>
+                            <th>Attachment</th>
+                            <th>Marks Given</th>
+                            <th>Feedback status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Operating Systems</td>
+                            <td>Process Scheduling Algorithms File</td>
+                            <td>12-Oct-2026</td>
+                            <td><a href="#" style="color: var(--primary);"><i class="fas fa-file-pdf"></i> OS_Assign1.pdf</a></td>
+                            <td><span style="font-weight: 600; color: var(--success);">18 / 20</span></td>
+                            <td><span class="status-badge status-success">Evaluated</span></td>
+                        </tr>
+                        <tr>
+                            <td>Computer Networks</td>
+                            <td>Socket Programming Code</td>
+                            <td>20-Oct-2026</td>
+                            <td><a href="#" style="color: var(--primary);"><i class="fas fa-file-archive"></i> Lab_Code.zip</a></td>
+                            <td><span style="font-weight: 600; color: var(--warning);">Pending</span></td>
+                            <td><span class="status-badge status-warning">Under Review</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             2. ATTENDANCE
+        =========================================== -->
+        <div id="sect-att-view" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-table text-info"></i> Detailed Attendance Logs</div>
+                </div>
+                <div class="filter-bar">
+                    <input type="date" class="form-control" title="From Date">
+                    <input type="date" class="form-control" title="To Date">
+                    <button class="btn btn-primary"><i class="fas fa-search"></i> Fetch Logs</button>
+                    <button class="btn btn-secondary" style="margin-left: auto;"><i class="fas fa-download"></i> Export</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day Order</th>
+                            <th>Hour / Period</th>
+                            <th>Subject Info</th>
+                            <th>Status (Present/Absent)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>24-Oct-2026</td>
+                            <td>Day 3</td>
+                            <td>Hour 1 (09:00 - 10:00)</td>
+                            <td>Computer Networks (CS401)</td>
+                            <td><span class="status-badge status-success">Present</span></td>
+                        </tr>
+                        <tr>
+                            <td>24-Oct-2026</td>
+                            <td>Day 3</td>
+                            <td>Hour 2 (10:00 - 11:00)</td>
+                            <td>Operating Systems (CS402)</td>
+                            <td><span class="status-badge status-danger">Absent</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sect-att-graph" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-chart-bar text-accent"></i> Graphical View (All Subjects)</div>
+                </div>
+                <div style="height: 400px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--border);">
+                    <!-- Placeholder for Chart.js Canvas -->
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             3. COURSE PLAN
+        =========================================== -->
+        <div id="sect-course-plan" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-map text-accent"></i> Course Plan Overview</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;"><option>Select Subject...</option><option>Computer Networks</option></select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Module #</th>
+                            <th>Topics to be Covered</th>
+                            <th>Planned Duration</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Module 1</td>
+                            <td>Intro to Networks, OSI Model, TCP/IP Suite</td>
+                            <td>12 Hours</td>
+                            <td><span class="status-badge status-success">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>Module 2</td>
+                            <td>Physical Layer & Data Link Layer Protocols</td>
+                            <td>15 Hours</td>
+                            <td><span class="status-badge status-warning">In Progress</span></td>
+                        </tr>
+                        <tr>
+                            <td>Module 3</td>
+                            <td>Network Layer (Routing Algorithms)</td>
+                            <td>14 Hours</td>
+                            <td><span class="status-badge status-info text-dim">Upcoming</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             STUDY MATERIALS
+        =========================================== -->
+        <div id="sect-study-mat" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-book-open text-info"></i> Subject Study Materials</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control"><option>Subject: DBMS</option></select>
+                    <select class="form-control"><option>All Material Types</option><option>Notes</option><option>PPTs</option><option>Videos</option></select>
+                </div>
+                
+                <div class="list-group">
+                    <div class="list-item">
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <i class="fas fa-file-pdf text-danger" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h5 style="margin-bottom: 2px;">Module 1 Complete Notes</h5>
+                                <p class="text-muted" style="font-size: 0.8rem;">Uploaded by: Dr. Sarah Connor | Size: 2.4 MB</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary text-primary"><i class="fas fa-download"></i></button>
+                    </div>
+                    <div class="list-item">
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <i class="fas fa-file-powerpoint text-warning" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h5 style="margin-bottom: 2px;">Normalization PPT Slides</h5>
+                                <p class="text-muted" style="font-size: 0.8rem;">Uploaded by: Dr. Sarah Connor | Size: 5.1 MB</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary text-primary"><i class="fas fa-download"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             5. EXAMS & QUESTION PAPERS
+        =========================================== -->
+        <div id="sect-exams" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-pen-square text-danger"></i> 5. Examinations Hub</div>
+                </div>
+                
+                <div class="inner-tabs">
+                    <div class="inner-tab active" onclick="switchInnerTab('exams', 'e-marks', this)"><i class="fas fa-star text-warning"></i> View Exam Marks</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-tt', this)"><i class="fas fa-calendar-week"></i> Exam Timetable</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-score', this)"><i class="fas fa-chart-line"></i> Score Card</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-arrear', this)"><i class="fas fa-history text-danger"></i> Arrear Histories</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-online', this)"><i class="fas fa-laptop-code text-primary"></i> Online Assessments</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-qbank', this)"><i class="fas fa-database text-info"></i> View Question Bank</div>
+                </div>
+
+                <!-- Marks Tab -->
+                <div id="e-marks" class="tab-content active">
+                    <div class="filter-bar">
+                        <select class="form-control"><option>Semester 4 - Mid Terms</option><option>Semester 4 - University Finale</option></select>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Subject Code</th>
+                                <th>Subject Name</th>
+                                <th>Max Marks</th>
+                                <th>Secured Marks</th>
+                                <th>Grade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CS401</td>
+                                <td>Computer Networks</td>
+                                <td>100</td>
+                                <td>85</td>
+                                <td>A</td>
+                                <td><span class="status-badge status-success">PASS</span></td>
+                            </tr>
+                            <tr>
+                                <td>CS402</td>
+                                <td>Operating Systems</td>
+                                <td>100</td>
+                                <td>42</td>
+                                <td>F</td>
+                                <td><span class="status-badge status-danger">FAIL</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Online Assessment Tab -->
+                <div id="e-online" class="tab-content">
+                    <div style="background: rgba(59, 130, 246, 0.1); padding: 15px; border-left: 4px solid var(--primary); border-radius: 8px; margin-bottom: 1.5rem;">
+                        <strong>Note:</strong> Online MCQ assessments follow strict timers assigned by staff. The exam will forcibly Auto-Submit once the duration expires.
+                    </div>
+                    
+                    <div class="card" style="background: var(--glass); margin-bottom: 0;">
+                        <div class="flex-between">
+                            <div>
+                                <h4 style="color: var(--primary); margin-bottom: 5px;">DBMS - Surprise Quiz 2</h4>
+                                <p class="text-muted" style="font-size: 0.85rem;"><i class="far fa-clock"></i> Duration: 30 Minutes | Max Score: 15</p>
+                            </div>
+                            <button class="btn btn-primary bg-success" onclick="alert('Launching secure online exam browser...')"><i class="fas fa-play"></i> Start Assessment</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Question Bank Tab -->
+                <div id="e-qbank" class="tab-content">
+                    <div class="filter-bar">
+                        <select class="form-control"><option>Course: B.Tech CSE</option></select>
+                        <select class="form-control"><option>Semester: 4</option></select>
+                        <select class="form-control"><option>Subject: All</option></select>
+                    </div>
+                    
+                    <div class="list-group">
+                        <div class="list-item">
+                            <div>
+                                <h5 style="margin-bottom: 5px;">University Exam Question Paper - 2025</h5>
+                                <p class="text-muted" style="font-size: 0.8rem;">Subject: Computer Networks | Uploaded: 01-Jan-2026</p>
+                            </div>
+                            <button class="btn btn-secondary text-primary"><i class="fas fa-download"></i> PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score Card / Arrear placeholders -->
+                <div id="e-tt" class="tab-content text-center" style="padding: 2rem;"><h5>Exam Timetable loads here.</h5></div>
+                <div id="e-score" class="tab-content text-center" style="padding: 2rem;"><h5>Score Card Generation loads here.</h5></div>
+                <div id="e-arrear" class="tab-content text-center" style="padding: 2rem;"><h5>Arrear Historical Data loads here.</h5></div>
+
+            </div>
+        </div>
+
+        <!-- ==========================================
+             4. TUTORIALS
+        =========================================== -->
+        <div id="sect-tutorials" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-chalkboard text-primary"></i> Class Tests (Tutorials)</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control" style="flex: 1;"><option>Select Subject...</option><option>Software Engineering</option></select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Tutorial #</th>
+                            <th>Topic Covered</th>
+                            <th>Conducted On</th>
+                            <th>Max Marks</th>
+                            <th>Marks Obtained</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tutorial 1</td>
+                            <td>Agile Methodologies</td>
+                            <td>05-Oct-2026</td>
+                            <td>10</td>
+                            <td><span style="font-weight: 600; color: var(--success);">8</span></td>
+                            <td><span class="status-badge status-success">Evaluated</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tutorial 2</td>
+                            <td>UML Diagrams</td>
+                            <td>15-Oct-2026</td>
+                            <td>10</td>
+                            <td><span style="font-weight: 600; color: var(--warning);">Pending</span></td>
+                            <td><span class="status-badge status-warning">Not Graded</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             8. SEMINARS
+        =========================================== -->
+        <div id="sect-seminars" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-microphone-alt text-warning"></i> My Seminars</div>
+                </div>
+                <div class="list-group">
+                    <div class="card" style="background: var(--glass); margin-bottom: 0; padding: 1.25rem;">
+                        <h4 style="margin-bottom: 5px; color: var(--primary);">Cloud Computing Security Protocols <span class="status-badge status-info" style="font-size: 0.65rem; margin-left: 10px; vertical-align: middle;">Upcoming</span></h4>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 10px;">Subject: Advanced Networks | Guided by: Dr. Johnson</p>
+                        <hr style="border-top: 1px dashed var(--border); margin: 10px 0;">
+                        <div class="flex-between">
+                            <span style="font-size: 0.85rem; color: var(--text-main);"><i class="far fa-calendar-alt text-warning"></i> Scheduled: 10-Nov-2026 (11:00 AM)</span>
+                            <button class="btn btn-secondary text-primary" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-upload"></i> Upload Presentation Deck</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             9. ASSIGNED SUBJECTS & STAFF
+        =========================================== -->
+        <div id="sect-subjects" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-book text-success"></i> Assigned Subjects & Faculties</div>
+                </div>
+                <div class="grid-2">
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 15px; display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <div>
+                            <h5 style="margin-bottom: 4px; font-size: 1rem;">Computer Networks (CS401)</h5>
+                            <p class="text-muted" style="font-size: 0.85rem;">Prof. Richard Hendricks</p>
+                            <p style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">4 Credits • Core Subject</p>
+                        </div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; padding: 15px; display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; border-radius: 10px; background: rgba(245, 158, 11, 0.15); color: var(--warning); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div>
+                            <h5 style="margin-bottom: 4px; font-size: 1rem;">Database Mgmt Systems (CS302)</h5>
+                            <p class="text-muted" style="font-size: 0.85rem;">Dr. Sarah Connor</p>
+                            <p style="font-size: 0.75rem; color: var(--success); margin-top: 4px;">3 Credits • Core Subject</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             10. TIMETABLE
+        =========================================== -->
+        <div id="sect-timetable" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-calendar-week text-primary"></i> Weekly Timetable (Day Order based)</div>
+                </div>
+                <div class="filter-bar" style="justify-content: center;">
+                    <button class="btn btn-secondary">Day 1</button>
+                    <button class="btn btn-secondary">Day 2</button>
+                    <button class="btn btn-primary">Day 3 (Current)</button>
+                    <button class="btn btn-secondary">Day 4</button>
+                    <button class="btn btn-secondary">Day 5</button>
+                </div>
+                
+                <table class="data-table text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-center">09:00 - 09:50</th>
+                            <th class="text-center">09:50 - 10:40</th>
+                            <th class="text-center">10:55 - 11:45</th>
+                            <th class="text-center bg-danger-light">12:35 - 13:25</th>
+                            <th class="text-center">13:25 - 14:15</th>
+                            <th class="text-center">14:15 - 16:00</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--primary);">CN (CS401)</strong><br><span style="font-size: 0.75rem; color: var(--text-dim);">Room 201</span></td>
+                            <td><strong style="color: var(--warning);">DBMS (CS302)</strong><br><span style="font-size: 0.75rem; color: var(--text-dim);">Room 201</span></td>
+                            <td><strong style="color: var(--success);">OS (CS402)</strong><br><span style="font-size: 0.75rem; color: var(--text-dim);">Room 204</span></td>
+                            <td class="bg-danger-light"><strong style="color: var(--danger);">LUNCH BREAK</strong></td>
+                            <td><strong style="color: var(--info);">Mentoring</strong><br><span style="font-size: 0.75rem; color: var(--text-dim);">Staff Cabin</span></td>
+                            <td><strong style="color: var(--accent);">DBMS LAB</strong><br><span style="font-size: 0.75rem; color: var(--text-dim);">Lab 3 (Ground Floor)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             11. COUNSELLING DETAILS
+        =========================================== -->
+        <div id="sect-counselling" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-user-md text-accent"></i> Academic Mentoring & Counselling</div>
+                </div>
+                
+                <div style="background: rgba(139, 92, 246, 0.1); border-left: 4px solid var(--accent); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h5 style="margin-bottom: 5px;">Assigned Mentor (Counsellor)</h5>
+                    <p style="color: var(--text-main); font-weight: 500;">Prof. Richard Hendricks (Dept. of CSE)</p>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;"><i class="fas fa-envelope"></i> richard.h@ideal.edu | <i class="fas fa-phone"></i> Ext. 142</p>
+                </div>
+
+                <h4 style="font-size: 1rem; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">Recent Interaction Logs</h4>
+                
+                <div class="list-group">
+                    <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; border: 1px solid var(--border);">
+                        <div class="flex-between" style="margin-bottom: 10px;">
+                            <span style="font-weight: 600; color: var(--primary);">Term 1 Progress Review</span>
+                            <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="far fa-calendar-alt"></i> 10-Sep-2026</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.5;">Discussed strategies to improve performance in Operating Systems. Recommended focusing heavily on memory management modules. Attendance is satisfactory.</p>
+                        <div style="margin-top: 10px;">
+                            <span class="status-badge" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border);">Action Item: Read Chapter 4 & 5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             12. PROGRAM PARTICIPATION
+        =========================================== -->
+        <div id="sect-program" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-users-cog text-info"></i> Extracurricular Program Participation</div>
+                    <button class="btn btn-primary" onclick="alert('Opening Participation Registration Form...')"><i class="fas fa-plus"></i> Add Entry</button>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Program / Event Name</th>
+                            <th>Category</th>
+                            <th>Date Attended</th>
+                            <th>Role / Level</th>
+                            <th>Certificate Proof</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>National Tech Symposium 2026</td>
+                            <td>Technical Workshop</td>
+                            <td>14-Aug-2026</td>
+                            <td>Participant</td>
+                            <td><a href="#" style="color: var(--primary); font-size: 0.85rem;"><i class="fas fa-paperclip"></i> Certificate.pdf</a></td>
+                            <td><span class="status-badge status-success"><i class="fas fa-check"></i> Verified by HOD</span></td>
+                        </tr>
+                        <tr>
+                            <td>NSS Winter Camp</td>
+                            <td>Social Service</td>
+                            <td>05-Dec-2025</td>
+                            <td>Volunteer</td>
+                            <td><a href="#" style="color: var(--primary); font-size: 0.85rem;"><i class="fas fa-paperclip"></i> NSS_Proof.jpg</a></td>
+                            <td><span class="status-badge status-success"><i class="fas fa-check"></i> Verified</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Remaining Sections Placeholder -->
+        <div id="sect-generic-placeholder" class="content-section">
+            <div class="card" style="text-align: center; padding: 4rem;">
+                <i class="fas fa-cogs" style="font-size: 4rem; color: var(--text-dim); margin-bottom: 20px;"></i>
+                <h2>Loading Academic Module</h2>
+                <p class="text-muted" id="placeholder-text">This section displays data mapped from specific sidebar routing.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Tab Selection Logic
+        function switchMainTab(sectionId, element, isSubmenu = false) {
+            // Hide all content sections
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            
+            // Remove active status from all nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
+            if(element && !isSubmenu) element.classList.add('active');
+            
+            if(element && isSubmenu) {
+                element.classList.add('active');
+                element.parentElement.previousElementSibling.style.color = 'var(--primary)';
+            }
+
+            // Route to correct visual section
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+            } else {
+                document.getElementById('sect-generic-placeholder').classList.add('active');
+                document.getElementById('placeholder-text').innerText = "Loading data view for: " + sectionId.replace('sect-', '').toUpperCase();
+            }
+        }
+
+        // Submenu Toggles
+        function toggleSubmenu(submenuId, element) {
+            element.classList.toggle('menu-open');
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon) {
+                if(element.classList.contains('menu-open')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+
+        // Inner Tabs for Exam Module
+        function switchInnerTab(groupId, targetId, element) {
+            element.parentElement.querySelectorAll('.inner-tab').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const container = document.getElementById(targetId).parentElement;
+            container.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        }
+
+        // Initialize Dummy Chart.js for Graphical Attendance
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Comp. Networks', 'DBMS', 'Operating Systems', 'Software Eng.'],
+                    datasets: [{
+                        label: 'Attendance %',
+                        data: [88, 74, 65, 92],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)', // Green
+                            'rgba(245, 158, 11, 0.7)', // Yellow
+                            'rgba(239, 68, 68, 0.7)',  // Red
+                            'rgba(16, 185, 129, 0.7)'  // Green
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(245, 158, 11)',
+                            'rgb(239, 68, 68)',
+                            'rgb(16, 185, 129)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

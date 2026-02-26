@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Principal Academic Info</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #f59e0b;     /* Amber */
+            --secondary: #d97706;   /* Darker Amber */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --info: #3b82f6;        /* Blue */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --hover: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.1) 0, transparent 40%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 5px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item i.main-icon {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: var(--hover);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2));
+            color: white;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-submenu {
+            display: none;
+            flex-direction: column;
+            padding-left: 35px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border-left: 1px solid var(--border);
+            margin-left: 25px;
+        }
+
+        .nav-item.menu-open + .nav-submenu {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 8px 10px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .submenu-item i {
+            font-size: 0.7rem;
+        }
+
+        .submenu-item:hover {
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .submenu-item.active {
+            color: var(--primary);
+            font-weight: 600;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* UI Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        .btn-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        /* Generic Table/List Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-info { background: rgba(59, 130, 246, 0.15); color: var(--info); }
+
+        /* Form Elements */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            background: var(--glass);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            min-width: 150px;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        /* Inner Tabs */
+        .inner-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .inner-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--glass);
+            color: var(--text-dim);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .inner-tab:hover {
+            color: var(--text-main);
+            background: var(--hover);
+        }
+
+        .inner-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .item-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            transition: 0.3s;
+        }
+        
+        .item-card:hover {
+            border-color: var(--primary);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-dim); }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university"></i> Principal Portal
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="principal-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-home"></i> Back to Dashboard</button>
+            </a>
+        </div>
+
+        <!-- Section 1: Academic Setup -->
+        <div class="nav-category">Academic Setup</div>
+        
+        <div class="nav-item active" onclick="switchMainTab('sect-branches', this)">
+            <div class="nav-item-content"><i class="fas fa-code-branch main-icon text-info"></i> 1. Branches</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchMainTab('sect-batches', this)">
+            <div class="nav-item-content"><i class="fas fa-layer-group main-icon text-warning"></i> 2. Batches</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchMainTab('sect-semesters', this)">
+            <div class="nav-item-content"><i class="far fa-calendar-alt main-icon text-success"></i> 3. Semesters</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchMainTab('sect-subjects', this)">
+            <div class="nav-item-content"><i class="fas fa-book main-icon text-accent"></i> 4. Subjects</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-electives', this)">
+            <div class="nav-item-content"><i class="fas fa-random main-icon text-primary"></i> 5 & 6. Electives</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-electives">
+            <div class="submenu-item" onclick="switchMainTab('sect-elec-groups', null, true)"><i class="fas fa-circle"></i> Elective Groups</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-elec-subjects', null, true)"><i class="fas fa-circle"></i> Elective Subjects</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-timetable', this)">
+            <div class="nav-item-content"><i class="fas fa-clock main-icon text-info"></i> Timetables</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-timetable">
+            <div class="submenu-item" onclick="switchMainTab('sect-tt-manage', null, true)"><i class="fas fa-circle"></i> View/Edit/Delete</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-tt-report', null, true)"><i class="fas fa-circle"></i> 10. Day-wise Report</div>
+        </div>
+
+        <!-- Section 2: Attendance -->
+        <div class="nav-category">11. Attendance Tracking</div>
+        
+        <div class="nav-item" onclick="toggleSubmenu('submenu-emp-att', this)">
+            <div class="nav-item-content"><i class="fas fa-user-tie main-icon text-success"></i> (a) Employee</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-emp-att">
+            <div class="submenu-item" onclick="switchMainTab('sect-emp-att-monthly', null, true)"><i class="fas fa-chart-bar"></i> Monthly</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-emp-att-history', null, true)"><i class="fas fa-history"></i> Historical</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-emp-att-graph', null, true)"><i class="fas fa-chart-line"></i> Graph View</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-emp-att-perc', null, true)"><i class="fas fa-percentage"></i> Percentage</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-stu-att', this)">
+            <div class="nav-item-content"><i class="fas fa-user-graduate main-icon text-warning"></i> (b) Student</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-stu-att">
+            <div class="submenu-item" onclick="switchMainTab('sect-stu-att-monthly', null, true)"><i class="fas fa-chart-bar"></i> Monthly</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-stu-att-history', null, true)"><i class="fas fa-history"></i> Historical</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-stu-att-graph', null, true)"><i class="fas fa-chart-line"></i> Day Graph</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-stu-att-perc', null, true)"><i class="fas fa-percentage"></i> Percentage</div>
+        </div>
+
+        <!-- Section 3: Exams & Operations -->
+        <div class="nav-category">12. Examinations</div>
+        
+        <div class="nav-item" onclick="switchMainTab('sect-exams', this)">
+            <div class="nav-item-content"><i class="fas fa-file-signature main-icon text-danger"></i> Exams & Marks</div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleSubmenu('submenu-assessments', this)">
+            <div class="nav-item-content"><i class="fas fa-laptop-code main-icon text-accent"></i> Online Assessments</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-assessments">
+            <div class="submenu-item" onclick="switchMainTab('sect-assess-view', null, true)"><i class="fas fa-circle"></i> Assign/View Status</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-assess-report', null, true)"><i class="fas fa-circle"></i> Download Reports</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-qpapers', this)">
+            <div class="nav-item-content"><i class="fas fa-file-alt main-icon text-info"></i> 14. Question Papers</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-qpapers">
+            <div class="submenu-item" onclick="switchMainTab('sect-qp-offline', null, true)"><i class="fas fa-circle"></i> Offline Q-Papers</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-qp-online', null, true)"><i class="fas fa-circle"></i> Online Q-Papers</div>
+        </div>
+        
+        <div class="nav-category">Other Modules</div>
+
+        <div class="nav-item" onclick="switchMainTab('sect-placements', this)">
+            <div class="nav-item-content"><i class="fas fa-briefcase main-icon text-success"></i> 13. Placements</div>
+        </div>
+        
+        <div class="nav-item" onclick="toggleSubmenu('submenu-seminars', this)">
+            <div class="nav-item-content"><i class="fas fa-chalkboard-teacher main-icon text-warning"></i> Seminars</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-seminars">
+            <div class="submenu-item" onclick="switchMainTab('sect-seminars-view', null, true)"><i class="fas fa-circle"></i> View Seminars</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-seminars-dates', null, true)"><i class="fas fa-circle"></i> Seminar Dates</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-courses', this)">
+            <div class="nav-item-content"><i class="fas fa-graduation-cap main-icon text-primary"></i> Course Details</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-courses">
+            <div class="submenu-item" onclick="switchMainTab('sect-courses-view', null, true)"><i class="fas fa-circle"></i> View Course Details</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-courses-seats', null, true)"><i class="fas fa-circle"></i> Seat Availability</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-data', this)">
+            <div class="nav-item-content"><i class="fas fa-database main-icon text-info"></i> Active Data lists</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-data">
+            <div class="submenu-item" onclick="switchMainTab('sect-data-students', null, true)"><i class="fas fa-circle"></i> Active Students</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-data-employees', null, true)"><i class="fas fa-circle"></i> Active Employees</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-grievances', this)">
+            <div class="nav-item-content"><i class="fas fa-gavel main-icon text-danger"></i> Grievances & Feedback</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-grievances">
+            <div class="submenu-item" onclick="switchMainTab('sect-gr-complaints', null, true)"><i class="fas fa-circle"></i> Complaints</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-gr-disciplinary', null, true)"><i class="fas fa-circle"></i> Disciplinary Actions</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-gr-fb-emp', null, true)"><i class="fas fa-circle"></i> FB: From Employees</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-gr-fb-stu', null, true)"><i class="fas fa-circle"></i> FB: From Students</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-gr-score', null, true)"><i class="fas fa-circle"></i> Outcome Scores</div>
+        </div>
+
+        <div class="nav-item" onclick="toggleSubmenu('submenu-mng-hostel', this)">
+            <div class="nav-item-content"><i class="fas fa-building main-icon text-accent"></i> Mngmt: Hostel</div>
+            <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+        </div>
+        <div class="nav-submenu" id="submenu-mng-hostel">
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-view', null, true)"><i class="fas fa-circle"></i> View Hostel</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-floors', null, true)"><i class="fas fa-circle"></i> Floors & Rooms</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-layout', null, true)"><i class="fas fa-circle"></i> Rooms Layout</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-freq', null, true)"><i class="fas fa-circle"></i> Attendance Freq.</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-acc', null, true)"><i class="fas fa-circle"></i> Accommodations</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-att-stu', null, true)"><i class="fas fa-circle"></i> Stu. Att. (Graph/Excel)</div>
+            <div class="submenu-item" onclick="switchMainTab('sect-ht-att-emp', null, true)"><i class="fas fa-circle"></i> Emp. Att. (Graph/Excel)</div>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Academic Operations Gateway</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Configure core institutional structures, monitor examinations, track attendance, and manage student grievances from a central hub.</p>
+            </div>
+            <div>
+                <span class="status-badge" style="background: rgba(245, 158, 11, 0.1); color: var(--primary); border: 1px solid var(--primary); font-size: 0.8rem;">
+                    Principal Authority Mode
+                </span>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             ACADEMIC SETUP MODULES
+        =========================================== -->
+
+        <!-- 1. Branches -->
+        <div id="sect-branches" class="content-section active">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-code-branch text-info"></i> 1. Manage Branches</div>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Branch</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" class="form-control" placeholder="Search branches..." style="flex: 1;">
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Branch ID</th>
+                            <th>Branch Name</th>
+                            <th>HOD</th>
+                            <th>Total Batches</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BR-001</td>
+                            <td>Computer Science and Eng.</td>
+                            <td>Dr. Alan Turing</td>
+                            <td>4</td>
+                            <td><span class="status-badge status-success">Active</span></td>
+                            <td><button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>BR-002</td>
+                            <td>Mechanical Engineering</td>
+                            <td>Dr. James Watt</td>
+                            <td>4</td>
+                            <td><span class="status-badge status-success">Active</span></td>
+                            <td><button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 2. Batches -->
+        <div id="sect-batches" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-layer-group text-warning"></i> 2. View/Edit Batches</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control"><option>All Branches</option><option>CSE</option><option>ME</option></select>
+                    <input type="text" class="form-control" placeholder="Search batch year..." style="flex: 1;">
+                </div>
+                <div class="grid-cards">
+                    <div class="item-card">
+                        <div class="flex-between mb-4">
+                            <h4 style="color: var(--text-main);">CSE (2024-2028)</h4>
+                            <span class="status-badge status-success">Active</span>
+                        </div>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 10px;">Branch: Computer Science</p>
+                        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 20px;">Current Sem: Semester 1</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-secondary" style="flex: 1;"><i class="fas fa-eye"></i> View</button>
+                            <button class="btn btn-primary" style="flex: 1;"><i class="fas fa-edit"></i> Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Semesters -->
+        <div id="sect-semesters" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="far fa-calendar-alt text-success"></i> 3. Semester Configurations</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control"><option>CSE (2024-2028)</option><option>ME (2023-2027)</option></select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Semester</th>
+                            <th>Duration</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Semester 1</td>
+                            <td>6 Months</td>
+                            <td>01-Aug-2024</td>
+                            <td>31-Jan-2025</td>
+                            <td><span class="status-badge status-success">Ongoing</span></td>
+                            <td><button class="btn btn-primary"><i class="fas fa-edit"></i> Edit Dates</button></td>
+                        </tr>
+                        <tr>
+                            <td>Semester 2</td>
+                            <td>6 Months</td>
+                            <td>01-Feb-2025</td>
+                            <td>31-Jul-2025</td>
+                            <td><span class="status-badge status-warning">Upcoming</span></td>
+                            <td><button class="btn btn-primary"><i class="fas fa-edit"></i> Edit Dates</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. Subjects -->
+        <div id="sect-subjects" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-book text-accent"></i> 4. Subjects Mapping</div>
+                    <button class="btn btn-primary"><i class="fas fa-plus"></i> Map New Subject</button>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control"><option>Branch: CSE</option></select>
+                    <select class="form-control"><option>Batch: 2024-2028</option></select>
+                    <select class="form-control"><option>Sem: 1</option></select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Subject Code</th>
+                            <th>Subject Name</th>
+                            <th>Type</th>
+                            <th>Credits</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CS101</td>
+                            <td>Intro to Programming</td>
+                            <td>Core</td>
+                            <td>4</td>
+                            <td><button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>MA101</td>
+                            <td>Engineering Mathematics I</td>
+                            <td>Core</td>
+                            <td>4</td>
+                            <td><button class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             12. EXAMS & REPORTS MODULE
+        =========================================== -->
+        <div id="sect-exams" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-file-signature text-danger"></i> 12. Examination Controller</div>
+                </div>
+                
+                <div class="inner-tabs">
+                    <div class="inner-tab active" onclick="switchInnerTab('exams', 'e-view', this)"><i class="fas fa-eye"></i> View Exams</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-marks', this)"><i class="fas fa-pen"></i> Enter/Upload Marks</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-elig', this)"><i class="fas fa-user-shield"></i> Eligibility/Permissions</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-report', this)"><i class="fas fa-download"></i> Exam Reports (Excel)</div>
+                    <div class="inner-tab" onclick="switchInnerTab('exams', 'e-tt', this)"><i class="fas fa-calendar-week"></i> Exam Timetable</div>
+                </div>
+
+                <div id="e-view" class="tab-content active">
+                    <div class="filter-bar">
+                        <select class="form-control"><option>All Internal Exams</option><option>University Exams</option></select>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Exam Name</th>
+                                <th>Type</th>
+                                <th>Batch/Sem target</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mid-Term Assessment 1</td>
+                                <td>Internal</td>
+                                <td>CSE(2024-2028) Sem1</td>
+                                <td><span class="status-badge status-warning">Scheduled</span></td>
+                                <td><button class="btn btn-secondary"><i class="fas fa-eye"></i> Details</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="e-marks" class="tab-content">
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-left: 4px solid var(--danger); border-radius: 8px; margin-bottom: 1.5rem;">
+                        <strong>Requirement:</strong> Exam Timetable MUST be created, and Exam Attendance MUST be marked before entering subject-wise marks.
+                    </div>
+                    <div class="filter-bar">
+                        <select class="form-control"><option>Select Exam...</option><option>Mid-Term Assessment 1</option></select>
+                        <select class="form-control"><option>Select Subject...</option></select>
+                        <button class="btn btn-primary" onclick="alert('Navigating to Marks entry interface...')">Proceed to Mark Entry</button>
+                    </div>
+                </div>
+
+                <div id="e-elig" class="tab-content">
+                     <p class="text-muted mb-4">Students with &lt; 75% overall attendance require explicit HOD/Principal permission to appear.</p>
+                     
+                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                         <!-- Not Eligible -->
+                         <div style="border: 1px dashed var(--danger); padding: 15px; border-radius: 12px; background: rgba(239, 68, 68, 0.05);">
+                            <h4 class="text-danger" style="margin-bottom: 15px;">Not Eligible Students (&lt;75%)</h4>
+                            <div class="list-group">
+                                <div class="list-item" style="border-left-color: var(--danger);">
+                                    <div>
+                                        <div style="font-weight: 600;">John Doe (EMP-021)</div>
+                                        <div style="font-size: 0.8rem;" class="text-muted">Attendance: 68%</div>
+                                    </div>
+                                    <button class="btn btn-success" style="padding: 5px 10px; font-size: 0.8rem;" onclick="alert('Student Permitted.')">Permit</button>
+                                </div>
+                            </div>
+                         </div>
+                         
+                         <!-- Allowed -->
+                         <div style="border: 1px dashed var(--success); padding: 15px; border-radius: 12px; background: rgba(16, 185, 129, 0.05);">
+                            <h4 class="text-success" style="margin-bottom: 15px;">Allowed After Permission</h4>
+                            <div class="list-group">
+                                <div class="list-item" style="border-left-color: var(--success);">
+                                    <div>
+                                        <div style="font-weight: 600;">Jane Smith (EMP-045)</div>
+                                        <div style="font-size: 0.8rem;" class="text-muted">Attendance: 72% | Permitted by: Principal</div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                     </div>
+                </div>
+                
+                <div id="e-report" class="tab-content">
+                    <div class="text-center mt-4" style="padding: 2rem; border: 1px dashed var(--border); border-radius: 12px;">
+                        <i class="fas fa-file-excel text-success" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <h4>Generate Exam Result Reports</h4>
+                        <p class="text-muted mb-4">Export comprehensive marksheets and grading data.</p>
+                        <button class="btn btn-primary bg-success"><i class="fas fa-download"></i> Generate Excel Report</button>
+                    </div>
+                </div>
+                
+                <div id="e-tt" class="tab-content">
+                     <div class="filter-bar">
+                        <select class="form-control"><option>Mid-Term Assessment 1</option></select>
+                        <button class="btn btn-secondary">View Timetable</button>
+                        <button class="btn btn-primary" style="margin-left: auto;"><i class="fas fa-plus"></i> Create Timetable</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==========================================
+             GRIEVANCES & FEEDBACK MODULE
+        =========================================== -->
+        <div id="sect-gr-complaints" class="content-section">
+            <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-exclamation-circle text-danger"></i> Grievances: Complaints Registry</div>
+                </div>
+                <div class="filter-bar">
+                    <select class="form-control"><option>All Senders</option><option>From Students</option><option>From Employees</option></select>
+                    <select class="form-control"><option>Status: Pending</option><option>Status: Resolved</option></select>
+                </div>
+                <div class="list-group">
+                    <div class="list-item" style="border-left-color: var(--danger); flex-direction: column; align-items: flex-start;">
+                        <div class="flex-between" style="width: 100%;">
+                            <span style="font-weight: 600; font-size: 1.05rem;">Hostel WiFi Issues in Block B</span>
+                            <span class="status-badge status-danger">Pending Review</span>
+                        </div>
+                        <p class="text-muted mt-4" style="font-size: 0.85rem; margin-top: 5px;">Raised by: Student ID STU-892 | Category: Infrastructure</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-primary" style="font-size: 0.8rem; padding: 5px 15px;" onclick="alert('Opening Reply Interface...')"><i class="fas fa-reply"></i> View & Reply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sect-gr-disciplinary" class="content-section">
+             <div class="card">
+                <div class="card-header">
+                    <div><i class="fas fa-gavel text-warning"></i> Disciplinary Actions</div>
+                    <button class="btn btn-danger"><i class="fas fa-plus"></i> Log Action</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name/ID</th>
+                            <th>Incident Date</th>
+                            <th>Action Taken</th>
+                            <th>Severity</th>
+                            <th>Documentation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mark Roberts (STU-102)</td>
+                            <td>12-Oct-2026</td>
+                            <td>Library Suspension (1 Week)</td>
+                            <td><span class="status-badge status-warning">Medium</span></td>
+                            <td>
+                                <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-edit"></i> Edit</button>
+                                <button class="btn btn-secondary text-info" style="padding: 4px 8px; font-size: 0.75rem;"><i class="fas fa-download"></i> PDF</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+             </div>
+        </div>
+
+        <!-- Remaining sections implemented as placeholders for visual completeness to prove routing logic -->
+        <div id="sect-generic-placeholder" class="content-section">
+            <div class="card" style="text-align: center; padding: 4rem;">
+                <i class="fas fa-cogs" style="font-size: 4rem; color: var(--text-dim); margin-bottom: 20px;"></i>
+                <h2>Module Loaded Based on Selection</h2>
+                <p class="text-muted" id="placeholder-text">This section handles specific data viewing/editing as defined by the sub-menu selection.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Main Tab Selection Logic
+        function switchMainTab(sectionId, element, isSubmenu = false) {
+            // Hide all content sections
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            
+            // Remove active status from all nav items and subitems
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+
+            // If it's a main menu item calling it
+            if(element && !isSubmenu) {
+                element.classList.add('active');
+            }
+            // If it's a submenu item calling it
+            if(element && isSubmenu) {
+                element.classList.add('active');
+                // Keep parent menu open and lightly highlighted
+                element.parentElement.previousElementSibling.style.color = 'var(--primary)';
+            }
+
+            // Try to find the specific section, else load placeholder
+            const targetSection = document.getElementById(sectionId);
+            if(targetSection) {
+                targetSection.classList.add('active');
+            } else {
+                document.getElementById('sect-generic-placeholder').classList.add('active');
+                document.getElementById('placeholder-text').innerText = "Simulating load for data table: " + sectionId.replace('sect-', '').replace(/-/g, ' ').toUpperCase();
+            }
+        }
+
+        // Dropdown Toggle Logic
+        function toggleSubmenu(submenuId, element) {
+            // Close other open menus (optional, implement if desired)
+            
+            // Toggle open class on the parent nav-item
+            element.classList.toggle('menu-open');
+            
+            // Toggle chevron direction
+            const icon = element.querySelector('.fa-chevron-down, .fa-chevron-up');
+            if(icon) {
+                if(element.classList.contains('menu-open')) {
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            }
+        }
+
+        // Inner Tab Logic for specific modules (like Exams)
+        function switchInnerTab(groupId, targetId, element) {
+            element.parentElement.querySelectorAll('.inner-tab').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const container = document.getElementById(targetId).parentElement;
+            container.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        }
+
+    </script>
+</body>
+</html>

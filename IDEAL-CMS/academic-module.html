@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Module | IDEAL ERP</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #ef4444;
+            --success: #10b981;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(148, 163, 184, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+        }
+
+        .nav-item:hover {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.2));
+            color: white;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .content-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        .data-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .data-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-university" style="color: var(--primary);"></i> Academic
+        </div>
+        
+        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin: 10px 0 5px 15px; font-weight: bold;">
+            Core Structure
+        </div>
+
+        <div class="nav-item active" onclick="switchTab('branch')">
+            <i class="fas fa-code-branch"></i>
+            <div>
+                <div style="font-weight: 500;">1. Branch Setup</div>
+            </div>
+        </div>
+
+        <div class="nav-item" onclick="switchTab('batch')">
+            <i class="fas fa-layer-group"></i>
+            <div>
+                <div style="font-weight: 500;">2. Batch Setup</div>
+            </div>
+        </div>
+
+        <div class="nav-item" onclick="switchTab('groups')">
+            <i class="fas fa-users-cog"></i>
+            <div>
+                <div style="font-weight: 500;">3. Group Setup</div>
+            </div>
+        </div>
+
+        <div class="nav-item" onclick="switchTab('assign')">
+            <i class="fas fa-user-plus"></i>
+            <div>
+                <div style="font-weight: 500;">4. Assign Students</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+            <a href="setup-preview.html" style="text-decoration: none; color: inherit;">
+                <div class="nav-item">
+                    <i class="fas fa-arrow-left"></i>
+                    <div>Return to Setup</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1 style="margin: 0; font-size: 1.8rem;">Academic Module Configuration</h1>
+                <p style="margin: 5px 0 0 0; color: var(--text-dim);">Manage your institutional hierarchy.</p>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px; background: rgba(16, 185, 129, 0.1); padding: 8px 15px; border-radius: 20px; color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <i class="fas fa-check-circle"></i> Module Activated
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. Branch Section -->
+        <div id="branch" class="content-section active">
+            <h2 style="margin-top:0;"><i class="fas fa-code-branch" style="color: var(--primary);"></i> Branch Setup</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Create various branches based on the institution.</p>
+            
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 2rem;">
+                <h4 style="margin: 0 0 1rem 0;">Add New Branch</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Institution Link</label>
+                        <select>
+                            <option>IDEAL - Institute of Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Branch Name</label>
+                        <input type="text" placeholder="e.g. Computer Science and Engineering">
+                    </div>
+                    <div class="form-group">
+                        <label>Branch Code</label>
+                        <input type="text" placeholder="e.g. CSE">
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <button class="btn btn-primary" style="display: inline-flex;">Create Branch</button>
+                </div>
+            </div>
+
+            <h4>Existing Branches</h4>
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 style="margin:0; font-size: 1.1rem; color: #fff;">Computer Science and Engineering (CSE)</h3>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">Institution: IDEAL</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Batch Section -->
+        <div id="batch" class="content-section">
+            <h2 style="margin-top:0;"><i class="fas fa-layer-group" style="color: var(--primary);"></i> Batch Setup</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Setup specific batches underneath a selected Branch.</p>
+            
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 2rem;">
+                <h4 style="margin: 0 0 1rem 0;">Create Batch</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Parent Branch</label>
+                        <select>
+                            <option>CSE - Computer Science and Engineering</option>
+                            <option>MECH - Mechanical Engineering</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Batch Name / Identifier</label>
+                        <input type="text" placeholder="e.g. CSE (2017-2020)">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Year</label>
+                        <input type="number" placeholder="2017">
+                    </div>
+                    <div class="form-group">
+                        <label>End Year</label>
+                        <input type="number" placeholder="2020">
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <button class="btn btn-primary" style="display: inline-flex;">Create Batch</button>
+                </div>
+            </div>
+
+            <h4>Branch Batches</h4>
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 style="margin:0; font-size: 1.1rem; color: #fff;">CSE (2017-2020)</h3>
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">Branch: CSE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Groups Section -->
+        <div id="groups" class="content-section">
+            <h2 style="margin-top:0;"><i class="fas fa-users-cog" style="color: var(--primary);"></i> Group Setup</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Divide batches into specific sections and further into structural groups for practical subjects.</p>
+            
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 2rem;">
+                <h4 style="margin: 0 0 1rem 0;">Create Group</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Parent Batch</label>
+                        <select>
+                            <option>CSE (2017-2020)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Section Identifier</label>
+                        <input type="text" placeholder="e.g. Sec-A">
+                    </div>
+                    <div class="form-group">
+                        <label>Section Total Capacity</label>
+                        <input type="number" placeholder="e.g. 60">
+                    </div>
+                    <div class="form-group"></div>
+                    <div class="form-group">
+                        <label>Group Sub-Name</label>
+                        <input type="text" placeholder="e.g. Group-1">
+                    </div>
+                    <div class="form-group">
+                        <label>Group Capacity (For Practical Timetables)</label>
+                        <input type="number" placeholder="e.g. 20">
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <button class="btn btn-primary" style="display: inline-flex;">Create Group</button>
+                </div>
+            </div>
+
+            <h4>Section Groups</h4>
+            <div class="data-card">
+                <div class="data-card-header">
+                    <h3 style="margin:0; font-size: 1.1rem; color: #fff;">Sec-A Groups</h3>
+                    <div style="color: var(--primary); font-size: 0.9rem;">Batch: CSE (2017-2020)</div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                        <strong style="color: #fff">Group-1</strong> <span style="color: var(--text-dim); margin-left: 10px;">Capacity: 20</span>
+                    </div>
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                        <strong style="color: #fff">Group-2</strong> <span style="color: var(--text-dim); margin-left: 10px;">Capacity: 20</span>
+                    </div>
+                    <div style="background: rgba(99, 102, 241, 0.1); padding: 10px 15px; border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                        <strong style="color: #fff">Group-3</strong> <span style="color: var(--text-dim); margin-left: 10px;">Capacity: 20</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Assign Section -->
+        <div id="assign" class="content-section">
+            <h2 style="margin-top:0;"><i class="fas fa-user-plus" style="color: var(--primary);"></i> Student Group Assignment</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Assign enrolled students into specifically allocated groups.</p>
+            
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 1.5rem; border-radius: 12px; border: 1px dashed var(--border); margin-bottom: 2rem;">
+                <h4 style="margin: 0 0 1rem 0;">Filter & Select Students</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Target Group</label>
+                        <select>
+                            <option>CSE (2017-2020) > Sec-A > Group-1</option>
+                            <option>CSE (2017-2020) > Sec-A > Group-2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Filter By Student Search</label>
+                        <input type="text" placeholder="Search unassigned students...">
+                    </div>
+                </div>
+
+                <!-- Fake selectable students list for UI demonstration -->
+                <div style="margin-top: 15px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead style="background: rgba(0,0,0,0.2);">
+                            <tr>
+                                <th style="padding: 12px;"><input type="checkbox" checked style="accent-color: var(--primary);"></th>
+                                <th style="padding: 12px;">Roll Number</th>
+                                <th style="padding: 12px;">Student Name</th>
+                                <th style="padding: 12px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 12px;"><input type="checkbox" checked style="accent-color: var(--primary);"></td>
+                                <td style="padding: 12px;">CSE17001</td>
+                                <td style="padding: 12px;">Alex Johnson</td>
+                                <td style="padding: 12px;"><span style="color: var(--success); font-size: 0.8rem;">Ready</span></td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 12px;"><input type="checkbox" checked style="accent-color: var(--primary);"></td>
+                                <td style="padding: 12px;">CSE17002</td>
+                                <td style="padding: 12px;">Sarah Williams</td>
+                                <td style="padding: 12px;"><span style="color: var(--success); font-size: 0.8rem;">Ready</span></td>
+                            </tr>
+                            <tr style="border-top: 1px solid var(--border);">
+                                <td style="padding: 12px;"><input type="checkbox" style="accent-color: var(--primary);"></td>
+                                <td style="padding: 12px;">CSE17003</td>
+                                <td style="padding: 12px;">Michael Brown</td>
+                                <td style="padding: 12px;"><span style="color: var(--text-dim); font-size: 0.8rem;">Already in Group-2</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="text-align: right; margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="color: var(--text-dim); font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i> 2 Students selected / Capacity: 20
+                    </div>
+                    <button class="btn btn-primary" style="display: inline-flex;"><i class="fas fa-check"></i> Assign Selected Students</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

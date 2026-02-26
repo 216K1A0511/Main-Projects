@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Management Portal</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #c026d3;     /* Fuchsia */
+            --secondary: #4f46e5;   /* Indigo */
+            --accent: #e11d48;      /* Rose */
+            --success: #059669;     /* Emerald */
+            --warning: #d97706;     /* Amber */
+            --info: #0284c7;        /* Light Blue */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-header {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin: 15px 0 10px 15px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(192, 38, 211, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(192, 38, 211, 0.2), rgba(79, 70, 229, 0.2));
+            color: white;
+            border: 1px solid rgba(192, 38, 211, 0.3);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3rem;
+            overflow-y: auto;
+            background-image: radial-gradient(at 100% 0%, rgba(192, 38, 211, 0.1) 0, transparent 40%);
+        }
+
+        .header-title {
+            margin-bottom: 2rem;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Layout Grids */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Reusable Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 1.5rem;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(192, 38, 211, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 38, 211, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass);
+            border-color: var(--border);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1); border-color: var(--primary); color: var(--primary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-briefcase"></i> Management Ops
+        </div>
+        
+        <div class="nav-header">Analytics & Health</div>
+        <div class="nav-item active" onclick="switchTab('m-facultyanalytics')">
+            <i class="fas fa-chart-bar"></i> 1. Faculty Analytics
+        </div>
+        <div class="nav-item" onclick="switchTab('m-hospital')">
+            <i class="fas fa-hospital"></i> 2. Hospital / Donors
+        </div>
+        <div class="nav-item" onclick="switchTab('m-leave')">
+            <i class="fas fa-calendar-times"></i> 3. Leave Architecture
+        </div>
+        
+        <div class="nav-header">Placements & Student Welfare</div>
+        <div class="nav-item" onclick="switchTab('m-placements')">
+            <i class="fas fa-briefcase"></i> 4. Placements
+        </div>
+        <div class="nav-item" onclick="switchTab('m-plctrainings')">
+            <i class="fas fa-chalkboard-teacher"></i> 5. Placement Trainings
+        </div>
+        <div class="nav-item" onclick="switchTab('m-scholarship')">
+            <i class="fas fa-graduation-cap"></i> 6. Scholarship
+        </div>
+        <div class="nav-item" onclick="switchTab('m-tutor')">
+            <i class="fas fa-user-friends"></i> 7. Tutor Mgmt
+        </div>
+        
+        <div class="nav-header">Admin Protocols</div>
+        <div class="nav-item" onclick="switchTab('m-gatepass')">
+            <i class="fas fa-id-card"></i> Gate Pass Control
+        </div>
+        
+        <div style="margin-top: auto; padding-top: 15px;">
+            <a href="#" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%; justify-content: flex-start;"><i class="fas fa-arrow-left"></i> Return to Main Admin</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 600;">Global Management Portal</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Monitor advanced institutional vectors: Faculty KPI, Health Records, and Unified Leave Logic.</p>
+            </div>
+            <div>
+                <span style="background: rgba(192, 38, 211, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                    Management Rights
+                </span>
+            </div>
+        </div>
+
+        <!-- 1. FACULTY PARTICIPATIONS (ANALYTICS) -->
+        <div id="m-facultyanalytics" class="content-section active">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chart-bar text-primary"></i> 1. Faculty Performance & Participations</h2>
+            <div class="grid-4" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                <!-- Event Participations -->
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header">(a) External Participations</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Global view of external event participations logged by employees.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-calendar-check"></i> View External Events Log</button>
+                </div>
+                
+                <!-- Working Hours -->
+                <div class="card" style="border-top: 3px solid var(--secondary);">
+                    <div class="card-header">(b) Working Hours Engine</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Review the net clock-in values mapped against individual staff members.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--secondary); color: var(--secondary);"><i class="fas fa-user-clock"></i> Access Working Hours Database</button>
+                </div>
+
+                <!-- Performance -->
+                <div class="card" style="border-top: 3px solid var(--success);">
+                    <div class="card-header">(c) Performance Matrices</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Audit generated KPIs, feedback scores, and performance evaluation metrics.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--success); color: var(--success);"><i class="fas fa-chart-pie"></i> Open Performance Dash</button>
+                </div>
+
+                <!-- Paper Publications -->
+                <div class="card" style="border-top: 3px solid var(--warning);">
+                    <div class="card-header">(e) Paper Publications</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Audit formal paper titles and journal names attached to your faculty bodies.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--warning); color: var(--warning);"><i class="fas fa-book-reader"></i> Open Publication Log</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. HOSPITAL -->
+        <div id="m-hospital" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-hospital text-accent"></i> 2. Hospital / Emergency Directory</h2>
+            <div class="grid-2">
+                <div class="card" style="border-left: 4px solid var(--accent); background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(225, 29, 72, 0.1));">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h3 style="margin-bottom: 5px; color: var(--text-main);"><i class="fas fa-tint text-accent"></i> Global Blood Donor Matrix</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Access emergency indexing arrays tied directly to registered student profiles.</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" style="background: var(--accent); flex: 1;"><i class="fas fa-search-plus"></i> View Student Blood Donors</button>
+                        <button class="btn btn-secondary" style="flex: 1;"><i class="fas fa-file-export"></i> Export Priority List</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. LEAVE ARCHITECTURE -->
+        <div id="m-leave" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-calendar-times" style="color: var(--info);"></i> 3. System-Wide Leave Protocol</h2>
+            
+            <div class="card" style="background: rgba(2, 132, 199, 0.05); border: 1px dashed var(--info); margin-bottom: 1.5rem;">
+                <h3 style="color: var(--info); margin-bottom: 15px;"><i class="fas fa-cogs"></i> Assignment Logic Framework</h3>
+                <div class="grid-2" style="margin-bottom: 0;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">(a) Definitions</span>
+                        <button class="btn btn-primary" style="justify-content: flex-start; background: var(--info); font-size: 0.8rem;"><i class="fas fa-plus"></i> Build Leave Types (Casual, Sick, etc.)</button>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">(b) Assignment Maps</span>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; border-color: var(--info); color: var(--info); font-size: 0.8rem;"><i class="fas fa-user-tag"></i> Assign Global Leave Caps to Staff</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-file-alt"></i> Access Leave Detail Ledger</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Employee Approvals -->
+                <div class="card" style="border-top: 3px solid var(--secondary);">
+                    <h3 style="color: var(--secondary); margin-bottom: 15px;">(d) Employee Approvals</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Triaging block for reviewing pending absence pushes triggered by registered staff nodes.</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; width: 100%; background: var(--secondary);"><i class="fas fa-tasks"></i> Process Staff Requests</button>
+                    </div>
+                </div>
+
+                <!-- Student Approvals -->
+                <div class="card" style="border-top: 3px solid var(--success);">
+                    <h3 style="color: var(--success); margin-bottom: 15px;">(e) Student Approvals</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Triaging block for reviewing pending absence pushes triggered by student populations.</p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; width: 100%; background: var(--success);"><i class="fas fa-user-graduate"></i> Process Student Requests</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--success); padding: 15px; border-radius: 12px; margin-top: 10px;">
+                <p style="font-size: 0.85rem; color: var(--text-main);"><i class="fas fa-check-double" style="color: var(--success);"></i> <strong>Note:</strong> All overrides executed here physically map to the global <strong>Attendance Analytics Engine</strong> ensuring system-wide visual sync.</p>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- 4. PLACEMENTS -->
+        <div id="m-placements" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-briefcase" style="color: var(--primary);"></i> 4. Placement Drives Operations</h2>
+            <div class="grid-3">
+                <div class="card" style="border-top: 3px solid var(--primary);">
+                    <div class="card-header">(a) Global Tracking</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Create/edit drives by department. HODs/Employees sync selected student trackers here.</p>
+                    <button class="btn btn-primary" style="width: 100%;"><i class="fas fa-star"></i> Setup Placement Drive</button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px;"><i class="fas fa-eye"></i> View Active Matrix</button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">(b) Eligibility Array</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Access automated system pulling eligible students structurally from Academic Percentage DB.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-file-download"></i> Department Eligibility Reports</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">(c) Placed Log Output</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Output and download logs for formally placed students by specific hiring parameters.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-database"></i> Access Drive Reports</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. PLACEMENT TRAININGS -->
+        <div id="m-plctrainings" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-chalkboard-teacher" style="color: var(--secondary);"></i> 5. Placement Trainings Matrix</h2>
+            <div class="grid-3">
+                <div class="card" style="border-top: 3px solid var(--secondary);">
+                    <div class="card-header">(a) Base Trainings</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Initialize and array department-focused physical training drives.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--secondary);"><i class="fas fa-plus"></i> Initialize Training Array</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(b) Day-Wise Logs</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Export immediate daily tracking arrays regarding training participations.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-file-excel"></i> Day-Wise Reports</button>
+                </div>
+                <div class="card">
+                    <div class="card-header">(c) Historical Reports</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Track macro data across various completed training events throughout the year.</p>
+                    <button class="btn btn-secondary" style="width: 100%; border-color: var(--secondary); color: var(--secondary);"><i class="fas fa-history"></i> Historical Dump</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. SCHOLARSHIP -->
+        <div id="m-scholarship" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-graduation-cap" style="color: var(--accent);"></i> 6. Universal Scholarship Pipeline</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">(a) Link Action Node</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Global switch pushing registration link instantly to all physical student dashboards.</p>
+                    <button class="btn btn-primary" style="background: var(--accent);"><i class="fas fa-link"></i> Engage Setup Form Logics</button>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent);">
+                    <div class="card-header">(b) Viewer Protocol</div>
+                    <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 15px;">Audit queue of all student applications systematically pushed from dashboard registrations.</p>
+                    <button class="btn btn-secondary" style="width: 100%;"><i class="fas fa-search"></i> Validate Registrations Log</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. TUTOR -->
+        <div id="m-tutor" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-user-friends" style="color: var(--success);"></i> 7. Tutor & Mentoring Logic</h2>
+            <div class="grid-2">
+                <!-- Assign & Edit -->
+                <div class="card" style="border-top: 3px solid var(--success);">
+                    <h3 style="color: var(--success); margin-bottom: 15px;">Assignment Architecture</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-primary" style="justify-content: flex-start; background: var(--success); font-size: 0.8rem;"><i class="fas fa-network-wired"></i> (a) Map Tutor to Student</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-users-cog"></i> (b) Edit Connected Hierarchy</button>
+                    </div>
+                </div>
+
+                <!-- Outputs -->
+                <div class="card">
+                    <h3 style="color: var(--text-main); margin-bottom: 15px;">Output Surveillance Logs</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-comments"></i> (f) Review Counselling Details</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; font-size: 0.8rem;"><i class="fas fa-running"></i> (g) Program Participation Output</button>
+                        <button class="btn btn-secondary" style="justify-content: flex-start; border-color: var(--success); color: var(--success); font-size: 0.8rem;"><i class="fas fa-chart-line"></i> (e) Student Performance Evaluation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GATE PASS -->
+        <div id="m-gatepass" class="content-section">
+            <h2 style="margin-bottom: 20px;"><i class="fas fa-id-card" style="color: var(--warning);"></i> Automated Gate Pass Approvals</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">1. Apply for Passage</div>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Trigger requests internally. Once routed, they land on external nodes (Warden / HOD) for checks.</p>
+                    <button class="btn btn-primary" style="width: 100%; background: var(--warning); color: #000;"><i class="fas fa-external-link-alt"></i> Apply Internal Request</button>
+                </div>
+                <div class="card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(217, 119, 6, 0.1)); border-left: 4px solid var(--warning);">
+                    <div class="card-header">2. Review & Triage</div>
+                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 15px;">Direct interface for Admin nodes to override, approve, or instantly terminate pending exterior requests.</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" style="background: var(--success); flex: 1;"><i class="fas fa-check"></i> Approve Actions</button>
+                        <button class="btn btn-primary" style="background: var(--accent); flex: 1;"><i class="fas fa-ban"></i> Reject Requests</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS for Tabs -->
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

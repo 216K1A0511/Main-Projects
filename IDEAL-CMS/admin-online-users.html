@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDEAL-CMS - Online Users</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0ea5e9;     /* Light Blue */
+            --secondary: #0284c7;   /* Sky Blue */
+            --accent: #8b5cf6;      /* Violet */
+            --success: #10b981;     /* Emerald */
+            --warning: #f59e0b;     /* Amber */
+            --danger: #ef4444;      /* Red */
+            --bg: #0f172a;          /* Slate 900 */
+            --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --sidebar-bg: rgba(15, 23, 42, 0.95);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0, transparent 40%),
+                radial-gradient(at 0% 100%, rgba(139, 92, 246, 0.1) 0, transparent 40%);
+        }
+
+        /* ------------------------
+           SIDEBAR Navigation
+        ------------------------- */
+        .sidebar {
+            width: 300px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            padding-left: 10px;
+        }
+
+        .nav-category {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 10px 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-dim);
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(139, 92, 246, 0.2));
+            color: white;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* ------------------------
+           MAIN CONTENT AREA
+        ------------------------- */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .header-title {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-title h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Reusable Components */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        /* Controls */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 14px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            color: var(--text-dim);
+            font-weight: 600;
+            background: rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 5px currentColor;
+        }
+        
+        .status-success { color: var(--success); }
+        .status-danger { color: var(--danger); }
+        .status-warning { color: var(--warning); }
+        
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--border);
+        }
+
+        .role-student { color: var(--primary); background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); }
+        .role-faculty { color: var(--accent); background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3); }
+        .role-admin { color: var(--warning); background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand">
+            <i class="fas fa-network-wired"></i> Network Ops
+        </div>
+        
+        <div class="nav-category">Access Control</div>
+        
+        <div class="nav-item active" onclick="switchTab('t-logged', this)">
+            <i class="fas fa-signal text-success"></i> 1. Active Sessions
+        </div>
+        <div class="nav-item" onclick="switchTab('t-history', this)">
+            <i class="fas fa-history text-info"></i> 2. Login History
+        </div>
+        <div class="nav-item" onclick="switchTab('t-deactivated', this)">
+            <i class="fas fa-user-slash text-danger"></i> 3. Revoked Users
+        </div>
+
+        <div style="margin-top: auto; padding-top: 20px;">
+            <a href="admin-dashboard.html" style="text-decoration: none;">
+                <button class="btn btn-secondary" style="width: 100%; border: 1px solid var(--border); background: var(--glass); color: var(--text-dim);"><i class="fas fa-arrow-left"></i> Return to Admin</button>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div class="header-title">
+            <div>
+                <h1>Online Users Monitor</h1>
+                <p style="color: var(--text-dim); margin-top: 5px;">Track realtime system telemetry, review authentication histories, and manage nullified network profiles.</p>
+            </div>
+            <div>
+                <span style="background: rgba(14, 165, 233, 0.1); color: var(--primary); border: 1px solid var(--primary); padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                    <i class="fas fa-shield-alt"></i> Security Clearance Level: Admin
+                </span>
+            </div>
+        </div>
+
+        <!-- 1. LOGGED IN USERS -->
+        <div id="t-logged" class="content-section active">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-satellite-dish text-success"></i> Live Session Matrix</div>
+                <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 2rem;">Overview of all clients currently connected to the CMS instances, pinged globally via their last server request.</p>
+                
+                <div class="filter-bar">
+                    <input type="text" class="form-control" placeholder="Search by IP, ID or Name..." style="flex: 1;">
+                    <select class="form-control">
+                        <option value="">All Roles</option>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                    <button class="btn btn-primary"><i class="fas fa-sync-alt"></i> Force Sync</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>User Profile</th>
+                                <th>System ID</th>
+                                <th>Role</th>
+                                <th>IP Address</th>
+                                <th>Active Time</th>
+                                <th>Network Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="fas fa-circle status-indicator status-success" title="Online"></i></td>
+                                <td><div style="font-weight: 500;">Dr. Alan Turing</div></td>
+                                <td><span style="font-family: monospace; color: var(--text-dim);">EMP-CS-001</span></td>
+                                <td><span class="role-badge role-faculty">Faculty (HOD)</span></td>
+                                <td>192.168.1.105</td>
+                                <td>02h 15m</td>
+                                <td><button class="btn btn-danger" style="font-size: 0.8rem; padding: 4px 12px;"><i class="fas fa-sign-out-alt"></i> Terminate Session</button></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-circle status-indicator status-success" title="Online"></i></td>
+                                <td><div style="font-weight: 500;">Jane Doe</div></td>
+                                <td><span style="font-family: monospace; color: var(--text-dim);">STU-24-102</span></td>
+                                <td><span class="role-badge role-student">Student</span></td>
+                                <td>10.0.5.22</td>
+                                <td>45m</td>
+                                <td><button class="btn btn-danger" style="font-size: 0.8rem; padding: 4px 12px;"><i class="fas fa-sign-out-alt"></i> Terminate Session</button></td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-circle status-indicator status-warning" title="Idle"></i></td>
+                                <td><div style="font-weight: 500;">Marcus Fenix</div></td>
+                                <td><span style="font-family: monospace; color: var(--text-dim);">EMP-NT-005</span></td>
+                                <td><span class="role-badge role-faculty">Non-Teaching</span></td>
+                                <td>192.168.2.55</td>
+                                <td>Idling (14m)</td>
+                                <td><button class="btn btn-danger" style="font-size: 0.8rem; padding: 4px 12px;"><i class="fas fa-sign-out-alt"></i> Terminate Session</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 15px; text-align: right; color: var(--text-dim); font-size: 0.85rem;">
+                    Currently Connected: <strong style="color: var(--success);">342 Nodes</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. LOGGED IN HISTORY -->
+        <div id="t-history" class="content-section">
+            <div class="card">
+                <div class="card-header"><i class="fas fa-history text-info"></i> Historical Authentication Logs</div>
+                <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 2rem;">Trace records of all login and logout events initiated by accounts across the ecosystem to ensure compliance.</p>
+                
+                <div class="filter-bar">
+                    <input type="text" class="form-control" placeholder="Target System ID (e.g. STU-...)">
+                    <input type="date" class="form-control" title="Start Date">
+                    <input type="date" class="form-control" title="End Date">
+                    <button class="btn btn-primary"><i class="fas fa-filter"></i> Query Logs</button>
+                    <button class="btn btn-secondary" style="margin-left: auto; color: var(--success); border-color: rgba(16, 185, 129, 0.3);"><i class="fas fa-file-excel"></i> Export Report</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Event Timestamp</th>
+                                <th>User ID</th>
+                                <th>User Name</th>
+                                <th>Role</th>
+                                <th>IP Trace</th>
+                                <th>Action</th>
+                                <th>Browser / OS Base</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="color: var(--text-dim);">2026-10-12 08:32:15</td>
+                                <td><span style="font-family: monospace;">STU-24-102</span></td>
+                                <td>Jane Doe</td>
+                                <td><span class="role-badge role-student">Student</span></td>
+                                <td>10.0.5.22</td>
+                                <td><span style="color: var(--success); font-weight: 600;"><i class="fas fa-sign-in-alt"></i> Login Success</span></td>
+                                <td>Chrome 115 / MacOS</td>
+                            </tr>
+                            <tr>
+                                <td style="color: var(--text-dim);">2026-10-12 07:14:02</td>
+                                <td><span style="font-family: monospace;">EMP-CS-001</span></td>
+                                <td>Dr. Alan Turing</td>
+                                <td><span class="role-badge role-faculty">Faculty</span></td>
+                                <td>192.168.1.105</td>
+                                <td><span style="color: var(--danger); font-weight: 600;"><i class="fas fa-exclamation-triangle"></i> Login Failed (Pwd)</span></td>
+                                <td>Firefox 118 / Windows 11</td>
+                            </tr>
+                            <tr>
+                                <td style="color: var(--text-dim);">2026-10-11 18:45:30</td>
+                                <td><span style="font-family: monospace;">ADM-001</span></td>
+                                <td>System Admin</td>
+                                <td><span class="role-badge role-admin">Administrator</span></td>
+                                <td>192.168.0.10</td>
+                                <td><span style="color: var(--warning); font-weight: 600;"><i class="fas fa-sign-out-alt"></i> Logout Explicit</span></td>
+                                <td>Safari / iOS</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. DEACTIVATED USERS -->
+        <div id="t-deactivated" class="content-section">
+            <div class="card" style="border-color: rgba(239, 68, 68, 0.3);">
+                <div class="card-header text-danger" style="border-bottom-color: rgba(239, 68, 68, 0.2);"><i class="fas fa-user-slash text-danger"></i> Profile Nullification Zone</div>
+                
+                <div style="background: rgba(239, 68, 68, 0.05); padding: 15px; border-left: 4px solid var(--danger); border-radius: 8px; margin-bottom: 2rem;">
+                    <strong>Alert:</strong> Listed profiles have been permanently or temporarily stripped of login rights. Any incoming authentication requests from these IDs are automatically dropped and traced to the security logs.
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" class="form-control" placeholder="Search Nullified Profiles..." style="flex: 1;">
+                    <select class="form-control">
+                        <option value="">By Reason</option>
+                        <option value="resigned">Resigned/Terminated</option>
+                        <option value="graduated">Alumni/Graduated</option>
+                        <option value="suspended">Suspended Action</option>
+                    </select>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nullified Hash ID</th>
+                                <th>Prior Identity Data</th>
+                                <th>Role</th>
+                                <th>Revocation Date</th>
+                                <th>Revocation Reason Note</th>
+                                <th>Override Protocol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span style="font-family: monospace; color: var(--danger); font-weight: 600;">EMP-CS-022</span></td>
+                                <td><div>Dr. Sarah Jenkins</div><div style="font-size: 0.8rem; color: var(--text-dim);">sarah.j@ideal.com</div></td>
+                                <td><span class="role-badge role-faculty">Faculty</span></td>
+                                <td>30-Nov-2026</td>
+                                <td>Scheduled Resignation Terminated</td>
+                                <td><button class="btn btn-primary" style="background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.8rem;" onclick="alert('Profile Hash Regenerated. Account is active.')"><i class="fas fa-unlock"></i> Reactivate</button></td>
+                            </tr>
+                            <tr style="opacity: 0.7;">
+                                <td><span style="font-family: monospace; color: var(--danger); font-weight: 600;">STU-21-445</span></td>
+                                <td><div>Michael Scott</div><div style="font-size: 0.8rem; color: var(--text-dim);">m.scott_21@ideal.com</div></td>
+                                <td><span class="role-badge role-student">Student</span></td>
+                                <td>15-Jun-2025</td>
+                                <td>Batch Graduated (Alumni Transfer)</td>
+                                <td><button class="btn btn-primary" style="background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); font-size: 0.8rem;" onclick="alert('Profile Hash Regenerated. Account is active.')"><i class="fas fa-unlock"></i> Reactivate</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripting for interactivity -->
+    <script>
+        // Main Sidebar Tabs
+        function switchTab(tabId, element) {
+            // Update sidebar UI
+            document.querySelectorAll('.sidebar .nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Update Main Content
+            document.querySelectorAll('.main-content > .content-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
